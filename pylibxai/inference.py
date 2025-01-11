@@ -5,8 +5,9 @@ import soundfile as sf
 import torch
 import argparse
 
-from audioLIME import lime_audio, RawAudioProvider, SpleeterFactorization
-from model_adapters import SotaModelsAdapter, PannsCnn14Adapter
+from pylibxai.AudioLoader import RawAudioLoader
+from pylibxai.audioLIME import lime_audio, SpleeterFactorization
+from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
 
 from utils import get_install_path
 
@@ -14,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description="Process a model name and input path.")
     
     parser.add_argument('-m', '--model', type=str, required=True,
-                        help="Name of the model to use.")
+                        help="Name of the model to use [sota_music, paans].")
     parser.add_argument('-i', '--input', type=str, required=True,
                         help="Path to the input file or directory.") 
     args = parser.parse_args()
@@ -32,8 +33,8 @@ def main():
     
     print(f'Adapter(): {adapter}')
     
-    data_provider = RawAudioProvider(args.input)
-    spleeter_factorization = SpleeterFactorization(data_provider,
+    audio_loader = RawAudioLoader(args.input)
+    spleeter_factorization = SpleeterFactorization(audio_loader,
                                                    n_temporal_segments=10,
                                                    composition_fn=None,
                                                    model_name='spleeter:5stems')
@@ -62,7 +63,7 @@ def main():
     outdir.mkdir(parents=True, exist_ok=True) 
     
     sf.write(str(outdir / f"explanation{timestamp}.wav"), sum(top_components), 16000, 'PCM_24')
-    sf.write(str(outdir / f"original{timestamp}.wav"), spleeter_factorization.data_provider.get_mix(), 16000, 'PCM_24')
+    sf.write(str(outdir / f"original{timestamp}.wav"), spleeter_factorization.audio_loader.get_mix(), 16000, 'PCM_24')
 
 if __name__ == '__main__':
     main()

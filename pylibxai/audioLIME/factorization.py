@@ -3,7 +3,8 @@ import warnings
 import os
 import librosa
 from audioLIME.factorization_base import Factorization
-from audioLIME.data_provider import RawAudioProvider
+
+from pylibxai.AudioLoader import RawAudioLoader
 
 try:
     import torch
@@ -108,7 +109,7 @@ class DataBasedFactorization(Factorization):
 
 class SpleeterFactorization(DataBasedFactorization):
     def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name, target_sr=16000):
-        assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
+        assert isinstance(data_provider, RawAudioLoader)
         self.model_name = model_name
         self.target_sr = target_sr
         super().__init__(data_provider, n_temporal_segments, composition_fn)

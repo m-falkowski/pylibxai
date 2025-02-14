@@ -1,0 +1,7 @@
+[project]
+name = "pylibxai"
+version = "0.1.0"
+description = "Audio explainable intelligence library for Python"
+
+[tool.setuptools]
+py-modules = ["pylibxai"]

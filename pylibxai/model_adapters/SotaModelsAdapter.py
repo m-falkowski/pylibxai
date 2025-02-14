@@ -8,13 +8,13 @@ import numpy as np
 
 from pathlib import Path
 
-path_sota = str(Path.home() / 'Desktop' / 'pylibxai' / 'pylibxai' / 'models' / 'sota_music_tagging_models')
+path_sota = str(Path.home() / 'Desktop' / 'pylibxai' / 'pylibxai' / 'models' / 'sota-music-tagging-models')
 sys.path.append(path_sota)
 sys.path.append(os.path.join(path_sota, 'training'))
 from training.eval import Predict  # can only be imported after appending path_sota in sota_utils
 
 class SotaModelsAdapter(object):
-    def __init__(self, model_type="fcn", input_length=29*16000, device='cuda'):
+    def __init__(self, model_type="fcn", input_length=29*16000, device='cuda', **kwargs):
         """Audio tagging inference wrapper.
         """
         assert device in ['cpu', 'cuda']
@@ -27,7 +27,10 @@ class SotaModelsAdapter(object):
         path_models = os.path.join(path_sota, 'models')
 
         config = Namespace()
-        config.dataset = "msd"  # we use the model trained on MSD
+        if kwargs['dataset']:
+            config.dataset = kwargs['dataset']
+        else:
+            config.dataset = "msd"  # we use the model trained on MSD
         config.model_type = model_type
         config.model_load_path = os.path.join(path_models, config.dataset, config.model_type, 'best_model.pth')
         config.input_length = input_length
@@ -35,6 +38,7 @@ class SotaModelsAdapter(object):
         self.model = Predict.get_model(config)
         
         self.model_state = torch.load(config.model_load_path, map_location=self.device)
+        self.model.cuda()
         self.config = config
 
     def get_predict_fn(self):

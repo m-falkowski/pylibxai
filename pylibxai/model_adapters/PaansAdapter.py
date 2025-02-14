@@ -56,10 +56,11 @@ class PannsCnn14Adapter(object):
 
         return clipwise_output, embedding
 
-    def get_predict_fn(self):
+    def get_predict_fn(self, input_length=None):
+        length = 29 * 16000 if not input_length else input_length
         def predict_fn(x_array):
             # based on code from sota repo
-            x = torch.zeros(len(x_array), 29 * 16000)
+            x = torch.zeros(len(x_array), length)
             #x = torch.zeros(len(x_array), 3254510)
             for i in range(len(x_array)):
                 x[i] = torch.Tensor(x_array[i]).unsqueeze(0)

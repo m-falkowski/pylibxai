@@ -1,3 +1,6 @@
-[submodule "pylibxai/pylibxai/models/audioset_tagging_cnn"]
-	path = pylibxai/pylibxai/models/audioset_tagging_cnn
-	url = https://github.com/qiuqiangkong/audioset_tagging_cnn
+[submodule "pylibxai/models/sota-music-tagging-models"]
+	path = pylibxai/models/sota-music-tagging-models
+	url = https://github.com/minzwon/sota-music-tagging-models.git
+[submodule "pylibxai/models/audioset_tagging_cnn"]
+	path = pylibxai/models/audioset_tagging_cnn
+	url = https://github.com/qiuqiangkong/audioset_tagging_cnn.git

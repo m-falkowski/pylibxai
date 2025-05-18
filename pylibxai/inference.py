@@ -1,24 +1,26 @@
 from datetime import datetime
-import librosa
-import os
 import soundfile as sf
 import torch
 import argparse
+import torchaudio
 
 from pylibxai.AudioLoader import RawAudioLoader
 from pylibxai.audioLIME import lime_audio, SpleeterFactorization
-from pylibxai.ShapExplainer import ShapExplainer
+from pylibxai.LRPExplainer import LRPExplainer
 from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
-
+from pylibxai.model_adapters.GtzanAdapter import GtzanAdapter
 from utils import get_install_path
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+GTZAN_MODEL_PATH= get_install_path() / "pylibxai" / "models" / "GtzanCNN" / "gtzan_cnn.ckpt"
 
 def main():
     parser = argparse.ArgumentParser(description="Process a model name and input path.")
     
     parser.add_argument('-m', '--model', type=str, required=True,
-                        help="Name of the model to use [sota_music, paans].")
+                        help="Name of the model to use [sota_music, paans, gtzan].")
     parser.add_argument('-e', '--explainer', type=str, required=True,
-                        help="Name of the explainer to use [lime, shap].")
+                        help="Name of the explainer to use [lime, shap, lrp].")
     parser.add_argument('-i', '--input', type=str, required=True,
                         help="Path to the input file or directory.") 
     args = parser.parse_args()
@@ -29,17 +31,19 @@ def main():
     paans_model = str(root / 'pylibxai' / 'models' / 'audioset_tagging_cnn' / 'Cnn14_mAP=0.431.pth')
     
     if args.model == "sota_music":
-        adapter = SotaModelsAdapter(model_type="fcn", input_length=29 * 16000, device='cuda', dataset='jamendo')
+        adapter = SotaModelsAdapter(model_type="sample", input_length=29 * 16000, device=DEVICE, dataset='jamendo')
     elif args.model == "paans":
-        adapter = PannsCnn14Adapter(checkpoint_path=paans_model, device='cuda')
+        adapter = PannsCnn14Adapter(checkpoint_path=paans_model, device=DEVICE)
+    elif args.model == "gtzan":
+        adapter = GtzanAdapter(model_path=GTZAN_MODEL_PATH, device=DEVICE)
     else:
-        print('Invalid value for -m/--model argument, available: [sota_music, paans].')
+        print('Invalid value for -m/--model argument, available: [sota_music, paans, gtzan].')
         return
     
     print(f'Adapter(): {adapter}')
     
-    audio_loader = RawAudioLoader(args.input)
     if args.explainer == "lime":
+        audio_loader = RawAudioLoader(args.input)
         spleeter_factorization = SpleeterFactorization(audio_loader,
                                                        n_temporal_segments=10,
                                                        composition_fn=None,
@@ -62,16 +66,16 @@ def main():
                                                                               negative_components=False,
                                                                               num_components=3,
                                                                               return_indeces=True)
-    elif args.explainer == "shap":
-        print('SHAP explanation')
-        audio = audio_loader.initialize_mix()
-        audio = torch.tensor(audio).cuda().unsqueeze(0)
-        background = torch.zeros((1, len(audio))).to(device='cuda')
-        print(f'{background.shape}')
-
-        explainer = ShapExplainer()
-        shap_values = explainer.explain_instance(adapter.model, audio, background=background)
-        print(f"SHAP values for the input audio: {shap_values}")
+    elif args.explainer == "lrp":
+        audio, _ = torchaudio.load(args.input, normalize=True)
+        # extract genre from filename
+        genre = args.input.split("/")[-2]
+        label_id = adapter.predictor.label_to_id[genre]
+        audio = audio.to(DEVICE)
+        
+        explainer = LRPExplainer(adapter.lrp_adapter_fn(), DEVICE)
+        fig, _ = explainer.explain_instance_visualize(audio, target=label_id)
+        fig.savefig("attribution_visualization1337.png", bbox_inches='tight')
         return
     else:
         print(f'Unknown explanation type: {args.explainer}')

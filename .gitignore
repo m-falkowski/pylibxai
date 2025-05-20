@@ -5,3 +5,4 @@ pylibxai.egg-info/
 pylibxai/pretrained_models/
 .ipynb_checkpoints
 .virtual_documents
+pylibxai/datasets

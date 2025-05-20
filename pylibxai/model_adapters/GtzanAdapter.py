@@ -22,3 +22,10 @@ class GtzanAdapter(object):
                 return self.predictor.model(x)
 
         return GtzanNNWrapper(self.predictor, self.device)
+
+    def shap_adapter_fn(self):
+        def shap_fn(x):
+            x.requires_grad_(True)
+            self.predictor.model.eval()
+            return self.predictor.model(x)
+        return shap_fn

@@ -7,6 +7,7 @@ import torchaudio
 from pylibxai.AudioLoader import RawAudioLoader
 from pylibxai.audioLIME import lime_audio, SpleeterFactorization
 from pylibxai.LRPExplainer import LRPExplainer
+from pylibxai.ShapExplainer.ShapExplainer import ShapExplainer
 from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
 from pylibxai.model_adapters.GtzanAdapter import GtzanAdapter
 from utils import get_install_path
@@ -76,6 +77,17 @@ def main():
         explainer = LRPExplainer(adapter.lrp_adapter_fn(), DEVICE)
         fig, _ = explainer.explain_instance_visualize(audio, target=label_id)
         fig.savefig("attribution_visualization1337.png", bbox_inches='tight')
+        return
+    elif args.explainer == "shap":
+        audio, _ = torchaudio.load(args.input, normalize=True)
+        # extract genre from filename
+        genre = args.input.split("/")[-2]
+        label_id = adapter.predictor.label_to_id[genre]
+        audio = audio.to(DEVICE)
+
+        explainer = ShapExplainer(adapter.shap_adapter_fn(), DEVICE)
+        fig, _ = explainer.explain_instance_visualize(audio, target=label_id)
+        fig.savefig("shap_attribution_visualization.png", bbox_inches='tight')
         return
     else:
         print(f'Unknown explanation type: {args.explainer}')

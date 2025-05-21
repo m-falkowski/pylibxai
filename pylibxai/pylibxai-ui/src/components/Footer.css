@@ -1,0 +1,10 @@
+.NavBarIcon {
+  font-size: 20px;
+  margin-right: 15px;
+  cursor: pointer;
+  color: white;
+}
+
+.NavBarIcon:hover {
+  color: #B7C3F3;
+} 

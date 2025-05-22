@@ -1,9 +1,30 @@
 .sidebar {
   width: 250px;
-  min-height: 100vh;
+  height: calc(100vh - 50px);
+  background-color: #212529;
+  position: fixed;
+  top: 50px;
+  left: 0;
   padding: 1rem;
-  border-right: 1px solid #dee2e6;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #2c2c2c;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #495057;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #6c757d;
 }
 
 .sidebar .nav-link {

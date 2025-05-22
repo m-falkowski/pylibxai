@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import '@fortawesome/fontawesome-free/css/all.min.css'
-import '@fortawesome/fontawesome-free/css/fontawesome.min.css'
-import '@fortawesome/fontawesome-free/css/brands.min.css'
-import '@fortawesome/fontawesome-free/css/solid.min.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './App.css'
 import Navbar from './components/Navbar'
 import Main from './components/Main'
 import Footer from './components/Footer'
 import Sidebar from './components/Sidebar'
+
+// Add all solid icons to the library
+library.add(fas)
 
 function App() {
   return (

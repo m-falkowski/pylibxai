@@ -1,10 +1,13 @@
 import React, { useEffect, useRef } from 'react'
 import Chart from 'chart.js/auto'
+import WaveSurfer from 'wavesurfer.js'
 import './Main.css'
 
 function Main() {
   const chartRef = useRef(null)
   const chartInstance = useRef(null)
+  const waveformRef = useRef(null)
+  const wavesurfer = useRef(null)
 
   useEffect(() => {
     if (chartInstance.current) {
@@ -41,9 +44,26 @@ function Main() {
       }
     })
 
+    wavesurfer.current = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#4F4A85',
+      progressColor: '#383351',
+      cursorColor: '#383351',
+      barWidth: 2,
+      barRadius: 3,
+      responsive: true,
+      height: 100,
+      barGap: 3
+    })
+
+    wavesurfer.current.load('/assets/sandman_5s.wav')
+
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy()
+      }
+      if (wavesurfer.current) {
+        wavesurfer.current.destroy()
       }
     }
   }, [])
@@ -80,6 +100,21 @@ function Main() {
           <h2 className="fw-bolder mb-4">Statystyki bloga</h2>
           <div className="chart-container">
             <canvas ref={chartRef}></canvas>
+          </div>
+        </section>
+
+        <section className="mb-5">
+          <h2 className="fw-bolder mb-4">Audio Visualization</h2>
+          <div className="waveform-container">
+            <div ref={waveformRef}></div>
+            <div className="controls mt-3">
+              <button 
+                className="btn btn-primary me-2"
+                onClick={() => wavesurfer.current.playPause()}
+              >
+                Play/Pause
+              </button>
+            </div>
           </div>
         </section>
       </div>

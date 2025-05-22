@@ -1,19 +1,34 @@
 import React from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faFacebook, 
+  faTwitter, 
+  faLinkedin, 
+  faInstagram 
+} from '@fortawesome/free-brands-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import './Navbar.css'
 
 function Navbar() {
+  const socialIcons = [
+    { icon: faFacebook, name: 'facebook' },
+    { icon: faTwitter, name: 'twitter' },
+    { icon: faLinkedin, name: 'linkedin' },
+    { icon: faInstagram, name: 'instagram' }
+  ]
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
       <div className="container-fluid">
         {/* Social Media Links */}
         <div className="d-flex align-items-center">
-          {['facebook', 'twitter', 'linkedin', 'instagram'].map(social => (
+          {socialIcons.map(({ icon, name }) => (
             <a 
-              key={social}
-              href={`https://www.${social}.com`} 
+              key={name}
+              href={`https://www.${name}.com`} 
               className="me-3 text-white text-decoration-none"
             >
-              <i className={`fa-brands fa-${social}`}></i>
+              <FontAwesomeIcon icon={icon} />
             </a>
           ))}
         </div>
@@ -46,7 +61,7 @@ function Navbar() {
         <div className="d-flex align-items-center">
           <div className="input-group">
             <span className="input-group-text bg-dark border-0">
-              <i className="fa-solid fa-magnifying-glass text-white"></i>
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="text-white" />
             </span>
             <input 
               type="text" 

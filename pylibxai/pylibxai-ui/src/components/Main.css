@@ -47,4 +47,17 @@
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.waveform-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.waveform-container .controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 } 

@@ -6,7 +6,7 @@ import './Sidebar.css';
 
 function Sidebar() {
   return (
-    <div className="sidebar bg-light" style={{ width: '250px', minHeight: '100vh', padding: '1rem' }}>
+    <div className="sidebar bg-light">
       <Nav className="flex-column">
         <Nav.Link href="#model-info" className="d-flex align-items-center">
           <FontAwesomeIcon icon={faInfoCircle} className="me-2" />

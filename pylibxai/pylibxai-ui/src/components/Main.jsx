@@ -56,7 +56,7 @@ function Main() {
       barGap: 3
     })
 
-    wavesurfer.current.load('/assets/sandman_5s.wav')
+    wavesurfer.current.load('sandman_5s.wav')
 
     return () => {
       if (chartInstance.current) {

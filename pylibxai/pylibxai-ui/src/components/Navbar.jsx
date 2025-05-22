@@ -1,36 +1,17 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faFacebook, 
-  faTwitter, 
-  faLinkedin, 
-  faInstagram 
-} from '@fortawesome/free-brands-svg-icons'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import './Navbar.css'
 
 function Navbar() {
-  const socialIcons = [
-    { icon: faFacebook, name: 'facebook' },
-    { icon: faTwitter, name: 'twitter' },
-    { icon: faLinkedin, name: 'linkedin' },
-    { icon: faInstagram, name: 'instagram' }
-  ]
-
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
       <div className="container-fluid">
-        {/* Social Media Links */}
+        {/* Logo */}
         <div className="d-flex align-items-center">
-          {socialIcons.map(({ icon, name }) => (
-            <a 
-              key={name}
-              href={`https://www.${name}.com`} 
-              className="me-3 text-white text-decoration-none"
-            >
-              <FontAwesomeIcon icon={icon} />
-            </a>
-          ))}
+          <a href="/" className="navbar-brand logo-text">
+            PylibXAI
+          </a>
         </div>
 
         {/* Navigation Links */}

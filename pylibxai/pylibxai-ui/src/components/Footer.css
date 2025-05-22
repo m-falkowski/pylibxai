@@ -1,10 +1,53 @@
-.NavBarIcon {
-  font-size: 20px;
-  margin-right: 15px;
-  cursor: pointer;
-  color: white;
+.footer {
+  margin-top: auto;
+  border-top: 1px solid #c5c7c9;
+  background-color: #f8f9fa;
+  padding: 1.5rem 0;
 }
 
-.NavBarIcon:hover {
-  color: #B7C3F3;
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.copyright {
+  margin: 0;
+  color: #495057;
+  text-align: center;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.social-icon {
+  font-size: 1.2rem;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  transform: translateY(-2px);
+  color: #495057;
+}
+
+.footer p {
+  margin: 0;
+  color: #495057;
 } 

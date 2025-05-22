@@ -14,15 +14,15 @@ library.add(fas)
 
 function App() {
   return (
-    <div className="d-flex flex-column h-100">
+    <div className="d-flex flex-column min-vh-100">
       <Navbar />
       <div className="d-flex flex-grow-1">
         <Sidebar />
-        <div className="flex-grow-1">
+        <div className="flex-grow-1 d-flex flex-column">
           <Main />
+          <Footer />
         </div>
       </div>
-      <Footer />
     </div>
   )
 }

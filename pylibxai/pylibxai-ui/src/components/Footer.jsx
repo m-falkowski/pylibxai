@@ -17,21 +17,20 @@ function Footer() {
   ]
 
   return (
-    <footer className="container-fluid bg-dark text-white mt-5"> 
-      <div className="container text-center pt-3 pb-0"> 
-        <p><small>Copyright © 2025 Jan Kowalski</small></p> 
-      </div> 
-      <div className="container text-center pt-0 pb-3"> 
-        {socialIcons.map(({ icon, url }) => (
-          <a key={url} href={url}>
-            <FontAwesomeIcon 
-              icon={icon} 
-              className="NavBarIcon" 
-              style={{ color: '#B7C3F3' }} 
-            />
-          </a>
-        ))}
-      </div> 
+    <footer className="footer"> 
+      <div className="footer-content">
+        <p className="copyright"><small>Copyright © 2025 Jan Kowalski</small></p>
+        <div className="social-icons">
+          {socialIcons.map(({ icon, url }) => (
+            <a key={url} href={url} className="social-link">
+              <FontAwesomeIcon 
+                icon={icon} 
+                className="social-icon"
+              />
+            </a>
+          ))}
+        </div>
+      </div>
     </footer>
   )
 }

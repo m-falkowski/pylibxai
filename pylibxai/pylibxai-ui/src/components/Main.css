@@ -1,0 +1,50 @@
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 15%;
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.main-container:before, .main-container:after {
+  content: "";
+  width: 15%;
+  height: 100%;
+  background-color: red;
+}
+
+.main-content {
+  width: 70%;
+  padding: 20px;
+}
+
+.image-cropper {
+  width: 100px;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.custom-circle-image img {
+  object-fit: cover;
+}
+
+.image-cropper img {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+} 

@@ -2,11 +2,9 @@
   margin-top: auto;
   border-top: 1px solid #eceef0;
   background-color: white;
-  padding-top: 2rem;
-  padding-bottom: 1.5rem;
-  margin-left: 290px; /* Width of the sidebar + extra margin */
-  margin-right: 40px; /* Extra margin on the right */
-  width: calc(100% - 330px); /* Full width minus (sidebar width + both margins) */
+  padding: 2rem 0;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .footer-content {
@@ -15,22 +13,9 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  max-width: 1800px; /* Match main-content max-width */
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 60px; /* Moved padding here to make border-top shorter */
-}
-
-/* Add responsive breakpoints for different screen sizes */
-@media (min-width: 2000px) {
-  .footer-content {
-    max-width: 2200px;
-  }
-}
-
-@media (min-width: 2500px) {
-  .footer-content {
-    max-width: 2600px;
-  }
+  padding: 0 2rem;
 }
 
 .copyright {
@@ -64,7 +49,15 @@
   color: #495057;
 }
 
-.footer p {
-  margin: 0;
-  color: #495057;
+/* Responsive adjustments */
+@media (min-width: 2000px) {
+  .footer-content {
+    max-width: 2000px;
+  }
+}
+
+@media (min-width: 2500px) {
+  .footer-content {
+    max-width: 2400px;
+  }
 } 

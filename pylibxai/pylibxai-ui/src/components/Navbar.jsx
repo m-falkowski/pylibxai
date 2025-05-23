@@ -1,6 +1,5 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import './Navbar.css'
 
 function Navbar() {
@@ -11,32 +10,6 @@ function Navbar() {
           <a href="/" className="logo-text">
             PylibXAI
           </a>
-        </div>
-
-        <button 
-          className="navbar-toggler" 
-          type="button" 
-          data-bs-toggle="collapse" 
-          data-bs-target="#navbarNav" 
-          aria-controls="navbarNav" 
-          aria-expanded="false" 
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="d-flex align-items-center">
-          <div className="input-group">
-            <span className="input-group-text bg-dark border-0">
-              <FontAwesomeIcon icon={faMagnifyingGlass} className="text-white" />
-            </span>
-            <input 
-              type="text" 
-              className="form-control bg-white text-white border-0" 
-              placeholder="Szukaj na blogu"
-              aria-label="Search blog"
-            />
-          </div>
         </div>
       </div>
     </nav>

@@ -1,11 +1,12 @@
 .footer {
   margin-top: auto;
-  border-top: 1px solid #c5c7c9;
+  border-top: 1px solid #eceef0;
   background-color: white;
   padding-top: 2rem;
   padding-bottom: 1.5rem;
-  margin-left: 250px; /* Width of the sidebar */
-  width: calc(100% - 250px); /* Full width minus sidebar width */
+  margin-left: 290px; /* Width of the sidebar + extra margin */
+  margin-right: 40px; /* Extra margin on the right */
+  width: calc(100% - 330px); /* Full width minus (sidebar width + both margins) */
 }
 
 .footer-content {
@@ -16,7 +17,7 @@
   gap: 1rem;
   max-width: 1800px; /* Match main-content max-width */
   margin: 0 auto;
-  padding: 0 10px; /* Reduced horizontal padding from 40px to 10px */
+  padding: 0 60px; /* Moved padding here to make border-top shorter */
 }
 
 /* Add responsive breakpoints for different screen sizes */

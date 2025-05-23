@@ -19,7 +19,7 @@ function Footer() {
   return (
     <footer className="footer"> 
       <div className="footer-content">
-        <p className="copyright"><small>Copyright © 2025 Jan Kowalski</small></p>
+        <p className="copyright"><small>Copyright © 2025 PylibXAI, Maciej Falkowski</small></p>
         <div className="social-icons">
           {socialIcons.map(({ icon, url }) => (
             <a key={url} href={url} className="social-link">

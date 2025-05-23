@@ -24,17 +24,6 @@ function Navbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
-          <ul className="navbar-nav">
-            {['O MNIE', 'BLOG', 'KONTAKT', 'O PROJEKCIE'].map((item, index) => (
-              <li key={index} className="nav-item">
-                <a className="nav-link" href={`/${item.toLowerCase().replace(' ', '')}`}>
-                  {item}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
 
         <div className="d-flex align-items-center">
           <div className="input-group">
@@ -43,7 +32,7 @@ function Navbar() {
             </span>
             <input 
               type="text" 
-              className="form-control bg-dark text-white border-0" 
+              className="form-control bg-white text-white border-0" 
               placeholder="Szukaj na blogu"
               aria-label="Search blog"
             />

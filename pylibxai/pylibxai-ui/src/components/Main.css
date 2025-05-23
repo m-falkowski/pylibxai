@@ -6,6 +6,8 @@
   width: calc(100% - 250px); /* Full width minus sidebar width */
   min-height: 100vh;
   background-color: #fff;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .main-container:before, .main-container:after {

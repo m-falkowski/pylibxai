@@ -32,6 +32,7 @@
   padding: 0.75rem 1rem;
   border-radius: 0.25rem;
   margin-bottom: 0.25rem;
+  text-decoration: none !important;
 }
 
 .sidebar .nav-link:hover {
@@ -39,7 +40,17 @@
   color: #212529;
 }
 
+/* Remove active state styling */
+.sidebar .nav-link:active,
+.sidebar .nav-link:focus,
 .sidebar .nav-link.active {
-  background-color: #0d6efd;
-  color: white;
+  background-color: transparent;
+  color: #495057;
+  box-shadow: none;
+}
+
+/* Override Bootstrap's default focus styles */
+.sidebar .nav-link:focus-visible {
+  outline: none;
+  box-shadow: none;
 } 

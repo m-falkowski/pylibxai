@@ -1,19 +1,19 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
-  faFacebook, 
-  faTwitter, 
-  faLinkedin, 
-  faInstagram 
+  faYoutube,
+  faGithub,
+  faXTwitter,
+  faDiscord
 } from '@fortawesome/free-brands-svg-icons'
 import './Footer.css'
 
 function Footer() {
   const socialIcons = [
-    { icon: faFacebook, url: 'https://www.facebook.com' },
-    { icon: faTwitter, url: 'https://twitter.com' },
-    { icon: faLinkedin, url: 'https://www.linkedin.com' },
-    { icon: faInstagram, url: 'https://www.instagram.com' }
+    { icon: faGithub, url: 'https://github.com/mfalkiewicz/pylibxai', label: 'GitHub' },
+    { icon: faYoutube, url: 'https://youtube.com/@pylibxai', label: 'YouTube' },
+    { icon: faXTwitter, url: 'https://x.com/pylibxai', label: 'X (Twitter)' },
+    { icon: faDiscord, url: 'https://discord.gg/pylibxai', label: 'Discord' }
   ]
 
   return (
@@ -21,8 +21,15 @@ function Footer() {
       <div className="footer-content">
         <p className="copyright"><small>Copyright © 2025 PylibXAI, Maciej Falkowski</small></p>
         <div className="social-icons">
-          {socialIcons.map(({ icon, url }) => (
-            <a key={url} href={url} className="social-link">
+          {socialIcons.map(({ icon, url, label }) => (
+            <a 
+              key={url} 
+              href={url} 
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+            >
               <FontAwesomeIcon 
                 icon={icon} 
                 className="social-icon"

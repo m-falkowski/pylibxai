@@ -1,13 +1,14 @@
 .sidebar {
   width: 250px;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 50px); /* Viewport height minus navbar height */
   background-color: #212529;
   position: fixed;
-  top: 50px;
+  top: 50px; /* Navbar height */
   left: 0;
   padding: 1rem;
   overflow-y: auto;
   z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -33,20 +34,19 @@
   border-radius: 0.25rem;
   margin-bottom: 0.25rem;
   text-decoration: none !important;
+  transition: all 0.2s ease;
 }
 
 .sidebar .nav-link:hover {
   background-color: #e9ecef;
   color: #212529;
+  transform: translateX(5px);
 }
 
-/* Remove active state styling */
-.sidebar .nav-link:active,
-.sidebar .nav-link:focus,
 .sidebar .nav-link.active {
-  background-color: transparent;
-  color: #495057;
-  box-shadow: none;
+  background-color: #e9ecef;
+  color: #212529;
+  font-weight: 500;
 }
 
 /* Override Bootstrap's default focus styles */

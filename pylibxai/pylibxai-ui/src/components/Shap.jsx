@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import Chart from 'chart.js/auto'
 import WaveSurfer from 'wavesurfer.js'
-import './Lime.css'
+import './Shap.css'
 
-function Lime() {
+function Shap() {
   const chartRef = useRef(null)
   const chartInstance = useRef(null)
   const waveformRef = useRef(null)
@@ -79,22 +79,9 @@ function Lime() {
   return (
     <>
         <div className="container-fluid text-center">
-          <h1>Blog Jan Kowalski</h1>
+          <h1>SHAP</h1>
           <br/>
         </div>
-        <section className="mb-5">
-          <p className="fs-5 mb-4">
-            Witajcie! Nazywam się Jan Kowalski i jestem absolwentem Politechniki Warszawskiej. 
-            Od zawsze interesowałem się elektroniką i technologią, a w szczególności układami 
-            scalonymi oraz procesorami.
-          </p>
-          <p className="fs-5 mb-4">
-            Już podczas studiów zacząłem pracować przy projektowaniu układów scalonych, 
-            a po ukończeniu studiów rozpocząłem swoją karierę jako inżynier ds. projektowania 
-            układów scalonych. Od tamtego czasu rozwijam swoje umiejętności i zdobywam coraz 
-            większe doświadczenie w tej dziedzinie.
-          </p>
-        </section>
 
         <section className="mb-5">
           <h2 className="fw-bolder mb-4">Statystyki bloga</h2>
@@ -121,4 +108,4 @@ function Lime() {
   )
 }
 
-export default Lime
+export default Shap

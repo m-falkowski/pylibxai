@@ -1,13 +1,22 @@
 import React from 'react'
-import LIME from './LIME'
-
+import Lime from './Lime'
+import Shap from './Shap'
+import ModelInfo from './ModelInfo'
 import './ContentPage.css'
 
-function ContentPage() {
+const routes = {
+  lime: Lime,
+  shap: Shap,
+  'model-info': ModelInfo
+}
+
+function ContentPage({ section }) {
+  const Component = routes[section]
+
   return (
     <div className="main-container">
       <div className="main-content">
-        <LIME />
+        {Component && <Component />}
       </div>
     </div>
   )

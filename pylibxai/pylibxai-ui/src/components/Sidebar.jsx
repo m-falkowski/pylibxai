@@ -10,27 +10,47 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import './Sidebar.css';
 
-function Sidebar() {
+function Sidebar({ onNavigate, currentSection }) {
   return (
     <div className="sidebar bg-light">
       <Nav className="flex-column">
-        <Nav.Link href="#model-info" className="d-flex align-items-center">
+        <Nav.Link 
+          href="#model-info" 
+          className={`d-flex align-items-center${currentSection === 'model-info' ? ' active' : ''}`}
+          onClick={() => onNavigate('model-info')}
+        >
           <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
           Model Information
         </Nav.Link>
-        <Nav.Link href="#shap" className="d-flex align-items-center">
+        <Nav.Link 
+          href="#shap" 
+          className={`d-flex align-items-center${currentSection === 'shap' ? ' active' : ''}`}
+          onClick={() => onNavigate('shap')}
+        >
           <FontAwesomeIcon icon={faChartBar} className="me-2" />
           SHAP
         </Nav.Link>
-        <Nav.Link href="#lime" className="d-flex align-items-center">
+        <Nav.Link 
+          href="#lime" 
+          className={`d-flex align-items-center${currentSection === 'lime' ? ' active' : ''}`}
+          onClick={() => onNavigate('lime')}
+        >
           <FontAwesomeIcon icon={faLightbulb} className="me-2" />
           LIME
         </Nav.Link>
-        <Nav.Link href="#lrp" className="d-flex align-items-center">
+        <Nav.Link 
+          href="#lrp" 
+          className={`d-flex align-items-center${currentSection === 'lrp' ? ' active' : ''}`}
+          onClick={() => onNavigate('lrp')}
+        >
           <FontAwesomeIcon icon={faBrain} className="me-2" />
           LRP
         </Nav.Link>
-        <Nav.Link href="#inference" className="d-flex align-items-center">
+        <Nav.Link 
+          href="#inference" 
+          className={`d-flex align-items-center${currentSection === 'inference' ? ' active' : ''}`}
+          onClick={() => onNavigate('inference')}
+        >
           <FontAwesomeIcon icon={faCircleInfo} className="me-2" />
           Inference Information
         </Nav.Link>

@@ -4,10 +4,9 @@
   justify-content: center;
   margin-left: 250px; /* Width of the sidebar */
   width: calc(100% - 250px); /* Full width minus sidebar width */
-  min-height: 100vh;
+  min-height: calc(100vh - 50px); /* Full height minus navbar */
   background-color: #fff;
-  padding-left: 10%;
-  padding-right: 10%;
+  padding: 20px 10%;
 }
 
 .main-container:before, .main-container:after {
@@ -17,7 +16,6 @@
 .main-content {
   width: 100%;
   max-width: 1800px; /* Increased from 1200px to better utilize ultrawide screens */
-  padding: 20px 10px; /* Reduced horizontal padding from 40px to 10px */
   margin: 0 auto;
 }
 

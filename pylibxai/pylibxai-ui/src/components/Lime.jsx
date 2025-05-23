@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import Chart from 'chart.js/auto'
 import WaveSurfer from 'wavesurfer.js'
-import './Main.css'
+import './Lime.css'
 
-function Main() {
+function LIME() {
   const chartRef = useRef(null)
   const chartInstance = useRef(null)
   const waveformRef = useRef(null)
@@ -69,8 +69,7 @@ function Main() {
   }, [])
 
   return (
-    <div className="main-container">
-      <div className="main-content">
+    <div>
         <div className="container-fluid text-center rounded-circle image-cropper">
           <img 
             src="/assets/face.jpg" 
@@ -117,9 +116,8 @@ function Main() {
             </div>
           </div>
         </section>
-      </div>
     </div>
   )
 }
 
-export default Main 
+export default LIME

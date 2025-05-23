@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './App.css'
 import Navbar from './components/Navbar'
-import Main from './components/Main'
+import ContentPage from './components/ContentPage'
 import Footer from './components/Footer'
 import Sidebar from './components/Sidebar'
 
@@ -19,7 +17,7 @@ function App() {
       <div className="d-flex flex-grow-1">
         <Sidebar />
         <div className="flex-grow-1 d-flex flex-column">
-          <Main />
+          <ContentPage />
           <Footer />
         </div>
       </div>

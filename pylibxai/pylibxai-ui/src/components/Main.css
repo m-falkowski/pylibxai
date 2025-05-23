@@ -15,7 +15,7 @@
 .main-content {
   width: 100%;
   max-width: 1800px; /* Increased from 1200px to better utilize ultrawide screens */
-  padding: 20px 40px; /* Increased horizontal padding */
+  padding: 20px 10px; /* Reduced horizontal padding from 40px to 10px */
   margin: 0 auto;
 }
 

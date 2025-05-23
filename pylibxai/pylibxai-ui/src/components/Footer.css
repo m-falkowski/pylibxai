@@ -1,8 +1,11 @@
 .footer {
   margin-top: auto;
   border-top: 1px solid #c5c7c9;
-  background-color: #f8f9fa;
-  padding: 1.5rem 0;
+  background-color: white;
+  padding-top: 2rem;
+  padding-bottom: 1.5rem;
+  margin-left: 250px; /* Width of the sidebar */
+  width: calc(100% - 250px); /* Full width minus sidebar width */
 }
 
 .footer-content {
@@ -11,9 +14,22 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  max-width: 1200px;
+  max-width: 1800px; /* Match main-content max-width */
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 10px; /* Reduced horizontal padding from 40px to 10px */
+}
+
+/* Add responsive breakpoints for different screen sizes */
+@media (min-width: 2000px) {
+  .footer-content {
+    max-width: 2200px;
+  }
+}
+
+@media (min-width: 2500px) {
+  .footer-content {
+    max-width: 2600px;
+  }
 }
 
 .copyright {

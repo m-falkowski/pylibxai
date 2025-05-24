@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Chart from 'chart.js/auto'
 import WaveSurfer from 'wavesurfer.js'
 import './Shap.css'
@@ -8,6 +8,8 @@ function Shap() {
   const chartInstance = useRef(null)
   const waveformRef = useRef(null)
   const wavesurfer = useRef(null)
+  const [statsCollapsed, setStatsCollapsed] = useState(false)
+  const [audioCollapsed, setAudioCollapsed] = useState(false)
 
   useEffect(() => {
     if (chartInstance.current) {
@@ -78,21 +80,35 @@ function Shap() {
 
   return (
     <>
-        <div className="container-fluid text-center">
-          <h1>SHAP</h1>
-          <br/>
-        </div>
-
         <section className="mb-5">
-          <h2 className="fw-bolder mb-4">Statystyki bloga</h2>
-          <div className="chart-container">
+          <div className="section-header">
+            <h2 className="fw-bolder">Statystyki bloga</h2>
+            <button 
+              className="collapse-toggle"
+              onClick={() => setStatsCollapsed(!statsCollapsed)}
+            >
+              {statsCollapsed ? '▼' : '▲'}
+            </button>
+          </div>
+          <div className={`chart-container ${statsCollapsed ? 'd-none' : ''}`}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             <canvas ref={chartRef}></canvas>
           </div>
         </section>
 
         <section className="mb-5">
-          <h2 className="fw-bolder mb-4">Audio Visualization</h2>
-          <div className="waveform-container">
+          <div className="section-header">
+            <h2 className="fw-bolder">Audio Visualization</h2>
+            <button 
+              className="collapse-toggle"
+              onClick={() => setAudioCollapsed(!audioCollapsed)}
+            >
+              {audioCollapsed ? '▼' : '▲'}
+            </button>
+          </div>
+          <div className={`waveform-container ${audioCollapsed ? 'd-none' : ''}`}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat
             <div ref={waveformRef}></div>
             <div className="controls mt-3">
               <button 

@@ -20,4 +20,36 @@
   display: flex;
   justify-content: center;
   gap: 10px;
+}
+
+.collapse-toggle {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.2rem;
+  padding: 0.25rem 0.5rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.collapse-toggle:hover {
+  color: #343a40;
+}
+
+.collapse-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  padding: 0;
 } 

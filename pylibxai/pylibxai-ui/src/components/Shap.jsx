@@ -10,21 +10,61 @@ function Shap() {
   const wavesurfer = useRef(null)
   const [statsCollapsed, setStatsCollapsed] = useState(false)
   const [audioCollapsed, setAudioCollapsed] = useState(false)
+  const [attributions, setAttributions] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    // Fetch SHAP attributions data
+    const fetchAttributions = async () => {
+      try {
+        console.log(`env: ${import.meta.env.PYLIBXAI_WORKDIR_PATH}`)
+        setIsLoading(true)
+        setError(null)
+        const response = await fetch(`summed_attributions.json`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        if (!data.attributions || !Array.isArray(data.attributions)) {
+          throw new Error('Data is not in the expected format (object with attributions array)')
+        }
+        
+        setAttributions(data.attributions)
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Error fetching attributions:", error)
+        setError(error.message)
+        setIsLoading(false)
+      }
+    }
+
+    fetchAttributions()
+  }, [])
 
   useEffect(() => {
     if (chartInstance.current) {
       chartInstance.current.destroy()
     }
 
+    if (isLoading || attributions.length === 0) {
+      return
+    }
+
     const ctx = chartRef.current.getContext('2d')
+    
+    // Generate indices as labels (0 to attributions.length-1)
+    const labels = Array.from({ length: attributions.length }, (_, i) => i)
     
     chartInstance.current = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec'],
+        labels: labels,
         datasets: [{
-          label: 'Liczba odwiedzin bloga',
-          data: [65, 59, 80, 81, 56, 55],
+          label: 'SHAP Attribution Values',
+          data: attributions,
           fill: false,
           borderColor: 'rgb(75, 192, 192)',
           tension: 0.1
@@ -35,12 +75,32 @@ function Shap() {
         plugins: {
           title: {
             display: true,
-            text: 'Statystyki odwiedzin bloga'
+            text: 'SHAP Attributions'
+          },
+          tooltip: {
+            callbacks: {
+              title: (tooltipItems) => {
+                return `Frame: ${tooltipItems[0].label}`
+              },
+              label: (tooltipItem) => {
+                return `Value: ${tooltipItem.raw.toFixed(4)}`
+              }
+            }
           }
         },
         scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Frame Index'
+            }
+          },
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Attribution Value'
+            }
           }
         }
       }
@@ -76,13 +136,13 @@ function Shap() {
         wavesurfer.current.destroy()
       }
     }
-  }, [])
+  }, [attributions, isLoading])
 
   return (
     <>
         <section className="mb-5">
           <div className="section-header">
-            <h2 className="fw-bolder">Statystyki bloga</h2>
+            <h2 className="fw-bolder">SHAP Attributions</h2>
             <button 
               className="collapse-toggle"
               onClick={() => setStatsCollapsed(!statsCollapsed)}
@@ -91,9 +151,17 @@ function Shap() {
             </button>
           </div>
           <div className={`chart-container ${statsCollapsed ? 'd-none' : ''}`}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            <canvas ref={chartRef}></canvas>
+            {isLoading ? (
+              <p>Loading SHAP attributions data...</p>
+            ) : error ? (
+              <p className="text-danger">Error: {error}</p>
+            ) : (
+              <>
+                <p>SHAP attributions visualization showing the importance of each frame in the audio sample.</p>
+                <p><small>Total frames: {attributions.length}</small></p>
+                <canvas ref={chartRef}></canvas>
+              </>
+            )}
           </div>
         </section>
 
@@ -108,12 +176,12 @@ function Shap() {
             </button>
           </div>
           <div className={`waveform-container ${audioCollapsed ? 'd-none' : ''}`}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat
+            <p>Audio waveform visualization with playback controls</p>
             <div ref={waveformRef}></div>
             <div className="controls mt-3">
               <button 
                 className="btn btn-primary me-2"
-                onClick={() => wavesurfer.current.playPause()}
+                onClick={() => wavesurfer.current && wavesurfer.current.playPause()}
               >
                 Play/Pause
               </button>

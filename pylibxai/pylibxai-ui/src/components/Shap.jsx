@@ -18,10 +18,10 @@ function Shap() {
     // Fetch SHAP attributions data
     const fetchAttributions = async () => {
       try {
-        console.log(`env: ${import.meta.env.PYLIBXAI_WORKDIR_PATH}`)
         setIsLoading(true)
         setError(null)
-        const response = await fetch(`summed_attributions.json`)
+        // from http://localhost:9000/
+        const response = await fetch(`http://localhost:9000/shap_attributions.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
@@ -63,7 +63,7 @@ function Shap() {
       data: {
         labels: labels,
         datasets: [{
-          label: 'SHAP Attribution Values',
+          label: `SHAP Attribution Values`,
           data: attributions,
           fill: false,
           borderColor: 'rgb(75, 192, 192)',

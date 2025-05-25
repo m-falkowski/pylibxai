@@ -13,6 +13,10 @@ function Shap() {
   const [attributions, setAttributions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  
+  // Get the static file server port from environment variables
+  const staticPort = import.meta.env.VITE_PYLIBXAI_STATIC_PORT || '9000'
+  const staticBaseUrl = `http://localhost:${staticPort}`
 
   useEffect(() => {
     // Fetch SHAP attributions data
@@ -20,8 +24,8 @@ function Shap() {
       try {
         setIsLoading(true)
         setError(null)
-        // from http://localhost:9000/
-        const response = await fetch(`http://localhost:9000/shap_attributions.json`)
+        
+        const response = await fetch(`${staticBaseUrl}/shap_attributions.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
@@ -42,7 +46,7 @@ function Shap() {
     }
 
     fetchAttributions()
-  }, [])
+  }, [staticBaseUrl])
 
   useEffect(() => {
     if (chartInstance.current) {
@@ -66,12 +70,13 @@ function Shap() {
           label: `SHAP Attribution Values`,
           data: attributions,
           fill: false,
-          borderColor: 'rgb(75, 192, 192)',
+          borderColor: 'rgb(42, 123, 198)',
           tension: 0.1
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true,
@@ -106,6 +111,11 @@ function Shap() {
       }
     })
 
+    // Set chart container height
+    if (chartRef.current) {
+      chartRef.current.parentElement.style.height = '400px'
+    }
+
     wavesurfer.current = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: '#4F4A85',
@@ -120,7 +130,7 @@ function Shap() {
 
     const loadAudio = async () => {
       try {
-        await wavesurfer.current.load('sandman_5s.wav')
+        await wavesurfer.current.load(`${staticBaseUrl}/input.wav`)
       } catch (error) {
         console.error('Failed to load audio:', error)
       }
@@ -136,7 +146,7 @@ function Shap() {
         wavesurfer.current.destroy()
       }
     }
-  }, [attributions, isLoading])
+  }, [attributions, isLoading, staticBaseUrl])
 
   return (
     <>

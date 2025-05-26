@@ -10,6 +10,11 @@ function Shap() {
   const wavesurfer = useRef(null)
   const [statsCollapsed, setStatsCollapsed] = useState(false)
   const [audioCollapsed, setAudioCollapsed] = useState(false)
+  const [imageCollapsed, setImageCollapsed] = useState(false)
+  const [statsAnimating, setStatsAnimating] = useState(false)
+  const [audioAnimating, setAudioAnimating] = useState(false)
+  const [imageAnimating, setImageAnimating] = useState(false)
+  const [showAttribution, setShowAttribution] = useState(true)
   const [attributions, setAttributions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -17,6 +22,28 @@ function Shap() {
   // Get the static file server port from environment variables
   const staticPort = import.meta.env.VITE_PYLIBXAI_STATIC_PORT || '9000'
   const staticBaseUrl = `http://localhost:${staticPort}`
+
+  const handleCollapse = (type) => {
+    if (type === 'stats') {
+      setStatsAnimating(true)
+      setTimeout(() => {
+        setStatsCollapsed(!statsCollapsed)
+        setStatsAnimating(false)
+      }, 300)
+    } else if (type === 'audio') {
+      setAudioAnimating(true)
+      setTimeout(() => {
+        setAudioCollapsed(!audioCollapsed)
+        setAudioAnimating(false)
+      }, 300)
+    } else if (type === 'image') {
+      setImageAnimating(true)
+      setTimeout(() => {
+        setImageCollapsed(!imageCollapsed)
+        setImageAnimating(false)
+      }, 300)
+    }
+  }
 
   useEffect(() => {
     // Fetch SHAP attributions data
@@ -152,15 +179,71 @@ function Shap() {
     <>
         <section className="mb-5">
           <div className="section-header">
+            <h2 className="fw-bolder">Original audio</h2>
+            <button 
+              className="collapse-toggle"
+              onClick={() => handleCollapse('audio')}
+              style={{ transform: audioCollapsed ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            >
+              {audioCollapsed ? '▼' : '▲'}
+            </button>
+          </div>
+          <div className={`waveform-container ${audioCollapsed ? 'd-none' : ''} ${audioAnimating ? (audioCollapsed ? 'collapsing' : 'expanding') : ''}`}>
+            <p>Audio waveform visualization with playback controls</p>
+            <div ref={waveformRef}></div>
+            <div className="controls mt-3">
+              <button 
+                className="btn btn-primary me-2"
+                onClick={() => wavesurfer.current && wavesurfer.current.playPause()}
+              >
+                Play/Pause
+              </button>
+            </div>
+          </div>
+        </section>
+        
+        <section className="mb-5">
+          <div className="section-header">
+            <h2 className="fw-bolder">SHAP Attribution Image</h2>
+            <div className="d-flex align-items-center gap-2">
+              <button 
+                className="collapse-toggle"
+                onClick={() => handleCollapse('image')}
+                style={{ transform: imageCollapsed ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
+                {imageCollapsed ? '▼' : '▲'}
+              </button>
+            </div>
+          </div>
+          <div className={`image-container ${imageCollapsed ? 'd-none' : ''} ${imageAnimating ? (imageCollapsed ? 'collapsing' : 'expanding') : ''}`}>
+            <p>Visual representation of SHAP attributions</p>
+            <img 
+              src={`${staticBaseUrl}/shap/${showAttribution ? 'shap_attribution_heat_map.png' : 'shap_spectogram.png'}`} 
+              alt={showAttribution ? "SHAP Attribution Heatmap" : "Audio Spectrogram"}
+              className="shap-image"
+            />
+              <button 
+                className="view-toggle"
+                onClick={() => setShowAttribution(!showAttribution)}
+                title={showAttribution ? "Show Spectrogram" : "Show Attribution Heatmap"}
+              >
+                {showAttribution ? "Show Spectrogram" : "Show Attribution"}
+              </button>
+          </div>
+        </section>
+
+        <section className="mb-5">
+          <div className="section-header">
             <h2 className="fw-bolder">SHAP Attributions</h2>
             <button 
               className="collapse-toggle"
-              onClick={() => setStatsCollapsed(!statsCollapsed)}
+              onClick={() => handleCollapse('stats')}
+              style={{ transform: statsCollapsed ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
               {statsCollapsed ? '▼' : '▲'}
             </button>
           </div>
-          <div className={`chart-container ${statsCollapsed ? 'd-none' : ''}`}>
+          <div className={`chart-container ${statsCollapsed ? 'd-none' : ''} ${statsAnimating ? (statsCollapsed ? 'collapsing' : 'expanding') : ''}`}>
             {isLoading ? (
               <p>Loading SHAP attributions data...</p>
             ) : error ? (
@@ -175,29 +258,6 @@ function Shap() {
           </div>
         </section>
 
-        <section className="mb-5">
-          <div className="section-header">
-            <h2 className="fw-bolder">Audio Visualization</h2>
-            <button 
-              className="collapse-toggle"
-              onClick={() => setAudioCollapsed(!audioCollapsed)}
-            >
-              {audioCollapsed ? '▼' : '▲'}
-            </button>
-          </div>
-          <div className={`waveform-container ${audioCollapsed ? 'd-none' : ''}`}>
-            <p>Audio waveform visualization with playback controls</p>
-            <div ref={waveformRef}></div>
-            <div className="controls mt-3">
-              <button 
-                className="btn btn-primary me-2"
-                onClick={() => wavesurfer.current && wavesurfer.current.playPause()}
-              >
-                Play/Pause
-              </button>
-            </div>
-          </div>
-        </section>
     </>
   )
 }

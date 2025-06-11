@@ -35,6 +35,15 @@ def main():
         print(f'Workdir {args.workdir} does not exist, creating it...')
         os.makedirs(args.workdir)
 
+    if not os.path.exists(os.path.join(args.workdir, "shap")):
+        os.makedirs(os.path.join(args.workdir, "shap"))
+
+    if not os.path.exists(os.path.join(args.workdir, "lrp")):
+        os.makedirs(os.path.join(args.workdir, "lrp"))
+
+    if not os.path.exists(os.path.join(args.workdir, "lime")):
+        os.makedirs(os.path.join(args.workdir, "lime"))
+
     root = get_install_path()
     datadir = root / "data"
     path_sota = str(root / 'sota-music-tagging-models')
@@ -62,7 +71,7 @@ def main():
         print('Creating explanation object')
         explainer = lime_audio.LimeAudioExplainer(verbose=True, absolute_feature_sort=False)
 
-        print('Starting explanation')
+        print('Starting LIME explanation')
         explanation = explainer.explain_instance(factorization=spleeter_factorization,
                                                  predict_fn=adapter.get_predict_fn(),
                                                  top_labels=1,
@@ -77,13 +86,15 @@ def main():
                                                                               num_components=3,
                                                                               return_indeces=True)
 
-        # print("predicted label:", label)
-        # timestamp = datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
-        # outdir = root / 'output'
-        # outdir.mkdir(parents=True, exist_ok=True)
+        print("predicted label:", label)
+        timestamp = datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
+        outdir = root / 'output'
+        outdir.mkdir(parents=True, exist_ok=True)
 
-        # sf.write(str(outdir / f"explanation{timestamp}.wav"), sum(top_components), 16000, 'PCM_24')
-        # sf.write(str(outdir / f"original{timestamp}.wav"), spleeter_factorization.data_provider.get_mix(), 16000, 'PCM_24')
+        shutil.copy(args.input, os.path.join(args.workdir, "original.wav"))
+        sf.write(os.path.join(args.workdir, "lime", f"lime_explanation.wav"), sum(top_components), 16000, 'PCM_24')
+        #sf.write(str(outdir / f"original{timestamp}.wav"), spleeter_factorization.data_provider.get_mix(), 16000, 'PCM_24')
+        return
     elif args.explainer == "lrp":
         audio, _ = torchaudio.load(args.input, normalize=True)
         # extract genre from filename
@@ -92,8 +103,11 @@ def main():
         audio = audio.to(DEVICE)
         
         explainer = LRPExplainer(adapter.lrp_adapter_fn(), DEVICE)
-        fig, _ = explainer.explain_instance_visualize(audio, target=label_id)
-        fig.savefig(os.path.join(args.workdir, "lrp_attribution.png"), bbox_inches='tight')
+        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
+        fig.savefig(os.path.join(args.workdir, "lrp", "lrp_attribution.png"), bbox_inches='tight')
+
+        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
+        fig.savefig(os.path.join(args.workdir, "lrp", "lrp_attribution.png"), bbox_inches='tight')
         return
     elif args.explainer == "shap":
         audio, _ = torchaudio.load(args.input, normalize=True)
@@ -103,8 +117,12 @@ def main():
         audio = audio.to(DEVICE)
 
         explainer = ShapExplainer(adapter.shap_adapter_fn(), DEVICE)
-        fig, _ = explainer.explain_instance_visualize(audio, target=label_id)
-        fig.savefig(os.path.join(args.workdir, "shap_attribution.png"), bbox_inches='tight')
+        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
+        fig.savefig(os.path.join(args.workdir, "shap", "shap_spectogram.png"), bbox_inches='tight')
+
+        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="heat_map")
+        fig.savefig(os.path.join(args.workdir, "shap", "shap_attribution_heat_map.png"), bbox_inches='tight')
+
         explainer.save_attributions(os.path.join(args.workdir, "shap_attributions.json"))
         #explainer.save_spectrogram(audio, os.path.join(args.workdir, "spectogram.png"))
         #return

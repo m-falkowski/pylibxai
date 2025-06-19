@@ -7,13 +7,15 @@ from torch.autograd import Variable
 import numpy as np
 
 from pathlib import Path
+from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter
 
 path_sota = str(Path.home() / 'Desktop' / 'pylibxai' / 'pylibxai' / 'models' / 'sota-music-tagging-models')
 sys.path.append(path_sota)
 sys.path.append(os.path.join(path_sota, 'training'))
 from training.eval import Predict  # can only be imported after appending path_sota in sota_utils
 
-class SotaModelsAdapter(object):
+# TODO: LrpAdapter, ShapAdapter should be implemented
+class SotaModelsAdapter(LimeAdapter):
     def __init__(self, model_type="fcn", input_length=29*16000, device='cuda', **kwargs):
         """Audio tagging inference wrapper.
         """
@@ -41,7 +43,7 @@ class SotaModelsAdapter(object):
         self.model.cuda()
         self.config = config
 
-    def get_predict_fn(self):
+    def get_lime_predict_fn(self):
         self.model.load_state_dict(self.model_state)
         self.model.cuda()
         self.model.eval()

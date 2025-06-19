@@ -3,6 +3,8 @@ from torch.autograd import Variable
 from .panns_inference import Cnn14, labels
 import numpy as np
 
+from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter
+
 def move_data_to_device(x, device):
     if 'float' in str(x.dtype):
         x = torch.Tensor(x)
@@ -13,7 +15,7 @@ def move_data_to_device(x, device):
 
     return x.to(device)
 
-class PannsCnn14Adapter(object):
+class PannsCnn14Adapter(LimeAdapter):
     def __init__(self, checkpoint_path=None, device='cuda'):
         """Audio tagging inference wrapper.
         """
@@ -56,7 +58,7 @@ class PannsCnn14Adapter(object):
 
         return clipwise_output, embedding
 
-    def get_predict_fn(self, input_length=None):
+    def get_lime_predict_fn(self, input_length=None):
         length = 29 * 16000 if not input_length else input_length
         def predict_fn(x_array):
             # based on code from sota repo

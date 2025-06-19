@@ -23,6 +23,8 @@ def main():
     
     parser.add_argument('-m', '--model', type=str, required=True,
                         help="Name of the model to use [sota_music, paans, gtzan].")
+    parser.add_argument('-u', '--visualize', action='store_true',
+                        help="Enable visualization of audio in browser-based UI.")
     parser.add_argument('-e', '--explainer', type=str, required=True,
                         help="Name of the explainer to use [lime, shap, lrp].")
     parser.add_argument('-i', '--input', type=str, required=True,
@@ -73,7 +75,7 @@ def main():
 
         print('Starting LIME explanation')
         explanation = explainer.explain_instance(factorization=spleeter_factorization,
-                                                 predict_fn=adapter.get_predict_fn(),
+                                                 predict_fn=adapter.get_lime_predict_fn(),
                                                  top_labels=1,
                                                  num_samples=16384,
                                                  batch_size=16
@@ -102,7 +104,7 @@ def main():
         label_id = adapter.predictor.label_to_id[genre]
         audio = audio.to(DEVICE)
         
-        explainer = LRPExplainer(adapter.lrp_adapter_fn(), DEVICE)
+        explainer = LRPExplainer(adapter.get_lrp_predict_fn(), DEVICE)
         fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
         fig.savefig(os.path.join(args.workdir, "lrp", "lrp_attribution.png"), bbox_inches='tight')
 
@@ -116,7 +118,7 @@ def main():
         label_id = adapter.predictor.label_to_id[genre]
         audio = audio.to(DEVICE)
 
-        explainer = ShapExplainer(adapter.shap_adapter_fn(), DEVICE)
+        explainer = ShapExplainer(adapter.get_shap_predict_fn(), DEVICE)
         fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
         fig.savefig(os.path.join(args.workdir, "shap", "shap_spectogram.png"), bbox_inches='tight')
 
@@ -133,18 +135,21 @@ def main():
     # copy input audio to workdir
     shutil.copy(args.input, os.path.join(args.workdir, "input.wav"))
 
-    port = 9000
-    print(f"Starting file server at http://localhost:{port}/")
-    print(f"Files will be served from: {args.workdir}")
-    server = run_file_server(directory=args.workdir, port=port)
-    print('Press Ctrl+C to stop the server.')
-    try:
-        while True:
-            pass  # Keep the server running
-    except KeyboardInterrupt:
-        print("Shutting down the server...")
-        server.shutdown()
-        print("Server stopped.")
-    
+    if args.visualize:
+        port = 9000
+        print(f"Starting file server at http://localhost:{port}/")
+        print(f"Files will be served from: {args.workdir}")
+        server = run_file_server(directory=args.workdir, port=port)
+        print('Press Ctrl+C to stop the server.')
+        try:
+            while True:
+                pass  # Keep the server running
+        except KeyboardInterrupt:
+            print("Shutting down the server...")
+            server.shutdown()
+            print("Server stopped.")
+    else:
+        print("Visualization is disabled.")
+
 if __name__ == '__main__':
     main()

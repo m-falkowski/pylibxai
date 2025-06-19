@@ -3,24 +3,11 @@ from pylibxai.utils import get_install_path
 import torch
 import numpy as np
 from pylibxai.models.GtzanCNN.preprocessing import convert_to_spectrogram
+from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter
 import torch.nn.functional as F
 MODEL_PATH = get_install_path() / "pylibxai" / "models" / "GtzanCNN" / "best_model.ckpt"
 
-from abc import ABC, abstractmethod
-
-class LimeAdapter(ABC):
-    @abstractmethod
-    def get_lime_predict_fn(self) -> np.array: pass
-
-class ShapAdapter(ABC):
-    @abstractmethod
-    def get_shap_predict_fn(self) -> np.array: pass
-
-class LrpAdapter(ABC):
-    @abstractmethod
-    def get_lrp_predict_fn(self) -> np.array: pass
-
-class GtzanAdapter(object):
+class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter):
     def __init__(self, model_path, device='cuda'):
         self.predictor = GtzanPredictor(model_path, device)
         self.predictor.load_model()
@@ -36,7 +23,7 @@ class GtzanAdapter(object):
             wav = wav[:, :target_len]  # truncate
         return wav
 
-    def get_predict_fn(self):
+    def get_lime_predict_fn(self):
         self.predictor.model.eval()
 
         def predict_fn(x_array):
@@ -61,7 +48,7 @@ class GtzanAdapter(object):
 
         return predict_fn
 
-    def lrp_adapter_fn(self):
+    def get_lrp_predict_fn(self):
         class GtzanNNWrapper(torch.nn.Module):
             def __init__(self, predictor, device):
                 super(GtzanNNWrapper, self).__init__()
@@ -75,7 +62,7 @@ class GtzanAdapter(object):
 
         return GtzanNNWrapper(self.predictor, self.device)
 
-    def shap_adapter_fn(self):
+    def get_shap_predict_fn(self):
         def shap_fn(x):
             x.requires_grad_(True)
             self.predictor.model.eval()

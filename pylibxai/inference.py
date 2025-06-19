@@ -12,7 +12,7 @@ from pylibxai.LRPExplainer import LRPExplainer
 from pylibxai.ShapExplainer.ShapExplainer import ShapExplainer
 from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
 from pylibxai.model_adapters.GtzanAdapter import GtzanAdapter
-from pylibxai.pylibxai_serve.file_serve import run_file_server
+from pylibxai.pylibxai_server import WebView
 from utils import get_install_path
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -136,17 +136,15 @@ def main():
     shutil.copy(args.input, os.path.join(args.workdir, "input.wav"))
 
     if args.visualize:
-        port = 9000
-        print(f"Starting file server at http://localhost:{port}/")
-        print(f"Files will be served from: {args.workdir}")
-        server = run_file_server(directory=args.workdir, port=port)
+        server = WebView(directory=args.workdir, port=9000)
+        server.start()
         print('Press Ctrl+C to stop the server.')
         try:
             while True:
                 pass  # Keep the server running
         except KeyboardInterrupt:
             print("Shutting down the server...")
-            server.shutdown()
+            server.stop()
             print("Server stopped.")
     else:
         print("Visualization is disabled.")

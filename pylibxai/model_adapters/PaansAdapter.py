@@ -15,6 +15,7 @@ def move_data_to_device(x, device):
 
     return x.to(device)
 
+# TODO: LrpAdapter, ShapAdapter should be implemented
 class PannsCnn14Adapter(LimeAdapter):
     def __init__(self, checkpoint_path=None, device='cuda'):
         """Audio tagging inference wrapper.

@@ -20,8 +20,8 @@ def pad_or_truncate_waveform(wav, target_len):
         wav = wav[:, :target_len]  # truncate
     return wav
 
-def convert_to_spectrogram(input_tensor, device):
-    input_tensor = pad_or_truncate_waveform(input_tensor, target_len=22050*30)
+def convert_to_spectrogram(input_tensor, device, target_len=22050*30):
+    input_tensor = pad_or_truncate_waveform(input_tensor, target_len=target_len)
     t = torchvision.transforms.Compose([
         torchaudio.transforms.MelSpectrogram(sample_rate=22050,
                                              n_fft=1024,

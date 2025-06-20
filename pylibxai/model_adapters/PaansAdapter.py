@@ -4,6 +4,7 @@ from .panns_inference import Cnn14, labels
 import numpy as np
 
 from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter
+from utils import get_install_path
 
 def move_data_to_device(x, device):
     if 'float' in str(x.dtype):
@@ -17,11 +18,10 @@ def move_data_to_device(x, device):
 
 # TODO: LrpAdapter, ShapAdapter should be implemented
 class PannsCnn14Adapter(LimeAdapter):
-    def __init__(self, checkpoint_path=None, device='cuda'):
+    def __init__(self, device='cuda'):
         """Audio tagging inference wrapper.
         """
-        if not checkpoint_path:
-            raise RuntimeError("Checkpoint path required")
+        paans_model = str(get_install_path() / 'pylibxai' / 'models' / 'audioset_tagging_cnn' / 'Cnn14_mAP=0.431.pth')
         
         assert device in ['cpu', 'cuda']
         if device == 'cuda':

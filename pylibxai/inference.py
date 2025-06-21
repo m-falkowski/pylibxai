@@ -1,18 +1,14 @@
-from datetime import datetime
-import soundfile as sf
 import torch
 import argparse
 import torchaudio
-import shutil
 import os
 
-from pylibxai.AudioLoader import RawAudioLoader
-from pylibxai.audioLIME import lime_audio, SpleeterFactorization
 from pylibxai.LRPExplainer import LRPExplainer
 from pylibxai.ShapExplainer.ShapExplainer import ShapExplainer
 from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
 from pylibxai.model_adapters.GtzanAdapter import GtzanAdapter
 from pylibxai.pylibxai_context import PylibxaiContext
+from pylibxai.Explainers import LimeExplainer
 from pylibxai.Interfaces import ViewType
 from utils import get_install_path
 
@@ -54,34 +50,8 @@ def main():
     context.write_audio(args.input, os.path.join("input.wav"))
     
     if args.explainer == "lime":
-        audio_loader = RawAudioLoader(args.input)
-        spleeter_factorization = SpleeterFactorization(audio_loader,
-                                                       n_temporal_segments=10,
-                                                       composition_fn=None,
-                                                       model_name='spleeter:5stems')
-
-        print('Creating explanation object')
-        explainer = lime_audio.LimeAudioExplainer(verbose=True, absolute_feature_sort=False)
-
-        print('Starting LIME explanation')
-        explanation = explainer.explain_instance(factorization=spleeter_factorization,
-                                                 predict_fn=adapter.get_lime_predict_fn(),
-                                                 top_labels=1,
-                                                 num_samples=16384,
-                                                 batch_size=16
-                                                 )
-
-        label = list(explanation.local_exp.keys())[0]
-        top_components, component_indices = explanation.get_sorted_components(label,
-                                                                              positive_components=True,
-                                                                              negative_components=False,
-                                                                              num_components=3,
-                                                                              return_indeces=True)
-
-        print("predicted label:", label)
-
-        context.write_audio(args.input, os.path.join("lime", "original.wav"))
-        context.write_audio(sum(top_components), os.path.join("lime", f"lime_explanation.wav"), 16000, 'PCM_24')
+        explainer = LimeExplainer(adapter, context, view_type=view_type)
+        explainer.explain(args.input, target=None)
     elif args.explainer == "lrp":
         audio, _ = torchaudio.load(args.input, normalize=True)
         # extract genre from filename

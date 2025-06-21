@@ -1,12 +1,14 @@
 import React from 'react'
 import Lime from './Lime'
 import Shap from './Shap'
+import Lrp from './Lrp'
 import ModelInfo from './ModelInfo'
 import './ContentPage.css'
 
 const routes = {
   lime: Lime,
   shap: Shap,
+  lrp: Lrp,
   'model-info': ModelInfo
 }
 

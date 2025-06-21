@@ -17,7 +17,7 @@ function Navbar() {
     version: '1.0.0',
     copyright: '© 2025 Maciej Falkowski',
     description: 'Explainable AI Library for Python',
-    repository: 'https://github.com/mfalkiewicz/pylibxai'
+    repository: 'https://github.com/m-falkowski/pylibxai'
   };
 
   return (

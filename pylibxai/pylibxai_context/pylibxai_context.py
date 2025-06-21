@@ -37,6 +37,12 @@ class PylibxaiContext:
             json.dump({
                 "attributions": smoothed_attribution.tolist(),
             }, f, indent=4)
+
+    def write_label_mapping(self, labels, suffix):
+        print(f'labels: {labels}')
+        path = os.path.join(self.workdir, suffix)
+        with open(path, 'w') as f:
+            json.dump(labels, f, indent=4)
     
     def write_audio(self, audio, suffix, *args, **kwargs):
         audio_path = os.path.join(self.workdir, suffix)

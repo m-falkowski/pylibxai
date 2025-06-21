@@ -3,11 +3,12 @@ from pylibxai.utils import get_install_path
 import torch
 import numpy as np
 from pylibxai.models.GtzanCNN.preprocessing import convert_to_spectrogram
-from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter
+from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider
 import torch.nn.functional as F
+from typing import Dict
 MODEL_PATH = get_install_path() / "pylibxai" / "models" / "GtzanCNN" / "best_model.ckpt"
 
-class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter):
+class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
     def __init__(self, model_path, device='cuda'):
         self.predictor = GtzanPredictor(model_path, device)
         self.predictor.load_model()
@@ -22,6 +23,9 @@ class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter):
         elif current_len > target_len:
             wav = wav[:, :target_len]  # truncate
         return wav
+    
+    def get_label_mapping(self) -> Dict[int, str]:
+        return self.predictor.label_to_id
 
     def get_lime_predict_fn(self):
         self.predictor.model.eval()

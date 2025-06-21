@@ -46,14 +46,6 @@ function Sidebar({ onNavigate, currentSection }) {
           <FontAwesomeIcon icon={faBrain} className="me-2" />
           LRP
         </Nav.Link>
-        <Nav.Link 
-          href="#inference" 
-          className={`d-flex align-items-center${currentSection === 'inference' ? ' active' : ''}`}
-          onClick={() => onNavigate('inference')}
-        >
-          <FontAwesomeIcon icon={faCircleInfo} className="me-2" />
-          Inference Information
-        </Nav.Link>
       </Nav>
     </div>
   );

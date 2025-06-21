@@ -48,6 +48,7 @@ def main():
 
     # copy input audio to workdir
     context.write_audio(args.input, os.path.join("input.wav"))
+    context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
     
     if args.explainer == "lime":
         explainer = LimeExplainer(adapter, context, view_type=view_type)

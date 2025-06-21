@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import './ModelInfo.css'
+import { NotificationContext } from '../App'
 
 function ModelInfo() {
   const [labels, setLabels] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { pushNotification } = useContext(NotificationContext)
 
   // Get the static file server port from environment variables
   const staticPort = import.meta.env.VITE_PYLIBXAI_STATIC_PORT || '9000'
@@ -14,7 +15,6 @@ function ModelInfo() {
     const fetchLabels = async () => {
       try {
         setIsLoading(true)
-        setError(null)
         const response = await fetch(`${staticBaseUrl}/labels.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
@@ -27,12 +27,12 @@ function ModelInfo() {
         setLabels(labelArray)
         setIsLoading(false)
       } catch (error) {
-        setError(error.message)
         setIsLoading(false)
+        pushNotification({ type: 'error', message: `ModelInfo: ${error.message}` })
       }
     }
     fetchLabels()
-  }, [staticBaseUrl])
+  }, [staticBaseUrl, pushNotification])
 
   return (
     <>
@@ -42,8 +42,6 @@ function ModelInfo() {
           <h3>Label Mapping</h3>
           {isLoading ? (
             <p>Loading labels...</p>
-          ) : error ? (
-            <p className="text-danger">Error: {error}</p>
           ) : (
             <div className="table-responsive d-flex justify-content-center">
               <table className="table table-bordered w-auto">

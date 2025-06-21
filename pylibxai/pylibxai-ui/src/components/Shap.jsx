@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import Chart from 'chart.js/auto'
 import WaveSurfer from 'wavesurfer.js'
 import './Shap.css'
+import { NotificationContext } from '../App'
 
 function Shap() {
   const chartRef = useRef(null)
@@ -17,7 +18,7 @@ function Shap() {
   const [showAttribution, setShowAttribution] = useState(true)
   const [attributions, setAttributions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { pushNotification } = useContext(NotificationContext)
   
   // Get the static file server port from environment variables
   const staticPort = import.meta.env.VITE_PYLIBXAI_STATIC_PORT || '9000'
@@ -50,45 +51,34 @@ function Shap() {
     const fetchAttributions = async () => {
       try {
         setIsLoading(true)
-        setError(null)
-        
         const response = await fetch(`${staticBaseUrl}/shap/shap_attributions.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
-        
         const data = await response.json()
-        
         if (!data.attributions || !Array.isArray(data.attributions)) {
           throw new Error('Data is not in the expected format (object with attributions array)')
         }
-        
         setAttributions(data.attributions)
         setIsLoading(false)
       } catch (error) {
-        console.error("Error fetching attributions:", error)
-        setError(error.message)
         setIsLoading(false)
+        pushNotification({ type: 'error', message: `SHAP: ${error.message}` })
       }
     }
-
     fetchAttributions()
-  }, [staticBaseUrl])
+  }, [staticBaseUrl, pushNotification])
 
   useEffect(() => {
     if (chartInstance.current) {
       chartInstance.current.destroy()
     }
-
     if (isLoading || attributions.length === 0) {
       return
     }
-
     const ctx = chartRef.current.getContext('2d')
-    
     // Generate indices as labels (0 to attributions.length-1)
     const labels = Array.from({ length: attributions.length }, (_, i) => i)
-    
     chartInstance.current = new Chart(ctx, {
       type: 'line',
       data: {
@@ -137,12 +127,10 @@ function Shap() {
         }
       }
     })
-
     // Set chart container height
     if (chartRef.current) {
       chartRef.current.parentElement.style.height = '400px'
     }
-
     wavesurfer.current = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: '#4F4A85',
@@ -154,16 +142,14 @@ function Shap() {
       height: 100,
       barGap: 3
     })
-
     const loadAudio = async () => {
       try {
         await wavesurfer.current.load(`${staticBaseUrl}/input.wav`)
       } catch (error) {
-        console.error('Failed to load audio:', error)
+        pushNotification({ type: 'error', message: `SHAP: Failed to load audio: ${error.message}` })
       }
     }
     loadAudio()
-
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy()
@@ -173,7 +159,7 @@ function Shap() {
         wavesurfer.current.destroy()
       }
     }
-  }, [attributions, isLoading, staticBaseUrl])
+  }, [attributions, isLoading, staticBaseUrl, pushNotification])
 
   return (
     <>
@@ -201,7 +187,6 @@ function Shap() {
             </div>
           </div>
         </section>
-        
         <section className="mb-5">
           <div className="section-header">
             <h2 className="fw-bolder">SHAP Attribution Image</h2>
@@ -231,7 +216,6 @@ function Shap() {
               </button>
           </div>
         </section>
-
         <section className="mb-5">
           <div className="section-header">
             <h2 className="fw-bolder">SHAP Attributions</h2>
@@ -246,8 +230,6 @@ function Shap() {
           <div className={`chart-container ${statsCollapsed ? 'd-none' : ''} ${statsAnimating ? (statsCollapsed ? 'collapsing' : 'expanding') : ''}`}>
             {isLoading ? (
               <p>Loading SHAP attributions data...</p>
-            ) : error ? (
-              <p className="text-danger">Error: {error}</p>
             ) : (
               <>
                 <p>SHAP attributions visualization showing the importance of each frame in the audio sample.</p>
@@ -257,7 +239,6 @@ function Shap() {
             )}
           </div>
         </section>
-
     </>
   )
 }

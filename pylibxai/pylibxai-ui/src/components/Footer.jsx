@@ -10,7 +10,7 @@ import './Footer.css'
 
 function Footer() {
   const socialIcons = [
-    { icon: faGithub, url: 'https://github.com/mfalkiewicz/pylibxai', label: 'GitHub' },
+    { icon: faGithub, url: 'https://github.com/m-falkowski/pylibxai', label: 'Github' },
     { icon: faYoutube, url: 'https://youtube.com/@pylibxai', label: 'YouTube' },
     { icon: faXTwitter, url: 'https://x.com/pylibxai', label: 'X (Twitter)' },
     { icon: faDiscord, url: 'https://discord.gg/pylibxai', label: 'Discord' }

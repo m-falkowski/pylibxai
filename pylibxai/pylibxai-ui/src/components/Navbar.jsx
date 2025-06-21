@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import './Navbar.css'
+import { NotificationContext } from '../App'
 
 function Navbar() {
   const [showAlerts, setShowAlerts] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-
-  const alerts = [
-    { id: 1, type: 'error', message: 'Failed to load audio file: sandman_5s.wav' },
-    { id: 2, type: 'warning', message: 'WaveSurfer initialization delayed' }
-  ];
+  const { notifications } = useContext(NotificationContext);
 
   const softwareInfo = {
     name: 'PylibXAI',
@@ -36,7 +33,7 @@ function Navbar() {
             aria-label="Show alerts"
           >
             <FontAwesomeIcon icon={faBell} />
-            {alerts.length > 0 && <span className="notification-badge">{alerts.length}</span>}
+            {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
           </button>
 
           <button 
@@ -50,8 +47,12 @@ function Navbar() {
           {showAlerts && (
             <div className="dropdown-panel alerts-panel">
               <h3>Notifications</h3>
-              {alerts.map(alert => (
-                <div key={alert.id} className={`alert-item ${alert.type}`}>
+              {notifications.length === 0 ? (
+                <div className="alert-item info">
+                  <span className="alert-message">No notifications</span>
+                </div>
+              ) : notifications.map(alert => (
+                <div key={alert.id} className={`alert-item ${alert.type || 'info'}`}>
                   <span className="alert-message">{alert.message}</span>
                 </div>
               ))}

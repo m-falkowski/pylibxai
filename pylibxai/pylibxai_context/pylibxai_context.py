@@ -28,23 +28,11 @@ class PylibxaiContext:
         if not os.path.exists(os.path.join(self.workdir, "lime")):
             os.makedirs(os.path.join(self.workdir, "lime"))
     
-    def write_lrp_attribution(self, fig):
-        fig.savefig(os.path.join(self.workdir, "lrp", "lrp_attribution.png"), bbox_inches='tight')
+    def write_plt_image(self, fig, suffix):
+        fig.savefig(os.path.join(self.workdir, suffix), bbox_inches='tight')
     
-    def write_shap_attribution_img(self, fig):
-        fig.savefig(os.path.join(self.workdir, "shap", "shap_attribution.png"), bbox_inches='tight')
-    
-    def write_lime_attribution(self, fig):
-        fig.savefig(os.path.join(self.workdir, "lime", "lime_attribution.png"), bbox_inches='tight')
-    
-    def write_shap_spectogram(self, fig):
-        fig.savefig(os.path.join(self.workdir, "shap", "shap_spectogram.png"), bbox_inches='tight')
-
-    def write_shap_heat_map(self, fig):
-        fig.savefig(os.path.join(self.workdir, "shap", "shap_attribution_heat_map.png"), bbox_inches='tight')
-
-    def write_shap_attribution(self, smoothed_attribution):
-        path = os.path.join(self.workdir, "shap_attributions.json")
+    def write_attribution(self, smoothed_attribution, suffix):
+        path = os.path.join(self.workdir, suffix) #"shap_attributions.json")
         with open(path, 'w') as f:
             json.dump({
                 "attributions": smoothed_attribution.tolist(),

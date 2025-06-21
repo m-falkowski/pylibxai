@@ -12,8 +12,8 @@ from pylibxai.LRPExplainer import LRPExplainer
 from pylibxai.ShapExplainer.ShapExplainer import ShapExplainer
 from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
 from pylibxai.model_adapters.GtzanAdapter import GtzanAdapter
-from pylibxai.pylibxai_server import WebView
 from pylibxai.pylibxai_context import PylibxaiContext
+from pylibxai.Interfaces import ViewType
 from utils import get_install_path
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -47,6 +47,11 @@ def main():
         return
     
     print(f'Adapter(): {adapter}')
+    
+    view_type = ViewType.WEBVIEW if args.visualize else ViewType.NONE
+
+    # copy input audio to workdir
+    context.write_audio(args.input, os.path.join("input.wav"))
     
     if args.explainer == "lime":
         audio_loader = RawAudioLoader(args.input)
@@ -84,9 +89,8 @@ def main():
         label_id = adapter.predictor.label_to_id[genre]
         audio = audio.to(DEVICE)
         
-        explainer = LRPExplainer(adapter.get_lrp_predict_fn(), DEVICE)
-        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
-        context.write_lrp_attribution(fig)
+        explainer = LRPExplainer(adapter, context, DEVICE, view_type=view_type)
+        explainer.explain(audio, target=label_id)
     elif args.explainer == "shap":
         audio, _ = torchaudio.load(args.input, normalize=True)
         # extract genre from filename
@@ -94,35 +98,11 @@ def main():
         label_id = adapter.predictor.label_to_id[genre]
         audio = audio.to(DEVICE)
 
-        explainer = ShapExplainer(adapter.get_shap_predict_fn(), DEVICE)
-        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="original_image")
-        context.write_shap_spectogram(fig)
-
-        fig, _ = explainer.explain_instance_visualize(audio, target=label_id, type="heat_map")
-        context.write_shap_heat_map(fig)
-
-        attribution = explainer.get_smoothed_attribution()
-        context.write_shap_attribution(attribution)
+        explainer = ShapExplainer(adapter, context, DEVICE, view_type=view_type)
+        explainer.explain(audio, target=label_id)
     else:
         print(f'Unknown explanation type: {args.explainer}')
         return
-
-    # copy input audio to workdir
-    context.write_audio(args.input, os.path.join("input.wav"))
-
-    if args.visualize:
-        server = WebView(directory=args.workdir, port=9000)
-        server.start()
-        print('Press Ctrl+C to stop the server.')
-        try:
-            while True:
-                pass  # Keep the server running
-        except KeyboardInterrupt:
-            print("Shutting down the server...")
-            server.stop()
-            print("Server stopped.")
-    else:
-        print("Visualization is disabled.")
 
 if __name__ == '__main__':
     main()

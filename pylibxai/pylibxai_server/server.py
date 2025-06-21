@@ -4,17 +4,18 @@ import os
 from .file_serve import run_file_server
 from pylibxai.utils import get_install_path
 from pylibxai.Interfaces.view import ViewInterface
+from pylibxai.pylibxai_context import PylibxaiContext
 
 class WebView(ViewInterface):
-    def __init__(self, directory, port=9000):
-        super().__init__(directory, port)
+    def __init__(self, context, port=9000):
+        super().__init__(context, port)
         self.vite_dir = get_install_path() / "pylibxai" / "pylibxai-ui"
         self.server = None
         self.vite_process = None
 
     def start(self):
         # Start the file server
-        self.server = run_file_server(self.directory, self.port)
+        self.server = run_file_server(self.context.workdir, self.port)
         # Start the Vite UI
         env = os.environ.copy()
         env['VITE_PYLIBXAI_STATIC_PORT'] = str(self.port)

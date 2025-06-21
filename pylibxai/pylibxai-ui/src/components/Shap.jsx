@@ -52,7 +52,7 @@ function Shap() {
         setIsLoading(true)
         setError(null)
         
-        const response = await fetch(`${staticBaseUrl}/shap_attributions.json`)
+        const response = await fetch(`${staticBaseUrl}/shap/shap_attributions.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }

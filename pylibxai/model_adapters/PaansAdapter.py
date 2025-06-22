@@ -17,7 +17,7 @@ def move_data_to_device(x, device):
     return x.to(device)
 
 # TODO: LrpAdapter, ShapAdapter should be implemented
-class PannsCnn14Adapter(LimeAdapter):
+class PannsCnn14Adapter(LimeAdapter, ShapAdapter):
     def __init__(self, device='cuda'):
         """Audio tagging inference wrapper.
         """
@@ -27,6 +27,7 @@ class PannsCnn14Adapter(LimeAdapter):
         if device == 'cuda':
             assert torch.cuda.is_available()
         self.device = device
+        checkpoint_path = str(get_install_path() / 'pylibxai' / 'models' / 'audioset_tagging_cnn' / 'Cnn14_mAP=0.431.pth')
         
         self.labels = labels
         self.classes_num = len(labels) #classes_num # len(labels)
@@ -46,6 +47,10 @@ class PannsCnn14Adapter(LimeAdapter):
             self.model = torch.nn.DataParallel(self.model)
         else:
             print('Using CPU.')
+    
+    def get_label_mapping(self):
+        """Returns the label mapping for the model."""
+        return {}
 
     def inference(self, audio):
         audio = move_data_to_device(audio, self.device)
@@ -58,6 +63,31 @@ class PannsCnn14Adapter(LimeAdapter):
         embedding = output_dict['embedding'].data.cpu().numpy()
 
         return clipwise_output, embedding
+    
+    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+        return x
+    
+    def get_shap_predict_fn(self):
+        def predict_fn(x):
+            # Make sure input requires gradients for SHAP
+            if not x.requires_grad:
+                x = x.detach().clone().requires_grad_(True)
+                
+            # Move to device while preserving gradient information
+            x = move_data_to_device(x, self.device)
+            
+            # Ensure it requires gradients after moving to device
+            if not x.requires_grad:
+                x.requires_grad_(True)
+
+            self.model.eval()  # Keep model in eval mode
+            output_dict = self.model(x, None)
+            
+            # Return the output without detaching to preserve gradient information
+            return output_dict['clipwise_output']
+
+        return predict_fn
+    
 
     def get_lime_predict_fn(self, input_length=None):
         length = 29 * 16000 if not input_length else input_length

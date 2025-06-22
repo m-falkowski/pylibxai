@@ -19,7 +19,7 @@ def main():
     parser = argparse.ArgumentParser(description="Process a model name and input path.")
     
     parser.add_argument('-m', '--model', type=str, required=True,
-                        help="Name of the model to use [sota_music, paans, gtzan].")
+                        help="Name of the model to use [{sota_music, paans, gtzan},]...")
     parser.add_argument('-u', '--visualize', action='store_true',
                         help="Enable visualization of audio in browser-based UI.")
     parser.add_argument('-e', '--explainer', type=str, required=True,
@@ -33,7 +33,7 @@ def main():
     context = PylibxaiContext(args.workdir)
 
     if args.model == "sota_music":
-        adapter = SotaModelsAdapter(model_type="fcn", input_length=29 * 16000, device=DEVICE, dataset='jamendo')
+        adapter = SotaModelsAdapter(model_type="hcnn", device=DEVICE)
     elif args.model == "paans":
         adapter = PannsCnn14Adapter(device=DEVICE)
     elif args.model == "gtzan":
@@ -50,30 +50,30 @@ def main():
     context.write_audio(args.input, os.path.join("input.wav"))
     context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
     
-    if args.explainer == "lime":
+    expls = args.explainer.split(",")
+    
+    if "lime" in expls:
         explainer = LimeExplainer(adapter, context, view_type=view_type)
         explainer.explain(args.input, target=None)
-    elif args.explainer == "lrp":
+    if "lrp" in expls:
         audio, _ = torchaudio.load(args.input, normalize=True)
         # extract genre from filename
-        genre = args.input.split("/")[-2]
-        label_id = adapter.predictor.label_to_id[genre]
+        #genre = args.input.split("/")[-2]
+        #label_id = adapter.predictor.label_to_id[genre]
         audio = audio.to(DEVICE)
         
         explainer = LRPExplainer(adapter, context, DEVICE, view_type=view_type)
-        explainer.explain(audio, target=label_id)
-    elif args.explainer == "shap":
+        explainer.explain(audio, target="")
+    if "shap" in expls:
         audio, _ = torchaudio.load(args.input, normalize=True)
+        print(f'torchaudio.load({args.input}, normalize=True) -> {audio.shape}')
         # extract genre from filename
-        genre = args.input.split("/")[-2]
-        label_id = adapter.predictor.label_to_id[genre]
+        #genre = args.input.split("/")[-2]
+        #label_id = adapter.predictor.label_to_id[genre]
         audio = audio.to(DEVICE)
 
         explainer = ShapExplainer(adapter, context, DEVICE, view_type=view_type)
-        explainer.explain(audio, target=label_id)
-    else:
-        print(f'Unknown explanation type: {args.explainer}')
-        return
+        explainer.explain(audio, target=0)
 
 if __name__ == '__main__':
     main()

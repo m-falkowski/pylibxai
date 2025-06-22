@@ -51,6 +51,11 @@ class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
             return np.array(output_tensor)
 
         return predict_fn
+    
+    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+        x = convert_to_spectrogram(x, self.device)
+        x.requires_grad_(True)
+        return x
 
     def get_lrp_predict_fn(self):
         class GtzanNNWrapper(torch.nn.Module):
@@ -60,7 +65,6 @@ class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
                 self.device = device
 
             def forward(self, x):
-                x.requires_grad_(True)
                 self.predictor.model.eval()
                 return self.predictor.model(x)
 
@@ -68,7 +72,6 @@ class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
 
     def get_shap_predict_fn(self):
         def shap_fn(x):
-            x.requires_grad_(True)
             self.predictor.model.eval()
             return self.predictor.model(x)
         return shap_fn

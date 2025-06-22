@@ -10,6 +10,7 @@ import os
 
 class ShapExplainer:
     def __init__(self, model_adapter, context, device, view_type=None):
+        self.model_adapter = model_adapter
         predict_fn = model_adapter.get_shap_predict_fn()
         self.explainer = IntegratedGradients(predict_fn)
         self.device = device
@@ -23,14 +24,12 @@ class ShapExplainer:
             pass
 
     def explain_instance(self, audio, target, background=None):
-        audio = convert_to_spectrogram(audio, self.device)
-        audio.requires_grad_(True)
+        audio = self.model_adapter.shap_prepare_inference_input(audio)
         attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
         return attributions, delta
     
     def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):
-        audio = convert_to_spectrogram(audio, self.device)
-        audio.requires_grad_(True)
+        audio = self.model_adapter.shap_prepare_inference_input(audio)
         attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
         self.attribution = attributions
         self.delta = delta

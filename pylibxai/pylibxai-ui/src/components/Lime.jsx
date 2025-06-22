@@ -88,7 +88,7 @@ function Lime() {
       }
       
       try {
-        await wavesurferOriginal.current.load(`${staticBaseUrl}/lime/original.wav`)
+        await wavesurferOriginal.current.load(`${staticBaseUrl}/input.wav`)
       } catch (error) {
         console.error('Failed to load audio:', error)
       }

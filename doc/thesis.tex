@@ -1,0 +1,471 @@
+%-----------------------------------------------
+%  Engineer's & Master's Thesis Template
+%  Copyleft by Artur M. Brodzki & Piotr Woźniak
+%  Warsaw University of Technology, 2019-2022
+%-----------------------------------------------
+
+\documentclass[
+    bindingoffset=5mm,  % Binding offset
+    footnoteindent=3mm, % Footnote indent
+    hyphenation=true    % Hyphenation turn on/off
+]{src/wut-thesis}
+
+\graphicspath{{tex/img/}} % Katalog z obrazkami.
+\addbibresource{bibliografia.bib} % Plik .bib z bibliografią
+
+% Do debugowania czy tekst wychodzi poza margines
+%\usepackage{showframe}
+
+\usepackage{minted}
+\usepackage{mdframed}
+
+\mdfdefinestyle{mintedframe}{
+    innertopmargin=1mm,
+    frametitlebelowskip=0pt,
+    frametitleaboveskip=0pt,
+    splittopskip=0pt,
+    linewidth=0.75pt
+}
+\surroundwithmdframed[style=mintedframe]{minted}
+
+\mdfdefinestyle{verbatimframe}{
+    innertopmargin=1mm,
+    frametitlebelowskip=0pt,
+    frametitleaboveskip=0pt,
+    splittopskip=0pt,
+    linewidth=0.75pt
+}
+\surroundwithmdframed[style=verbatimframe]{verbatim}
+
+%-------------------------------------------------------------
+% Wybór wydziału:
+%  \facultyeiti: Wydział Elektroniki i Technik Informacyjnych
+%  \facultymeil: Wydział Mechaniczny Energetyki i Lotnictwa
+% --
+% Rodzaj pracy: \EngineerThesis, \MasterThesis
+% --
+% Wybór języka: \langpol, \langeng
+%-------------------------------------------------------------
+\facultyeiti    % Wydział Elektroniki i Technik Informacyjnych
+\MasterThesis % Praca inżynierska
+\langeng % Praca w języku polskim
+
+\begin{document}
+
+%------------------
+% Strona tytułowa
+%------------------
+\instytut{Instytut Automatyki i Informatyki Stosowanej}
+\kierunek{Computer Science}
+\specjalnosc{Computer Science}
+\title{
+    Machine learning framework for explainable artificial intelligence models
+}
+% Title in English for English theses
+% In English theses, you may remove this command
+\engtitle{
+    Machine learning framework for explainable artificial intelligence models
+}
+% Title in Polish for English theses
+% Use it only in English theses
+\poltitle{
+    Machine learning framework for explainable artificial intelligence models
+}
+\author{Maciej Falkowski}
+\album{329117}
+\promotor{dr inż. Mateusz Modrzejewski}
+\date{\the\year}
+\maketitle
+
+%-------------------------------------
+% Streszczenie po polsku dla \langpol
+% English abstract if \langeng is set
+%-------------------------------------
+\cleardoublepage % Zaczynamy od nieparzystej strony
+\abstract
+The aim of this thesis is to present a system that aims to simplify the analysis of explainable artificial intelligence (XAI) techniques in audio machine learning models.
+
+The proposed system is a framework that integrates selected XAI techniques such as
+audioLIME, SHAP (Shapley Additive explanations), and Layer-wise Relevance Propagation (LRP). The framework aims to provide a unified and extensible infrastructure for creating, managing, and visualizing model explanations.
+
+The proposed system is structured using the Model-View-Controller (MVC) design pattern, ensuring modularity, scalability, and separation of concerns. The Model layer encapsulates operations and the machine learning models. The View layer 
+
+defines an intuitive user interface tailored to data scientists and machine learning engineers, enabling interactive exploration of explanation outputs; and the Controller layer manages communication between the model and interface components.
+
+% Ważne by napisać czym praca nie jesy
+The aim of the thesis is not to provide 
+
+A key contribution of this work is the formalization of design principles and integration strategies that support multimodal explanations, including both visual and auditory outputs, with a focus on interpretability and usability.
+
+The framework includes visualization modules for displaying saliency maps, relevance heatmaps, and feature contribution plots, dynamically generated based on user queries and model outputs. In addition, user roles and interaction paradigms are defined to accommodate different levels of expertise, ensuring accessibility for both novice and expert users. The evaluation of the system demonstrates its effectiveness in improving interpretability and user understanding of complex model behaviors.
+
+This work lays the groundwork for future research and development in human-centric AI systems, offering a flexible foundation for building transparent and trustworthy machine learning applications.
+\keywords XXX, XXX, XXX
+
+%----------------------------------------
+% Streszczenie po angielsku dla \langpol
+% Polish abstract if \langeng is set
+%----------------------------------------
+%\clearpage
+%\secondabstract \kant[1-3]
+%\secondkeywords XXX, XXX, XXX
+
+\pagestyle{plain}
+
+%--------------
+% Spis treści
+%--------------
+\cleardoublepage % Zaczynamy od nieparzystej strony
+\tableofcontents
+
+%------------
+% Rozdziały
+%------------
+\cleardoublepage % Zaczynamy od nieparzystej strony
+\pagestyle{headings}
+
+% #############################################
+%
+% Rozdział 1 - Introduction
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{Introduction} \label{ch:introduction}
+
+% Akapit z cytatem
+\lipsum[1] \cite{goossens93}
+
+% Przykładowy obrazek
+\begin{figure}[!h]
+    % Wyrównanie obrazka, szerokość i plik
+    % Zamiast width można też użyć height, etc.
+    \centering \includegraphics[width=0.5\linewidth]{logopw.png}
+    % Podpis umieszczamy pod obrazkiem
+    % znacznik \caption służy również do wygenerowania numeru obrazka
+    \caption{Tradycyjne godło Politechniki Warszawskiej}
+    % \label pozwala odwołać się do obrazka w innych miejscach za pomocą \ref
+    % odwołanie \ref renderuje się jako numer obrazka,
+    % dlatego zawsze najpierw używaj \caption a potem \label
+    \label{fig:tradycyjne-logo-pw}
+\end{figure}
+
+% \ref wyrenderuje się jako 'Reference to image 1.1'
+\lipsum[2] Reference to image \ref{fig:tradycyjne-logo-pw}.
+
+% Lista punktowana
+% Parametr label ustawia symbol punktora
+\begin{itemize}
+    \item Item 1:
+    \begin{itemize}[label=---]
+        \item item 1.1;
+        \item item 1.2;
+    \end{itemize}
+    \item Item 2;
+    \item Item 3.
+\end{itemize}
+
+\lipsum[3]
+
+% Lista numerowana w formacie 1.a).ii
+% Tutaj również można stosować \label
+\begin{enumerate}
+    \item Item 1:
+    \begin{enumerate}
+        \item item 1.1;
+        \item item 1.2:
+        \begin{enumerate}
+            \item item 1.2.1;
+            \item item 1.2.2;
+        \end{enumerate}
+        \item item 1.3;
+    \end{enumerate}
+    \item Item 2;
+    \item Item 3.
+\end{enumerate}
+
+% Przypis dolny \footnote
+\lipsum[4] Lorem ipsum dolor sit amet\footnote{Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.}, consectetur adipiscing elit.
+
+% Przykładowa tabela: wyśrodkowana i renderowana
+% w miejscu wstawienia: !h = !h[ere]
+% Domyślnie tabele trafiają na górę strony
+\begin{table}[!h] \centering
+    % Podpis tabeli umieszczamy od góry
+    \caption{Przykładowa tabela.}
+    \label{tab:tabela1}
+
+    % Tabela z trzema kolumnami:
+    % dwie wyrównanie do środka [c], a ostatnia do prawej [r]
+    % szerokość kolumn automatyczna (równa szerokości tekstu)
+    \begin{tabular}{| c | c | r |} \hline
+        Kolumna 1       & Kolumna 2 & Liczba \\ \hline\hline
+        cell1           & cell2     & 60     \\ \hline
+        cell4           & cell5     & 43     \\ \hline
+        cell7           & cell8     & 20,45  \\ \hline
+        % Komórka o szerokości dwóch kolumn, wyrównana do prawej
+        % Przypisy dolne w tabelach wstawiamy przez \tablefootnote
+        \multicolumn{2}{|r|}{Suma\tablefootnote{Table footnote.}} & 123,45 \\ \hline
+    \end{tabular}
+
+\end{table}
+
+Lorem ipsum dolor sit amet.
+
+% #############################################
+%
+% Rozdział 2 - Analiza problemu
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{Problem analysis} \label{ch:probAnalysis}
+
+This chapter provides an overview of terminology and methods used in the thesis,
+which describes essentials of machine learning explanations, description of explanation methods used in the thesis which are audioLIME, LRP, SHAP, and software engineering principles used for designing a framework for audio machine learning explanations.
+
+\subsection{Why explanation framework for audio - the problem}
+\subsubsection{Why explanation framework for audio - the problem}
+
+\subsection{Similar solutions}
+
+\subsection{Selection of methodology - overview of framework, monolithic UI etc.}
+
+\subsection{Framework definition}
+\subsubsection{Definition}
+\subsubsection{Modularity}
+\subsubsection{Dependency injection}
+
+\subsection{Definition of user}
+
+\subsection{Definition of ML explanation}
+\subsubsection{Locality-awareness}
+\subsubsection{Model-agnostic}
+
+\subsection{Audio processing}
+\subsubsection{Waveform representation}
+\subsubsection{Mel-spectogram}
+
+\subsection{Model explanation}
+\subsubsection{definition}
+\subsubsection{Locality-awareness}
+
+\subsection{Selection of explanation methods for framework}
+\subsubsection{Criteria - interpretability, attribution, model-agnostic}
+\subsubsection{AudioLIME}
+\subsubsection{Shapley values method}
+\subsubsection{Layerwise propagation}
+
+\subsection{Selection of model for integration}
+\subsubsection{Criteria - practicality}
+\subsubsection{State-of-art Music Models}
+\subsubsection{Paans}
+\subsubsection{Paast}
+\subsubsection{Handmade Gtzan}
+
+\subsection{ML Explanation framework overview}
+\subsubsection{Framework components - library, UI, terminal command}
+
+\subsection{Visualizing ML Explanation framework overview}
+
+\subsection{Model-View controller}
+\subsubsection{Architecture of Model-View Controller}
+\subsubsection{Characteristic of Model, View and Controller}
+\subsubsection{Separation of operations on data and visualization}
+
+% #############################################
+%
+% Rozdział 3 - Requirements and tools (może Framework requirements?)
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{Requirements and tools} \label{ch:reqrTools}
+
+        The project should meet several functional and nonfunctional
+        requirements to meet the objective of the thesis.
+
+\subsection{Software requirements}
+% Framework components - library, UI, terminal command
+\subsection{Functional requirements}
+% Wymagania interfejsu, backend serwera, UI
+\subsubsection{Library interface requirements}
+\subsubsection{Web interface requirements}
+
+\subsection{Non-functional requirements}
+\subsubsection{Modularity}
+\subsubsection{Reliability (Persistency)}
+
+% #############################################
+%
+% Rozdział 4 - External specification
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{External specification} \label{ch:externalSpec}
+
+\subsection{Installation process overview}
+\subsubsection{Installation steps}
+
+\subsection{Command-line tool for simple explanations}
+
+\subsection{Web interface for explanation}
+\subsubsection{Initalizing web interface}
+\subsubsection{Displaying LIME results}
+\subsubsection{Displaying LRP results}
+\subsubsection{Displaying SHAP results}
+\subsubsection{Displaying software warning}
+\subsubsection{Version information}
+
+% #############################################
+%
+% Rozdział 5 - Framework implementation
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{Framework implementation} \label{ch:implementation}
+
+    The following chapter contains an overview of the architecture and implementation details of the explanation framework.
+    It briefly discusses each of the system's components by providing a walk-through of each step of the framework's explanation pipeline.
+
+\subsection{Software architecture overview}
+% Class diagram
+
+\subsection{Model adapter abstract base class (ABC)}
+\subsection{Explanation: audioLIME, SOTA, Paast}
+\subsection{Backend server: Python httpd}
+\subsection{UI: React}
+
+% #############################################
+%
+% Rozdział 6 - Verification
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{Verification} \label{ch:verification}
+
+\subsection{Case study: integrating Simple GTZAN model into framework}
+\subsection{Unit test organization}
+\subsection{Model tests, adapter test, backend tests}
+
+\begin{figure}%[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
+    def __init__(self, model_path, device='cuda'):
+        self.predictor = GtzanPredictor(model_path, device)
+        self.predictor.load_model()
+        self.device = device
+        self.target_length = 22050 * 30  # Expected audio length
+
+    def pad_or_truncate_waveform(self, wav, target_len):
+        current_len = wav.shape[-1]
+        if current_len < target_len:
+            pad_amt = target_len - current_len
+            wav = F.pad(wav, (0, pad_amt))  # pad end with zeros
+        elif current_len > target_len:
+            wav = wav[:, :target_len]  # truncate
+        return wav
+    
+    def get_label_mapping(self) -> Dict[int, str]:
+        return self.predictor.label_to_id
+\end{minted}
+\caption{Compiler's recursive compilation scheme of the abstract syntax tree.}
+\label{fig:RecursiveCompilation}
+\end{figure}
+
+This is sample code; pay attention to this part
+
+\mintinline{py}{def foo(self, wav, target_len)},
+the full code presented at \ref{fig:RecursiveCompilation}
+
+\begin{figure}%[h]
+\begin{verbatim}
+assignment_stmt ::=  (target_list "=")+ (starred_expression |
+                                         yield_expression)
+target_list     ::=  target ("," target)* [","]
+target          ::=  identifier
+                     | "(" [target_list] ")"
+                     | "[" [target_list] "]"
+                     | attributeref
+                     | subscription
+                     | slicing
+                     | "*" target
+\end{verbatim}
+\caption{The Python's eBNF notation of assignment expression.}
+\label{fig:PythonExampleRule}
+\end{figure}
+
+% #############################################
+%
+% Rozdział 7 - Podsumowanie
+%
+% #############################################
+\clearpage % Rozdziały zaczynamy od nowej strony.
+\section{Summary} \label{ch:summary}
+
+%---------------
+% Bibliografia
+%---------------
+\cleardoublepage % Zaczynamy od nieparzystej strony
+\printbibliography
+\clearpage
+
+% Wykaz symboli i skrótów.
+% Pamiętaj, żeby posortować symbole alfabetycznie
+% we własnym zakresie. Makro \acronymlist
+% generuje właściwy tytuł sekcji, w zależności od języka.
+% Makro \acronym dodaje skrót/symbol do listy,
+% zapewniając podstawowe formatowanie.
+\acronymlist
+\acronym{EiTI}{Wydział Elektroniki i Technik Informacyjnych}
+\acronym{PW}{Politechnika Warszawska}
+\acronym{WEIRD}{ang. \emph{Western, Educated, Industrialized, Rich and Democratic}}
+\acronym{SOTA}{State-of-art Music Models}
+\acronym{LRP}{Layerwise propagation}
+\vspace{0.8cm}
+
+%--------------------------------------
+% Spisy: rysunków, tabel, załączników
+%--------------------------------------
+\pagestyle{plain}
+
+\listoffigurestoc    % Spis rysunków.
+\vspace{1cm}         % vertical space
+\listoftablestoc     % Spis tabel.
+\vspace{1cm}         % vertical space
+\listofappendicestoc % Spis załączników
+
+%-------------
+% Załączniki
+%-------------
+
+% Obrazki i tabele w załącznikach nie trafiają do spisów
+\captionsetup[figure]{list=no}
+\captionsetup[table]{list=no}
+
+% Załącznik 1
+\clearpage
+\appendix{Nazwa załącznika 1}
+\lipsum[1-3]
+\begin{figure}[!h]
+	\centering \includegraphics[width=0.5\linewidth]{logopw2.png}
+	\caption{Obrazek w załączniku.}
+\end{figure}
+\lipsum[4-7]
+
+% Załącznik 2
+\clearpage
+\appendix{Nazwa załącznika 2}
+\lipsum[1-2]
+\begin{table}[!h] \centering
+    \caption{Tabela w załączniku.}
+    \begin{tabular} {| c | c | r |} \hline
+        Kolumna 1       & Kolumna 2 & Liczba \\ \hline\hline
+        cell1           & cell2     & 60     \\ \hline
+        \multicolumn{2}{|r|}{Suma:} & 123,45 \\ \hline
+    \end{tabular}
+\end{table}
+\lipsum[3-4]
+
+% Używając powyższych spisów jako szablonu,
+% możesz dodać również swój własny wykaz,
+% np. spis algorytmów.
+
+\end{document} % Dobranoc.

@@ -10,6 +10,10 @@
     hyphenation=true    % Hyphenation turn on/off
 ]{src/wut-thesis}
 
+%\usepackage{setspace}
+%\onehalfspacing
+%\frenchspacing
+
 \graphicspath{{tex/img/}} % Katalog z obrazkami.
 \addbibresource{bibliografia.bib} % Plik .bib z bibliografią
 
@@ -18,6 +22,8 @@
 
 \usepackage{minted}
 \usepackage{mdframed}
+\usepackage{float}
+\newtheorem{example}{Example}
 
 \mdfdefinestyle{mintedframe}{
     innertopmargin=1mm,
@@ -279,19 +285,235 @@ which describes essentials of machine learning explanations, description of expl
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{Requirements and tools} \label{ch:reqrTools}
 
-        The project should meet several functional and nonfunctional
-        requirements to meet the objective of the thesis.
+        This chapter defines and formalizes requirements that the project must actualize
+    to meet the objective of the thesis, including software and behavioral requirements.
+    The chapter starts with a definition of functional and non-functional requirements,
+    followed by an overview of software requirements and tools used in the thesis.
 
-\subsection{Software requirements}
-% Framework components - library, UI, terminal command
 \subsection{Functional requirements}
+
+    The functional requirements seek to define how a framework should behave to its user.
+    For clarity the requirements are divided based on the software component of the framework which
+    in framework's case are library, user web interface, and terminal helper tool.
+
 % Wymagania interfejsu, backend serwera, UI
-\subsubsection{Library interface requirements}
-\subsubsection{Web interface requirements}
+\subsubsection{Library application programming interface requirements}
+    \begin{enumerate}
+
+    \item \textbf{Provide user model injection}
+
+        The library API must enable users to create adapters for their classes allowing them to inject operations on
+    their data into the framework. Users may implement custom model adapters by extending the provided base
+    classes. This enables integration of various audio model architectures with the explanation
+    framework.
+
+    \item \textbf{Provide explanation interface for model adapters}
+
+        The library API must offer base classes for implementing a given explanation method.
+    Each adapter type must define specific methods required for the corresponding explanation algorithm,
+    including LIME, SHAP, or LRP, ensuring a consistent interface for different explanation methods.
+
+    \item \textbf{Explanation Method Selection}
+
+        The library API must offer users the ability to choose which explanation methods are displayed in the view.
+    Users can select from available explainers including LIME, SHAP, and LRP through library API or through
+    command-line arguments in case when using a helper tool. This allows users to focus on specific explanation
+    approaches relevant to their use case.
+
+    \item \textbf{Support necessary audio format}
+
+        The library API must support user audio input provided in \texttt{.wav} and \texttt{.mp4} formats.
+    Audio should be automatically converted to appropriate tensor formats for model processing.
+
+    \item \textbf{Provide interface for view classes}
+
+        The library API must offer a base interface for implementing views which will fulfill
+    the requirement of modularity and allow a system to support multiple view types.
+
+    \item \textbf{Context Management}
+
+        The library API must define a context that serves to store and save the current explanation progress.
+    The context class manages working directories, file operations, and explanation state throughout the process.
+    Context provides centralized access to resources and maintains consistency across different explanation phases.
+
+    \item \textbf{Interface for prediction class information}
+
+        The library should offer an interface enabling users to inject prediction class information.
+    This information is essential for proper explanation interpretation and visualization.
+    The system should support label retrieval dynamically depending on whether the user provided
+    support for their user-defined model adapters.
+
+    \item \textbf{Support for selected explanation methods}
+
+        The library API must provide explanation methods selected for the thesis, such as LIME, SHAP, and LRP.
+    These methods should be implemented as classes, and they also serve as controllers within
+    the Model-View-Controller pattern and coordinate between model adapters, explanation algorithms, and view components. They encapsulate the complete explanation workflow from input processing to result visualization.
+
+    \item \textbf{Support for web interface view}
+
+        The library API must define web server view classes that manage file serving and web-based user interface.
+    Web server components handle HTTP requests and serve explanation results through a user interface.
+
+    \item \textbf{Ensure persistent result storage}
+
+        The library API must ensure persistent storage of user results on disk to prevent
+    data loss. The context system should provide this by saving explanation artifacts to
+    the working directory. This will enable users to archive explanation outputs across 
+    multiple sessions.
+    
+    \end{enumerate}
+
+\subsubsection{User web interface requirements}
+    \begin{enumerate}
+    %\vspace{\baselineskip}
+    \item \textbf{Separate tab for each explanation result}
+
+            The user interface must aggregate the results of each explanation method in separate tabs to organize
+        outcomes and enable switching between them. Each explanation method, which is LIME, SHAP, or LRP,
+        should get its dedicated tab. This should allow users to easily navigate different explanation approaches
+        to compare results. The sidebar should provide a structured view of all generated explanations in a single
+        interface and allow you to switch between them.
+
+    \item \textbf{Display original audio playback}
+
+        The user interface must display the original audio track that serves as input for explanations across all
+    explanation methods. The interface must enable audio playback functionality, including play/pause controls and
+    waveform visualization. Users can listen to the original audio while examining explanation results for better
+    context understanding. The waveform display provides a visual representation of the audio signal structure.
+
+    \item \textbf{Visualize LIME explanation result}
+
+        The user interface must display LIME explanation result as playable audio.
+    Users should be able to listen to specific audio segments that contributed most significantly
+    to the model's prediction. This enables an intuitive understanding of which temporal parts of
+    the audio influenced the model's decision. The width of the explained audio visualization
+    should be aligned with the original audio.
+
+    \item \textbf{Provide version information}
+
+        The user interface must display information about the library version so that users may verify which
+    version of a library they are currently using. Such information may prove to be useful,
+    for example, for troubleshooting.
+
+    \item \textbf{Display notification and error information}
+
+        The user interface must display notifications about errors or other information in a dedicated information
+    panel. The notification system provides user feedback for processing status, errors, warnings,
+    and completion messages. Users receive clear communication about the system state and any issues that
+    require attention. The dedicated panel ensures important messages are prominently displayed without
+    disrupting the main workflow.
+
+    \item \textbf{Visualize attribution intensity}
+
+        The user interface must show plot of attribution intensity of user's input audio
+    for both SHAP and LIME explanations. The attribution scores given to various audio input segments are displayed in these plots. This enables users to determine which audio signal regions had the biggest impact on the model's prediction.
+
+    \item \textbf{Display of user's input overlayed with attribution}
+
+        The user interface must display attribution overlaid on user's input for both SHAP and LIME explanations.
+    Attribution values are visualized as color heatmaps on the user's spectrogram which enables a user to
+    understand which frequency components at a given time interval influenced the model's decision.
+    This method works very well when the input provided to the model is a spectrogram.
+
+    \item \textbf{Display prediction classes of user's model}
+
+        The user interface must display optional model label descriptions when provided by the user's model adapter.
+    The interpretability of explanation visualizations is improved by label information.
+
+    \end{enumerate}
+
+\subsubsection{Terminal application requirements}
+    Framework must provide a terminal-application tool for launching supported models on framework's explanation method with input provided by the user. The tool then will implement a typical usage scenario:
+    \begin{enumerate}
+        \item User input is converted from a waveform input into model's type which is either tensor of input samples or spectrogram type.
+        \item The tool defines a necessary model adapter,
+    \end{enumerate}
+
+    \begin{enumerate}
+
+    \item \textbf{Provide selection of one or more explanation method}
+
+        The application must enable users to select one or more explanation methods offered by the framework which are LIME, SHAP, or LRP.
+
+    \item \textbf{Provide selection of audio model}
+
+            The application must enable users to select from models implemented within the framework that they
+        intend to use. 
+
+    \item \textbf{Provide selection of visualization method}
+
+        The application must enable users to select the visualization method implemented in the framework.
+    Users can choose between web-based visualization and disabled visualization.
+
+    \item \textbf{Provide selection of working directory}
+
+    The application must enable users to select a folder as the working directory or create a default when not provided by the user.
+
+    \end{enumerate}
 
 \subsection{Non-functional requirements}
-\subsubsection{Modularity}
-\subsubsection{Reliability (Persistency)}
+
+    The implementation of an audio XAI framework must meet several criteria
+    top ensure proper behavior for the user and quality criteria.
+    The most important criteria are modularity, usability, and persistency.
+
+\begin{description}
+    \item \textbf{Modularity}
+
+         The project thesis aims to provide a general and extensible audio explanation framework. The system must be 
+    designed with a modular structure, where key components such as explanation methods, model adapters, and view renderers
+    are implemented as independent modules. For that, the system must adhere to the pattern principles of Model-View-
+    Controller architecture as discussed in <Sec. TODO> This modularity allows for the seamless integration of new 
+    functionalities, such as adding additional explanation algorithms or supporting new audio models, without requiring 
+    modifications to the core of the system.
+
+    \item \textbf{Reliability}
+
+        The system must behave stably and predictably during normal operation. During regular operation, the system has to
+    display stable and predictable behavior. The user interface, audio processing pipelines, and explanation methods must
+    all gracefully handle runtime errors and invalid inputs. Errors must be properly logged, and informative feedback must
+    be sent to the user without crashing. To avoid data loss, intermediate and final outputs need to be saved consistently.
+
+    \item \textbf{Usability}
+
+        The framework library and web user interface must follow intuitive design principles, including consistent
+    navigation, clear labeling, and visual clarity of explanation results. The use of separate tabs for different 
+    explanation methods ensures that users can focus on one explanation at a time while easily switching between views. 
+    Notifications and status indicators must be visible and should inform a user about the behavior of the interface. In 
+    addition, the command-line application helper tool must be a fast way of testing the library implementation and environment setup.
+
+\end{description}
+
+\subsection{Tools specification}
+\begin{description}
+\item \textbf{PyTorch}
+
+A comprehensive open-source machine learning framework that provides exceptional flexibility for building and training neural networks with dynamic computational graphs. PyTorch offers seamless GPU acceleration capabilities enabling efficient training of complex deep learning models on large datasets. The framework provides extensive libraries of pre-built components and optimizers that accelerate development while maintaining a pythonic interface. PyTorch has become the preferred framework for research due to its intuitive debugging experience and strong community support.
+
+\item \textbf{librosa}
+
+A specialized Python library for music and audio signal processing that provides comprehensive tools for analyzing sound data through various time-frequency transforms. Librosa offers advanced capabilities for rhythm analysis, beat detection, and feature extraction of key acoustic characteristics commonly used in machine learning pipelines. The library integrates smoothly with numerical computing libraries while supporting various audio formats with built-in resampling capabilities. Librosa emphasizes reproducible research with transparent implementations of audio algorithms complemented by excellent documentation.
+
+\item \textbf{torchaudio}
+
+A domain-specific library built on PyTorch that provides GPU-accelerated tools for audio processing tasks in deep learning applications. TorchAudio offers seamless integration with PyTorch's autograd system, enabling gradient-based training with audio feature extractors as differentiable components. The library includes specialized audio augmentation techniques and pre-trained models for common audio tasks with a consistent tensor-based API. TorchAudio ensures compatibility with PyTorch's ecosystem and is actively maintained with regular updates incorporating state-of-the-art techniques.
+
+\item \textbf{pytest}
+
+A sophisticated testing framework for Python that emphasizes simplicity with a minimalist syntax for writing tests and a powerful fixture system for managing dependencies. Pytest's parameterization features enable running tests with multiple inputs while providing detailed assertion introspection to quickly identify issues. The framework's plugin architecture has fostered a rich ecosystem of extensions for specialized testing needs including coverage analysis. Pytest supports both unit and functional testing with automatic test discovery and comprehensive reporting features.
+
+\item \textbf{matplotlib}
+
+A comprehensive data visualization library for Python that has become the standard for creating publication-quality figures and interactive visualizations. Matplotlib offers exceptional flexibility through its object-oriented API, allowing precise control over every aspect of plots for creating complex custom visualizations. The library supports an extensive range of plot types from basic line graphs to specialized visualizations suitable for diverse data representation needs. Matplotlib integrates seamlessly with NumPy and pandas while providing robust support for mathematical expressions through LaTeX rendering.
+
+\item \textbf{captum}
+
+An interpretability library built specifically for PyTorch that implements state-of-the-art algorithms for explaining decisions made by deep learning models. Captum provides unified implementations of gradient-based attribution methods that reveal feature importance across various model architectures at multiple granularities. The library implements advanced visualization techniques for different data modalities, rendering attributions as heatmaps for images and waveforms for audio. Captum's attribution methods support batch processing and GPU acceleration with a consistent API that works across different model architectures.
+
+\item \textbf{React}
+
+A declarative JavaScript library that has revolutionized user interface development through its component-based architecture and efficient virtual DOM rendering system. React promotes unidirectional data flow that makes application state changes predictable while its JSX syntax combines JavaScript with HTML-like templates for creating reusable components. The library's robust ecosystem includes state management solutions, routing libraries, and testing frameworks that address common development challenges. React's composition-focused design encourages creation of small, focused components that can be combined to build complex interfaces while promoting code reuse.
+\end{description}
 
 % #############################################
 %
@@ -322,16 +544,76 @@ which describes essentials of machine learning explanations, description of expl
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{Framework implementation} \label{ch:implementation}
 
-    The following chapter contains an overview of the architecture and implementation details of the explanation framework.
-    It briefly discusses each of the system's components by providing a walk-through of each step of the framework's explanation pipeline.
+    The following chapter contains an overview of the architecture and implementation details of the explanation framework. It briefly discusses each of the system's components by providing
+    a walk-through of each step of the framework's explanation pipeline.
 
 \subsection{Software architecture overview}
+
+    The architecture of the project consists of three main components that are library, web interface, and command-line helper script.
+    These component implement all steps of a full-pipeline from prereprocessing
+    user's input up to visualizing explanation results as discussed in
+    %\ref{fig:PipelineArchitecture}. TODO
+
+\begin{enumerate}
+    \item \textbf{Library} - provides a main logic and implementation. It is interfacing directly
+        with a user and provides a necessary tools for execution of explanation. This includes   interfaces for creation of adapters for user's models, logic implementing supported explanation types, visualization of explanation that include frontend web interface, and helper utilities.
+
+    \item \textbf{Web interface} - Defines a main visual view for observation of explanations' results. It is composed from two parts which the first is a backend server that server's the explanation results to the frontend part through HTTP protocol. The frontend part then requests required data from the backend server and visualizes it in the form of browser page.
+
+    \item \textbf{Command-line helper script} - It is a toolchain's helper script and serves a purpose of quickly launching a typical usage type of the library which is loading an input audio file and then launching a chosen set of explanations on the chosen library's provided model.
+\end{enumerate}
+
+The communication process between user application and framework is shown in \ref{fig:CommunicationArchitecture}.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=15cm]{comm.jpg}
+    \caption{Communication scheme between user application and frontend.}
+    \label{fig:CommunicationArchitecture}
+\end{figure}
+
+\subsection{Project structure}
+
+    The project’s source code is grouped in multiple directories grouping similar implementations. They contain an implementation of each of the framework’s pipeline phases
+    and unit test definitions for them.
+
+\begin{description}
+    \item 
+\end{description}
+
+\subsection{Model-View-Controller implementation overview}
 % Class diagram
 
-\subsection{Model adapter abstract base class (ABC)}
-\subsection{Explanation: audioLIME, SOTA, Paast}
-\subsection{Backend server: Python httpd}
-\subsection{UI: React}
+\subsection{Model adapter interfaces}
+
+\subsection{Model adapter implementation}
+\subsubsection{GtzanCNN model adapter}
+\subsubsection{SOTA model adapter}
+\subsubsection{Paans model adapter}
+
+\subsection{Explainer classes implementation}
+\subsubsection{LIME explainer}
+\subsubsection{SHAP explainer}
+\subsubsection{LRP explainer}
+
+\subsection{Context class definition}
+
+\subsection{View class definition}
+\subsubsection{Web view class}
+\subsubsection{LIME explainer}
+
+\subsection{Web frontend implementation}
+\subsubsection{File server backend}
+\subsubsection{Frontend UI class}
+
+\subsection{Frontend web interface view implementation}
+\subsubsection{Main component}
+\subsubsection{Sidebar component}
+\subsubsection{Model information component}
+\subsubsection{Notification tab implementation}
+\subsubsection{LIME component}
+
+\subsection{Command-line helper tool implementation}
 
 % #############################################
 %

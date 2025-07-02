@@ -28,6 +28,8 @@ def main():
                         help="Path to the input file or directory.") 
     parser.add_argument('-w', '--workdir', type=str, required=True,
                         help="Path to the workdir directory.")
+    parser.add_argument('-d', '--device', type=str, default=DEVICE,
+                        help="Device to use for computation [cpu, cuda]. Default is 'cuda' if available, otherwise 'cpu'.")
     args = parser.parse_args()
 
     context = PylibxaiContext(args.workdir)

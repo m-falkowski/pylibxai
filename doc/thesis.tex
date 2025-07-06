@@ -578,7 +578,22 @@ The communication process between user application and framework is shown in \re
     and unit test definitions for them.
 
 \begin{description}
-    \item 
+	\item \textbf{audioLIME/} - Contains implementation of LIME explanation method adapted for audio data.
+	\item \textbf{AudioLoader/} - Provides utilities for loading and preprocessing audio files from various formats.
+	\item \textbf{Explainers/} - Contains base explainer classes and LIME explainer implementation.
+	\item \textbf{gtzan\_lime\_expl/} - Stores LIME explanation results and outputs for GTZAN model experiments.
+	\item \textbf{inference.py} - Main command-line entry point for running explanations on audio models.
+	\item \textbf{Interfaces/} - Defines abstract base classes and interfaces for adapters, explainers, and views.
+	\item \textbf{LRPExplainer/} - Contains Layer-wise Relevance Propagation explainer implementation.
+	\item \textbf{model\_adapters/} - Implements adapter classes for integrating different audio models with the framework.
+	\item \textbf{models/} - Contains pre-trained model files and checkpoints for supported audio models.
+	\item \textbf{paans\_shap\_expl/} - Stores SHAP explanation results and outputs for PAANS model experiments.
+	\item \textbf{pretrained\_models/} - Additional directory for storing pre-trained model weights and configurations.
+	\item \textbf{pylibxai\_context/} - Implements context management for storing explanation state and working directories.
+	\item \textbf{pylibxai\_server/} - Contains web server implementation for serving explanation results through HTTP.
+	\item \textbf{pylibxai-ui/} - Frontend React application providing web-based user interface for visualization.
+	\item \textbf{ShapExplainer/} - Contains SHAP (Shapley Additive Explanations) explainer implementation.
+	\item \textbf{utils.py} - Provides utility functions for path management and common operations.
 \end{description}
 
 \subsection{Model-View-Controller implementation overview}

@@ -46,7 +46,7 @@ def main():
     
     print(f'Adapter(): {adapter}')
     
-    view_type = ViewType.WEBVIEW if args.visualize else ViewType.NONE
+    view_type = ViewType.WEBVIEW if args.visualize else ViewType.DEBUG
 
     # copy input audio to workdir
     context.write_audio(args.input, os.path.join("input.wav"))

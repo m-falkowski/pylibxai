@@ -32,7 +32,7 @@ class PylibxaiContext:
         fig.savefig(os.path.join(self.workdir, suffix), bbox_inches='tight')
     
     def write_attribution(self, smoothed_attribution, suffix):
-        path = os.path.join(self.workdir, suffix) #"shap_attributions.json")
+        path = os.path.join(self.workdir, suffix)
         with open(path, 'w') as f:
             json.dump({
                 "attributions": smoothed_attribution.tolist(),

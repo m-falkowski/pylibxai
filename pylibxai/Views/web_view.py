@@ -8,7 +8,8 @@ from pylibxai.pylibxai_context import PylibxaiContext
 
 class WebView(ViewInterface):
     def __init__(self, context, port=9000):
-        super().__init__(context, port)
+        super().__init__(context)
+        self.port = port
         self.vite_dir = get_install_path() / "pylibxai" / "pylibxai-ui"
         self.server = None
         self.vite_process = None
@@ -31,10 +32,10 @@ class WebView(ViewInterface):
         print(f"Vite UI launched at http://localhost:{self.port}/ (UI dev server running)")
 
     def stop(self):
-        if self.server:
-            self.server.shutdown()
-            print("File server stopped.")
         if self.vite_process:
             self.vite_process.terminate()
             self.vite_process.wait()
             print("Vite UI process terminated.")
+        if self.server:
+            self.server.shutdown()
+            print("File server stopped.")

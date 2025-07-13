@@ -15,9 +15,8 @@ class ViewInterface(ABC):
     """Abstract base class for View Interface
     """
     @abstractmethod
-    def __init__(self, context, port):
+    def __init__(self, context):
         self.context = context
-        self.port = port
 
     @abstractmethod
     def start(self) -> None: pass

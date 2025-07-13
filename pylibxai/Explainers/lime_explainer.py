@@ -1,7 +1,7 @@
 from pylibxai.AudioLoader import RawAudioLoader
 from pylibxai.audioLIME import lime_audio, SpleeterFactorization
 from pylibxai.Interfaces import ViewType
-from pylibxai.pylibxai_server import WebView
+from pylibxai.Views import WebView, DebugView
 import os
 
 class LimeExplainer:
@@ -12,8 +12,8 @@ class LimeExplainer:
         if view_type == ViewType.WEBVIEW:
             self.view = WebView(context, port=9000)
         elif view_type == ViewType.DEBUG:
-            pass
-        
+            self.view = DebugView(context)
+
     def explain(self, audio, target=None): 
         audio_loader = RawAudioLoader(audio)
         spleeter_factorization = SpleeterFactorization(audio_loader,
@@ -55,3 +55,6 @@ class LimeExplainer:
                 print("Shutting down the server...")
                 self.view.stop()
                 print("Server stopped.")
+        else:
+            self.view.start()
+            self.view.stop()

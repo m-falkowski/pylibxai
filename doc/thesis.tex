@@ -15,6 +15,8 @@
 %\frenchspacing
 
 \graphicspath{{tex/img/}} % Katalog z obrazkami.
+
+%\usepackage[style=authoryear]{biblatex}
 \addbibresource{bibliografia.bib} % Plik .bib z bibliografią
 
 % Do debugowania czy tekst wychodzi poza margines
@@ -223,15 +225,17 @@ Lorem ipsum dolor sit amet.
 %
 % #############################################
 \clearpage % Rozdziały zaczynamy od nowej strony.
-\section{Problem analysis} \label{ch:probAnalysis}
+\section{Problem analysis} \label{ch1:probAnalysis}
 
 This chapter provides an overview of terminology and methods used in the thesis,
 which describes essentials of machine learning explanations, description of explanation methods used in the thesis which are audioLIME, LRP, SHAP, and software engineering principles used for designing a framework for audio machine learning explanations.
 
-\subsection{Why explanation framework for audio - the problem}
+\subsection{Black box interpretation of ML predictors} % Why explanation framework for audio - the problem
 \subsubsection{Why explanation framework for audio - the problem}
 
 \subsection{Similar solutions}
+
+To the best of our knowledge this is the ...
 
 \subsection{Selection of methodology - overview of framework, monolithic UI etc.}
 
@@ -256,9 +260,9 @@ which describes essentials of machine learning explanations, description of expl
 
 \subsection{Selection of explanation methods for framework}
 \subsubsection{Criteria - interpretability, attribution, model-agnostic}
-\subsubsection{AudioLIME}
-\subsubsection{Shapley values method}
-\subsubsection{Layerwise propagation}
+\subsubsection{AudioLIME} \label{ch1:audioLIME}
+\subsubsection{Shapley Additive Explanations} \label{ch1:ShapMethod}
+\subsubsection{Layer-wise Relevance Propagation} \label{ch1:LrpMethod}
 
 \subsection{Selection of model for integration}
 \subsubsection{Criteria - practicality}
@@ -270,9 +274,9 @@ which describes essentials of machine learning explanations, description of expl
 \subsection{ML Explanation framework overview}
 \subsubsection{Framework components - library, UI, terminal command}
 
-\subsection{Visualizing ML Explanation framework overview}
+\subsection{Visualizing ML Explanation framework overview} 
 
-\subsection{Model-View controller}
+\subsection{Model-View-Controller} \label{ch1:ModelViewController}
 \subsubsection{Architecture of Model-View Controller}
 \subsubsection{Characteristic of Model, View and Controller}
 \subsubsection{Separation of operations on data and visualization}
@@ -298,7 +302,7 @@ which describes essentials of machine learning explanations, description of expl
 
 % Wymagania interfejsu, backend serwera, UI
 \subsubsection{Library application programming interface requirements}
-    \begin{enumerate}
+    \begin{enumerate}[itemsep=1\baselineskip]
 
     \item \textbf{Provide user model injection}
 
@@ -313,7 +317,7 @@ which describes essentials of machine learning explanations, description of expl
     Each adapter type must define specific methods required for the corresponding explanation algorithm,
     including LIME, SHAP, or LRP, ensuring a consistent interface for different explanation methods.
 
-    \item \textbf{Explanation Method Selection}
+    \item \textbf{Explanation method Selection}
 
         The library API must offer users the ability to choose which explanation methods are displayed in the view.
     Users can select from available explainers including LIME, SHAP, and LRP through library API or through
@@ -364,7 +368,7 @@ which describes essentials of machine learning explanations, description of expl
     \end{enumerate}
 
 \subsubsection{User web interface requirements}
-    \begin{enumerate}
+    \begin{enumerate}[itemsep=1\baselineskip]
     %\vspace{\baselineskip}
     \item \textbf{Separate tab for each explanation result}
 
@@ -429,7 +433,7 @@ which describes essentials of machine learning explanations, description of expl
         \item The tool defines a necessary model adapter,
     \end{enumerate}
 
-    \begin{enumerate}
+    \begin{enumerate}[itemsep=1\baselineskip]
 
     \item \textbf{Provide selection of one or more explanation method}
 
@@ -451,7 +455,7 @@ which describes essentials of machine learning explanations, description of expl
 
     \end{enumerate}
 
-\subsection{Non-functional requirements}
+\subsection{Non-functional requirements} \label{ch:NonFuncRequirements}
 
     The implementation of an audio XAI framework must meet several criteria
     top ensure proper behavior for the user and quality criteria.
@@ -484,7 +488,7 @@ which describes essentials of machine learning explanations, description of expl
 
 \end{description}
 
-\subsection{Tools specification}
+\subsection{Tools specification} \label{ch:ch3LabelSpec}
 \begin{description}
 \item \textbf{PyTorch}
 
@@ -555,15 +559,21 @@ A declarative JavaScript library that has revolutionized user interface developm
     %\ref{fig:PipelineArchitecture}. TODO
 
 \begin{enumerate}
-    \item \textbf{Library} - provides a main logic and implementation. It is interfacing directly
-        with a user and provides a necessary tools for execution of explanation. This includes   interfaces for creation of adapters for user's models, logic implementing supported explanation types, visualization of explanation that include frontend web interface, and helper utilities.
+    \item \textbf{Library} - Provides the main logic and implementation. It is interfacing directly with a user and
+    provides the necessary tools for the execution of an explanation. This includes interfaces for the creation of 
+    adapters for users' models, logic implementing supported explanation types, visualization of explanations that 
+    include a frontend web interface, and helper utilities.
 
-    \item \textbf{Web interface} - Defines a main visual view for observation of explanations' results. It is composed from two parts which the first is a backend server that server's the explanation results to the frontend part through HTTP protocol. The frontend part then requests required data from the backend server and visualizes it in the form of browser page.
+    \item \textbf{Web interface} - Defines a main visual view for the observation of the explanations' results. It is
+    composed of two parts which the first is a backend server that serves the explanation results to the frontend part
+    through the HTTP protocol. The frontend part then requests the required data from the backend server and visualizes
+    it in the form of a browser page. The communication process between user application and framework is shown in
+    \ref{fig:CommunicationArchitecture}.
 
-    \item \textbf{Command-line helper script} - It is a toolchain's helper script and serves a purpose of quickly launching a typical usage type of the library which is loading an input audio file and then launching a chosen set of explanations on the chosen library's provided model.
+    \item \textbf{Command-line helper script} - It is a toolchain's helper script and serves the purpose of quickly 
+    launching a typical usage type of the library, which is loading an input audio file and then launching a chosen set 
+    of explanations on the chosen library's provided model.
 \end{enumerate}
-
-The communication process between user application and framework is shown in \ref{fig:CommunicationArchitecture}.
 
 \begin{figure}[h!] % TODO: h! musi być wyłączone
     \centering
@@ -577,56 +587,412 @@ The communication process between user application and framework is shown in \re
     The project’s source code is grouped in multiple directories grouping similar implementations. They contain an implementation of each of the framework’s pipeline phases
     and unit test definitions for them.
 
-\begin{description}
-	\item \textbf{audioLIME/} - Contains implementation of LIME explanation method adapted for audio data.
-	\item \textbf{AudioLoader/} - Provides utilities for loading and preprocessing audio files from various formats.
-	\item \textbf{Explainers/} - Contains base explainer classes and LIME explainer implementation.
-	\item \textbf{gtzan\_lime\_expl/} - Stores LIME explanation results and outputs for GTZAN model experiments.
-	\item \textbf{inference.py} - Main command-line entry point for running explanations on audio models.
-	\item \textbf{Interfaces/} - Defines abstract base classes and interfaces for adapters, explainers, and views.
-	\item \textbf{LRPExplainer/} - Contains Layer-wise Relevance Propagation explainer implementation.
-	\item \textbf{model\_adapters/} - Implements adapter classes for integrating different audio models with the framework.
-	\item \textbf{models/} - Contains pre-trained model files and checkpoints for supported audio models.
-	\item \textbf{paans\_shap\_expl/} - Stores SHAP explanation results and outputs for PAANS model experiments.
-	\item \textbf{pretrained\_models/} - Additional directory for storing pre-trained model weights and configurations.
-	\item \textbf{pylibxai\_context/} - Implements context management for storing explanation state and working directories.
-	\item \textbf{pylibxai\_server/} - Contains web server implementation for serving explanation results through HTTP.
-	\item \textbf{pylibxai-ui/} - Frontend React application providing web-based user interface for visualization.
+\begin{itemize}[itemsep=1\baselineskip]
+	\item \textbf{audioLIME/} - Contains implementation of audioLIME explanation method,
+	\item \textbf{AudioLoader/} - Provides utilities for loading and preprocessing audio files,
+	\item \textbf{Explainers/} - Contains explainer classes for LIME, SHAP, and LRP methods,
+	\item \textbf{pylibxai\_explain.py} - Main command-line entry point for running explanations on audio models,
+	\item \textbf{Interfaces/} - Defines abstract base classes and interfaces for model adapters and views,
+	\item \textbf{LRPExplainer/} - Contains Layer-wise Relevance Propagation  explainer implementation,
+	\item \textbf{model\_adapters/} - Implements adapter classes for integrating different audio models with the framework,
+	\item \textbf{models/} - Contains pretrained model files and checkpoints for supported audio models,
+	\item \textbf{pylibxai\_context/} - Implements context management for storing explanation state and working directories,
+	\item \textbf{pylibxai\_server/} - Contains web server implementation for serving explanation results through HTTP,
+	\item \textbf{pylibxai-ui/} - Frontend React application providing web-based user interface for visualization,
 	\item \textbf{ShapExplainer/} - Contains SHAP (Shapley Additive Explanations) explainer implementation.
-	\item \textbf{utils.py} - Provides utility functions for path management and common operations.
-\end{description}
+\end{itemize}
 
 \subsection{Model-View-Controller implementation overview}
-% Class diagram
 
-\subsection{Model adapter interfaces}
+\begin{figure}%[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=15cm]{class_diagram.png}
+    \caption{Library class diagram.}
+    \label{fig:ClassDiagram}
+\end{figure}
+
+    The thesis utilizes Model-View-Controller (MVC) architectural pattern (Sec. \ref{ch1:ModelViewController}) to obtain extendable architecture that satisfies one of core requirements of the thesis that is modularity as discussed in Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extandable with a new explanation types, model predictors, and views separating these three from each other so that the developer might work on one of these exclusively.
+
+    The Model-View-Controller is implemented using
+    the following classes visible in the class diagram \ref{fig:ClassDiagram}. The implementation and details of these classes are discussed later in the chapter:
+    \begin{description}
+        \item[Model] The function of the model in the framework is realized using adapter classes for user models, such as \texttt{SotaMusicModelsAdapter} (Sec. TODO) or \texttt{PaansAdapter} (Sec. TODO). These classes operate on user data passed to them from controller classes, performing data manipulation, which is an inference in this case. The interface for these classes is discussed in Sec. TODO,
+
+        \item[View] The function of view in the framework is realized using classes such as \texttt{WebView} or \texttt{DebugView}. These classes receive explanation results specified in the \texttt{Context} class as required by the \texttt{ViewInterface} class and process them to display the results to the user,
+
+        \item[Controller] The purpose of this part is to pass the user’s input into the model
+        classes for data manipulation and to later pass the results of data manipulation into 
+        the view. This functionality is achieved by classes implementing explainers' logic, 
+        such as \texttt{LimeExplainer} or \texttt{ShapExplainer}.
+
+    \end{description}
+
+\subsection{Interfaces for model adapters}
+
+    Model adapters require a set of interfaces that specify the required behavior that a user
+    must fulfill to make their model work properly within the framework. For that reason, the 
+    library provides an interface for required explanation methods to perform a given 
+    explanation that specifies behavior
+    between a given explainer class and the user’s model adapter. This provides enough 
+    granularity to the interface so that a user may freely decide which explanation method 
+    they would like to provide support for.
+    Interfaces for model adapters are implemented with the use of
+    Python’s \mintinline{py}{ABC} module \cite{pythonABC}, which allows defining abstract 
+    base classes for other classes. Every interface method is annotated 
+    \mintinline{py}{@abstractmethod}, requiring a user to define it when performing inheritance, or it throws a \mintinline{py}{TypeError} exception otherwise.
+    
+\subsubsection{LIME method adapter}
+
+    Adapter for LIME method (\ref{ch1:audioLIME}) defines the interface that the user's model needs to satisfy to be able to launch \texttt{audioLIME} explanation on it.
+    This interface requires from user defining a single method \mintinline{py}{get_lime_predict_fn(self)}
+    that must return a \mintinline{py}{np.array}.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+from abc import ABC, abstractmethod
+import numpy as np
+
+class LimeAdapter(ABC):
+    """Abstract base class for LIME (Local Interpretable
+       Model-agnostic Explanations) adapters"""
+    @abstractmethod
+    def get_lime_predict_fn(self) -> np.array: pass
+    """Returns a function that takes an audio input and
+       returns the model's prediction for that input."""
+\end{minted}
+\caption{Class definition of \texttt{LimeExplainer}.}
+\label{fig:LimeAdapter}
+\end{figure}
+
+\subsubsection{SHAP method adapter}
+
+    In the same way, adapter for SHAP method (\ref{ch1:ShapMethod}) defines the interface that the user's model needs to satisfy to be able to launch Shapley-Additive explanation on it.
+    This interface requires from user defining a single method \mintinline{py}{get_shap_predict_fn(self)}
+    that must return an \mintinline{py}{np.array}.
+
+    Additionally, SHAP interface requires defining a \mintinline{py}{shap_prepare_inference_input} method that serves a purpose of additionally preprocessing data for a given model as shown in \ref{fig:ShapAdapter}.
+    This is required as interface for explainers accept user's waveform input but they do expect an input which is the same as model's input which may be either waveform or a spectogram which requires additional conversion.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+class ShapAdapter(ABC):
+    """Abstract base class for SHAP (SHapley Additive exPlanations)
+       adapters"""
+    @abstractmethod
+    def get_shap_predict_fn(self) -> np.array: pass
+    """Returns a function that takes an audio input and returns
+    the model's prediction for that input."""
+
+    @abstractmethod
+    def shap_prepare_inference_input(self, x: torch.Tensor) \
+        -> torch.Tensor: pass
+    """Returns a function that takes an audio input
+    and returns the model's prediction for that input."""
+\end{minted}
+\caption{Class definition of \texttt{ShapExplainer}.}
+\label{fig:ShapAdapter}
+\end{figure}
+
+\subsubsection{LRP method adapter}
+
+    The last method adapter for LRP method (\ref{ch1:LrpMethod}) also requires the user to define a single method \mintinline{py}{get_lime_predict_fn(self)} that must return \mintinline{py}{nn.Module}. This return type is required as Captum's LRP implementation takes it as an input.
+
+    \begin{example}
+        An exemplary implementation of LrpAdapter for an exemplary user's adapter \texttt{MyModelAdapter}
+        is shown in \ref{fig:UserAdapterExample}.
+    \end{example}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+from pylibxai.Interfaces import LrpAdapter
+
+class MyModelAdapter(LrpAdapter):
+    def __init__(self, model, device):
+        self.model = model
+        self.device = device
+
+    def get_lrp_predict_fn(self):
+        class MyModelWrapper(torch.nn.Module):
+            def __init__(self, model):
+                super(MyModelWrapper, self).__init__()
+                self.predictor = predictor
+                self.device = device
+
+            def forward(self, x):
+                self.predictor.model.eval()
+                return self.predictor.model(x)
+
+        return MyModelWrapper(self.predictor, self.device)
+\end{minted}
+\caption{A sample implementation of \texttt{LrpAdapter} for the exemplary \texttt{MyModelAdapter} class.}
+\label{fig:UserAdapterExample}
+\end{figure}
+
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+class LrpAdapter(ABC):
+    """Abstract base class for LRP (Layer-wise Relevance Propagation)
+       adapters"""
+    @abstractmethod
+    def get_lrp_predict_fn(self)\
+    \-> nn.Module: pass
+    """Returns a function that takes an audio input and
+       returns the model's prediction for that input."""
+\end{minted}
+\caption{Class definition of \texttt{LrpAdapter}.}
+\label{fig:LrpAdapter}
+\end{figure}
 
 \subsection{Model adapter implementation}
+
+\
+
 \subsubsection{GtzanCNN model adapter}
 \subsubsection{SOTA model adapter}
 \subsubsection{Paans model adapter}
 
 \subsection{Explainer classes implementation}
+
+Explanation methods are implemented as separate classes including \texttt{LimeAdapter}, \texttt{ShapExplainer}, and \texttt{LrpAdapter}.
+The purpose of these classes is to implem TODO
+
+These classes serves a purpose of controllers as part of Model-View-Controller pattern so their purpose include managing 
+
+
 \subsubsection{LIME explainer}
 \subsubsection{SHAP explainer}
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class ShapExplainer:
+    def __init__(self, model_adapter, context, device, view_type=None):
+        self.model_adapter = model_adapter
+        predict_fn = model_adapter.get_shap_predict_fn()
+        self.explainer = IntegratedGradients(predict_fn)
+        self.device = device
+        self.attribution = None
+        self.delta = None
+        self.context = context
+        self.view_type = view_type
+        if view_type == ViewType.WEBVIEW:
+            self.view = WebView(context, port=9000)
+        elif view_type == ViewType.DEBUG:
+            pass
+
+    def explain_instance(self, audio, target, background=None):
+        pass
+    
+    def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):
+        pass
+
+    def get_attribution(self):
+        pass
+
+    def get_smoothed_attribution(self):
+        pass
+    
+    def explain(self, audio, target):
+        pass
+\end{minted}
+\caption{Class definition of \texttt{ShapExplainer}.}
+\label{fig:ShapExplainer}
+\end{figure}
 \subsubsection{LRP explainer}
 
 \subsection{Context class definition}
 
-\subsection{View class definition}
-\subsubsection{Web view class}
-\subsubsection{LIME explainer}
+The \texttt{PylibxaiContext} class manages the data and encapsulates the data saving process.
+It is an important bridge between model and view classes, formalizing how explanation results
+are saved and accessed through a framework.
+The class also implements the requirement \textit{Context Management} and \textit{Ensure persistent result storage} as described in Sec. (\ref{ch:NonFuncRequirements}), fully encapsulating the process of
+saving the explanation results into the persistent storage. For the simplicity of design and also the purpose of serving
+explanation result to the web frontend as discussed later in \ref{ch:ch5WebFrontend},
+the implementation of this class saves all explanation results as files in a tree structure in a given working directory.
 
-\subsection{Web frontend implementation}
-\subsubsection{File server backend}
+\begin{example}
+    An exemplary implementation of \texttt{write\_attribution} method of \\
+    \texttt{PylibxaiContext} class. The method saves an attribution of the explanation to a file in \texttt{JSON} format
+    as shown in Fig. \ref{fig:WriteAttributionMethod}.
+\end{example}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+def write_attribution(self, smoothed_attribution, suffix):
+    path = os.path.join(self.workdir, suffix)
+    with open(path, 'w') as f:
+        json.dump({
+            "attributions": smoothed_attribution.tolist(),
+        }, f, indent=4)
+\end{minted}
+\caption{The implementation of \texttt{write\_attribution} method.}
+\label{fig:WriteAttributionMethod}
+\end{figure}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class PylibxaiContext:
+    def __init__(self, workdir):
+        self.workdir = workdir
+        # [...]
+    
+    def write_plt_image(self, fig, suffix): pass # [...]
+    
+    def write_attribution(self, smoothed_attribution, suffix): pass # [...]
+
+    def write_label_mapping(self, labels, suffix): pass # [...]
+    
+    def write_audio(self, audio, suffix, *args, **kwargs): pass # [...]
+\end{minted}
+\caption{Class definition of \texttt{PylibxaiContext}.}
+\label{fig:PylibxaiContext}
+\end{figure}
+
+The \texttt{PylibxaiContext} class contains the following fields, as shown in its definition in Fig. \ref{fig:PylibxaiContext}:
+
+\begin{itemize}
+    \item \mintinline{py}{self.workdir} - the field holds a path to the working directory in which explanation results will be saved,
+    \item \mintinline{py}{write_plt_image(self, fig, suffix)} - it handles saving the results of Matplotlib's (Sec. \ref{ch:ch3LabelSpec}) generated image,
+    \item \mintinline{py}{write_attribution(self, smoothed_attribution, suffix)} - it handles saving explanation's attribution,
+    \item \mintinline{py}{write_label_mapping(self, labels, suffix)} - it handles saving the mapping of labels into their indexes,
+    \item \mintinline{py}{write_audio(self, audio, suffix, *args, **kwargs)} - it handles saving of an audio file,
+\end{itemize}
+
+\subsection{View classes}
+
+The purpose of view classes is to present explanation results to the user in a readable form
+according to Model-View-Controller pattern. The framework is implemented with modularity as a goal
+and allows multiple views defined implementing \texttt{ViewInterface} interface.
+The framework is implemented with modularity as a goal and allows multiple views
+defined by implementing \texttt{ViewInterface} interface that defines how explanation
+classes should be implemented in the framework.
+This interface \texttt{ViewInterface} requires a user to define the necessary
+methods required to initialize, start, and stop the given view as shown in Fig. \ref{fig:ViewType}.
+
+\begin{itemize}
+    \item \mintinline{py}{__init__(self, context, port)} - A given view is initialized with a provided context class.
+    The view then may utilize the accumulated results of explanation in that class and present them to the user,
+
+    \item \mintinline{py}{start(self)} - The start method is responsible for launching the given view. In the case of \texttt{WebView},
+    it starts the backend and frontend servers. For \texttt{DebugView} it generates a terminal debugging logs showing based on 
+    explanation results,
+    
+    \item \mintinline{py}{stop(self)} - The stop method is responsible for stopping and cleaning the execution of a given view class. It is required though it logic may be empty when there is nothing to stop as in case of \texttt{DebugView} class.
+\end{itemize}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class ViewInterface(ABC):
+    """Abstract base class for View Interface
+    """
+    @abstractmethod
+    def __init__(self, context, port):
+        self.context = context
+        self.port = port
+
+    @abstractmethod
+    def start(self) -> None: pass
+
+    @abstractmethod
+    def stop(self) -> None: pass    
+\end{minted}
+\caption{Class definition of \texttt{ViewInterface}.}
+\label{fig:ViewInterface}
+\end{figure}
+
+Every view class defined in a framework must have an entry in enumeration \texttt{ViewType}.
+For \texttt{WebView} there is an enumeration \mintinline{py}{DEBUG} provided, for \texttt{DebugView}
+it is \mintinline{py}{DEBUG} as shown in Fig. \ref{fig:ViewType}.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class ViewType(IntEnum):
+    """Enum-like class for View Types"""
+    WEBVIEW = 1
+    DEBUG = 2
+    NONE = 2
+\end{minted}
+\caption{Class definition of \texttt{ViewType}.}
+\label{fig:ViewType}
+\end{figure}
+
+\subsubsection{Web view}
+
+The \texttt{WebView} implementation provides the main visualization of the explanation results
+in the form of a web page. Its implementation only starts the underlying backend and frontend servers
+in separate processes using Python's subprocess module.  The class implements the View interface to be later used within a framework. The definition of \texttt{WebView} is visible in Fig. \ref{fig:WebView}.
+
+The whole startup process of the WebView contained in the \mintinline{py}{setup()} method contains the following steps:
+\begin{enumerate}
+    \item The startup procedure starts with the creation of a backend server using the function  \\
+        \mintinline{py}{run_file_server(self.context.workdir, self.port)}.
+        It takes the path of \\ the working directory from a given instance of the \texttt{Context} class
+        and start a file serving server using Python's \mintinline{py}{socketserver.TCPServer} class.
+        The implementation of file server is discussed later in Sec. \ref{ch5:FileServer},
+    \item In the next step, the frontend server is initialized with the use of the Vite \cite{ViteDOC} tool,
+        which it is based on. The \texttt{subprocess.Popen} argument takes the
+        Vite command startup arguments as \mintinline{py}{['npm', 'run', 'dev']} that is run in the current working directory where the implementation of the frontend source code is placed, which is \mintinline{py}{cwd=self.vite_dir}. Additional parameters for the frontend web server are passed through the environmental variables, such as a port number that is passed to the frontend through the \mintinline{py}{'VITE_PYLIBXAI_STATIC_PORT'} environmental variable.
+    
+\end{enumerate}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class WebView(ViewInterface):
+    def __init__(self, context, port=9000):
+        super().__init__(context, port)
+        self.vite_dir = get_install_path() / "pylibxai" / "pylibxai-ui"
+        self.server = None
+        self.vite_process = None
+
+    def start(self):
+        # Start the file server
+        self.server = run_file_server(self.context.workdir, self.port)
+        # Start the Vite UI
+        env = os.environ.copy()
+        env['VITE_PYLIBXAI_STATIC_PORT'] = str(self.port)
+        print(f"Vite UI directory: {self.vite_dir}")
+        self.vite_process = subprocess.Popen(
+            ['npm', 'run', 'dev'],
+            cwd=self.vite_dir,
+            env=env,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            shell=True
+        )
+        print(f"Vite UI launched at http://localhost:{self.port}/ (UI dev server running)")
+
+    def stop(self):
+        if self.vite_process:
+            self.vite_process.terminate()
+            self.vite_process.wait()
+            print("Vite UI process terminated.")
+        if self.server:
+            self.server.shutdown()
+            print("File server stopped.")
+\end{minted}
+\caption{Class definition of \texttt{WebView}.}
+\label{fig:WebView}
+\end{figure}
+ 
+\subsubsection{Debug View}
+
+\subsection{Web frontend implementation} \label{ch:ch5WebFrontend}
+
+% Figure: Communication scheme Backend <-> Frontend
+
+\subsubsection{File server backend} \label{ch5:FileServer}
+
+%\begin{example}
+% Show that a path workdir/lrp/attribution.json will be under path /lrp/attribution.json    
+%\end{example}
+
 \subsubsection{Frontend UI class}
 
 \subsection{Frontend web interface view implementation}
-\subsubsection{Main component}
-\subsubsection{Sidebar component}
-\subsubsection{Model information component}
-\subsubsection{Notification tab implementation}
-\subsubsection{LIME component}
+%\subsubsection{Main component}
+%\subsubsection{Sidebar component}
+%\subsubsection{Model information component}
+%\subsubsection{Notification tab implementation}
+%\subsubsection{LIME component}
 
 \subsection{Command-line helper tool implementation}
 
@@ -641,53 +1007,6 @@ The communication process between user application and framework is shown in \re
 \subsection{Case study: integrating Simple GTZAN model into framework}
 \subsection{Unit test organization}
 \subsection{Model tests, adapter test, backend tests}
-
-\begin{figure}%[h!]
-\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
-class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
-    def __init__(self, model_path, device='cuda'):
-        self.predictor = GtzanPredictor(model_path, device)
-        self.predictor.load_model()
-        self.device = device
-        self.target_length = 22050 * 30  # Expected audio length
-
-    def pad_or_truncate_waveform(self, wav, target_len):
-        current_len = wav.shape[-1]
-        if current_len < target_len:
-            pad_amt = target_len - current_len
-            wav = F.pad(wav, (0, pad_amt))  # pad end with zeros
-        elif current_len > target_len:
-            wav = wav[:, :target_len]  # truncate
-        return wav
-    
-    def get_label_mapping(self) -> Dict[int, str]:
-        return self.predictor.label_to_id
-\end{minted}
-\caption{Compiler's recursive compilation scheme of the abstract syntax tree.}
-\label{fig:RecursiveCompilation}
-\end{figure}
-
-This is sample code; pay attention to this part
-
-\mintinline{py}{def foo(self, wav, target_len)},
-the full code presented at \ref{fig:RecursiveCompilation}
-
-\begin{figure}%[h]
-\begin{verbatim}
-assignment_stmt ::=  (target_list "=")+ (starred_expression |
-                                         yield_expression)
-target_list     ::=  target ("," target)* [","]
-target          ::=  identifier
-                     | "(" [target_list] ")"
-                     | "[" [target_list] "]"
-                     | attributeref
-                     | subscription
-                     | slicing
-                     | "*" target
-\end{verbatim}
-\caption{The Python's eBNF notation of assignment expression.}
-\label{fig:PythonExampleRule}
-\end{figure}
 
 % #############################################
 %
@@ -716,6 +1035,7 @@ target          ::=  identifier
 \acronym{WEIRD}{ang. \emph{Western, Educated, Industrialized, Rich and Democratic}}
 \acronym{SOTA}{State-of-art Music Models}
 \acronym{LRP}{Layerwise propagation}
+\texttt{JSON}{JavaScript Object Notation}
 \vspace{0.8cm}
 
 %--------------------------------------

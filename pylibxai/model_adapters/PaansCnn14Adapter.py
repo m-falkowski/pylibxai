@@ -3,7 +3,7 @@ from torch.autograd import Variable
 from .panns_inference import Cnn14, labels
 import numpy as np
 
-from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter
+from pylibxai.Interfaces import LimeAdapter, ShapAdapter, ModelLabelProvider
 from utils import get_install_path
 
 def move_data_to_device(x, device):
@@ -16,22 +16,32 @@ def move_data_to_device(x, device):
 
     return x.to(device)
 
-# TODO: LrpAdapter, ShapAdapter should be implemented
-class PannsCnn14Adapter(LimeAdapter, ShapAdapter):
+class Cnn14Adapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
     def __init__(self, device='cuda'):
         """Audio tagging inference wrapper.
         """
-        paans_model = str(get_install_path() / 'pylibxai' / 'models' / 'audioset_tagging_cnn' / 'Cnn14_mAP=0.431.pth')
         
         assert device in ['cpu', 'cuda']
         if device == 'cuda':
             assert torch.cuda.is_available()
         self.device = device
         checkpoint_path = str(get_install_path() / 'pylibxai' / 'models' / 'audioset_tagging_cnn' / 'Cnn14_mAP=0.431.pth')
-        
-        self.labels = labels
-        self.classes_num = len(labels) #classes_num # len(labels)
-        print(f'{self.classes_num=}')
+       
+        self.label_to_id = {}
+        self.id_to_label = {}
+        with open(get_install_path() / 'pylibxai' / 'datasets' / 'AudioSet' / 'class_labels_indices.csv', 'r') as f:
+            lines = f.readlines()
+            self.classes_num = len(lines) - 1
+            for line in lines[1:]:
+                if '"' in line:
+                    parts = line.strip().split(',"')
+                    index_mid = parts[0].split(',')
+                    index = index_mid[0]
+                    display_name = parts[1].rstrip('"')
+                else:
+                    index, _, display_name = line.strip().split(',')
+                self.label_to_id[display_name] = int(index)
+                self.id_to_label[int(index)] = display_name
 
         self.model = Cnn14(sample_rate=32000, window_size=1024, 
             hop_size=320, mel_bins=64, fmin=50, fmax=14000, 
@@ -50,7 +60,7 @@ class PannsCnn14Adapter(LimeAdapter, ShapAdapter):
     
     def get_label_mapping(self):
         """Returns the label mapping for the model."""
-        return {}
+        return self.id_to_label
 
     def inference(self, audio):
         audio = move_data_to_device(audio, self.device)
@@ -88,13 +98,23 @@ class PannsCnn14Adapter(LimeAdapter, ShapAdapter):
 
         return predict_fn
     
+    def shap_map_target_to_id(self, target: str) -> int:
+        if target in self.label_to_id:
+            return self.label_to_id[target]
+        else:
+            raise ValueError(f"Target '{target}' not found in label mapping.")
+
+    def lrp_map_target_to_id(self, target: str) -> int:
+        if target in self.label_to_id:
+            return self.label_to_id[target]
+        else:
+            raise ValueError(f"Target '{target}' not found in label mapping.")
+    
 
     def get_lime_predict_fn(self, input_length=None):
-        length = 29 * 16000 if not input_length else input_length
+        length = 5 * 16000 if not input_length else input_length
         def predict_fn(x_array):
-            # based on code from sota repo
             x = torch.zeros(len(x_array), length)
-            #x = torch.zeros(len(x_array), 3254510)
             for i in range(len(x_array)):
                 x[i] = torch.Tensor(x_array[i]).unsqueeze(0)
 

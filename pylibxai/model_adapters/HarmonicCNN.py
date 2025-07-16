@@ -14,9 +14,10 @@ sys.path.append(path_sota)
 sys.path.append(os.path.join(path_sota, 'training'))
 from training.eval import Predict  # can only be imported after appending path_sota in sota_utils
 
-# TODO: LrpAdapter, ShapAdapter should be implemented
-class SotaModelsAdapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
-    def __init__(self, model_type="fcn", device='cuda', **kwargs):
+TAGS = ['genre---downtempo', 'genre---ambient', 'genre---rock', 'instrument---synthesizer', 'genre---atmospheric', 'genre---indie', 'instrument---electricpiano', 'genre---newage', 'instrument---strings', 'instrument---drums', 'instrument---drummachine', 'genre---techno', 'instrument---guitar', 'genre---alternative', 'genre---easylistening', 'genre---instrumentalpop', 'genre---chillout', 'genre---metal', 'mood/theme---happy', 'genre---lounge', 'genre---reggae', 'genre---popfolk', 'genre---orchestral', 'instrument---acousticguitar', 'genre---poprock', 'instrument---piano', 'genre---trance', 'genre---dance', 'instrument---electricguitar', 'genre---soundtrack', 'genre---house', 'genre---hiphop', 'genre---classical', 'mood/theme---energetic', 'genre---electronic', 'genre---world', 'genre---experimental', 'instrument---violin', 'genre---folk', 'mood/theme---emotional', 'instrument---voice', 'instrument---keyboard', 'genre---pop', 'instrument---bass', 'instrument---computer', 'mood/theme---film', 'genre---triphop', 'genre---jazz', 'genre---funk', 'mood/theme---relaxing']
+
+class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
+    def __init__(self, device='cuda', **kwargs):
         """Audio tagging inference wrapper.
         """
         assert device in ['cpu', 'cuda']
@@ -44,10 +45,14 @@ class SotaModelsAdapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
         if kwargs.get('dataset') is not None:
             config.dataset = kwargs['dataset']
         else:
-            config.dataset = "msd"  # we use the model trained on MSD
-        config.model_type = model_type
+            config.dataset = "jamendo"  # we use the model trained on MSD
+        
+        self.label_to_id = {i: v for i, v in enumerate(TAGS)}
+        self.id_to_label = {v: i for i, v in enumerate(TAGS)}
+
+        config.model_type = "hcnn"
         config.model_load_path = os.path.join(path_models, config.dataset, config.model_type, 'best_model.pth')
-        config.input_length = self.model_map[model_type]  # input length in samples
+        config.input_length = self.model_map["hcnn"]
         config.batch_size = 1  # we analyze one chunk of the audio
         self.model = Predict.get_model(config)
         
@@ -57,14 +62,7 @@ class SotaModelsAdapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
     
     def get_label_mapping(self):
         """Returns the label mapping for the model."""
-        #if self.config.dataset == 'msd':
-        #    label_mapping = Predict.get_msd_label_mapping()
-        #elif self.config.dataset == 'jamendo':
-        #    label_mapping = Predict.get_jamendo_label_mapping()
-        #else:
-        #    raise ValueError(f"Unknown dataset: {self.config.dataset}")
-        
-        return {}
+        return self.label_to_id
     
     def get_shap_predict_fn(self):
         self.model.load_state_dict(self.model_state)
@@ -91,6 +89,19 @@ class SotaModelsAdapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
     
     def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
         return x
+    
+    def shap_map_target_to_id(self, target: str) -> int:
+        if target in self.label_to_id:
+            return self.label_to_id[target]
+        else:
+            raise ValueError(f"Target '{target}' not found in label mapping.")
+
+
+    def lrp_map_target_to_id(self, target: str) -> int:
+        if target in self.label_to_id:
+            return self.label_to_id[target]
+        else:
+            raise ValueError(f"Target '{target}' not found in label mapping.")
 
     def get_lrp_predict_fn(self):
         class SotaNNWrapper(torch.nn.Module):

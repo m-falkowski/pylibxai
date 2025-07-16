@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from typing import Dict
 MODEL_PATH = get_install_path() / "pylibxai" / "models" / "GtzanCNN" / "best_model.ckpt"
 
-class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
+class GtzanCNNAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
     def __init__(self, model_path, device='cuda'):
         self.predictor = GtzanPredictor(model_path, device)
         self.predictor.load_model()
@@ -32,19 +32,26 @@ class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
 
         def predict_fn(x_array):
             # Convert numpy array to tensor and ensure correct shape
-            audio = torch.zeros(len(x_array), self.target_length, device=self.device)
+            #audio = torch.zeros(len(x_array), self.target_length, device=self.device)
+            
+            audios = []
             for i in range(len(x_array)):
-                audio_tensor = torch.Tensor(x_array[i]).unsqueeze(0).to(self.device)
+                audio = torch.from_numpy(np.array(x_array)).to(self.device)
+                audio_tensor = convert_to_spectrogram(audio, self.device).squeeze(0)
+                print(f': {audio_tensor.shape}')
                 audio_tensor = self.pad_or_truncate_waveform(audio_tensor, self.target_length)
-                audio[i] = audio_tensor.squeeze(0)
+                print(f'LIME audio shape after padding/truncating: {audio_tensor.shape}')
+                audios.append(audio_tensor)
 
             # Convert to spectrogram with proper shape [batch_size, 1, mel_bins, time]
-            audio = convert_to_spectrogram(audio, self.device)
+            batch_tensor = torch.stack(audios)
+            print(f'LIME audio shape before spectrogram conversion: {batch_tensor.shape}')
 
             # Ensure correct shape for batch normalization
             if audio.dim() == 3:
                 audio = audio.unsqueeze(1)  # Add channel dimension if missing
 
+            print(f'LIME audio spectrogram after unsqueeze shape: {audio.shape}')
             with torch.no_grad():
                 output_dict = self.predictor.model(audio)
             output_tensor = output_dict.detach().cpu().numpy()
@@ -56,6 +63,12 @@ class GtzanAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
         x = convert_to_spectrogram(x, self.device)
         x.requires_grad_(True)
         return x
+    
+    def shap_map_target_to_id(self, target: str) -> int:
+        return self.predictor.label_to_id[target]
+
+    def lrp_map_target_to_id(self, target: str) -> int:
+        return self.predictor.label_to_id[target]
 
     def get_lrp_predict_fn(self):
         class GtzanNNWrapper(torch.nn.Module):

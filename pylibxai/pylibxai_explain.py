@@ -5,8 +5,7 @@ import os
 
 from pylibxai.LRPExplainer import LRPExplainer
 from pylibxai.ShapExplainer.ShapExplainer import ShapExplainer
-from pylibxai.model_adapters import SotaModelsAdapter, PannsCnn14Adapter
-from pylibxai.model_adapters.GtzanAdapter import GtzanAdapter
+from pylibxai.model_adapters import HarmonicCNN, Cnn14Adapter, GtzanCNNAdapter
 from pylibxai.pylibxai_context import PylibxaiContext
 from pylibxai.Explainers import LimeExplainer
 from pylibxai.Interfaces import ViewType
@@ -24,6 +23,9 @@ def main():
                         help="Enable visualization of audio in browser-based UI.")
     parser.add_argument('-e', '--explainer', type=str, required=True,
                         help="Name of the explainer to use [lime, shap, lrp].")
+    parser.add_argument('-t', '--target', type=str, required=True,
+                        help="Name or index of the label to explain.\
+                              Mapping is done automatically based on the model if the model provides it.") 
     parser.add_argument('-i', '--input', type=str, required=True,
                         help="Path to the input file or directory.") 
     parser.add_argument('-w', '--workdir', type=str, required=True,
@@ -31,51 +33,57 @@ def main():
     parser.add_argument('-d', '--device', type=str, default=DEVICE,
                         help="Device to use for computation [cpu, cuda]. Default is 'cuda' if available, otherwise 'cpu'.")
     args = parser.parse_args()
+    
+    device = args.device if args.device is not None else DEVICE
+    assert device in ['cpu', 'cuda'], "Device must be either 'cpu' or 'cuda'."
+    
+    expls = args.explainer.split(",")
+    assert all(ex in ["lime", "shap", "lrp"] for ex in expls), \
+        "Invalid explainer specified. Available options: [lime, shap, lrp]."
 
     context = PylibxaiContext(args.workdir)
 
-    if args.model == "sota_music":
-        adapter = SotaModelsAdapter(model_type="hcnn", device=DEVICE)
-    elif args.model == "paans":
-        adapter = PannsCnn14Adapter(device=DEVICE)
-    elif args.model == "gtzan":
-        adapter = GtzanAdapter(model_path=GTZAN_MODEL_PATH, device=DEVICE)
+    if args.model == "HCNN":
+        adapter = HarmonicCNN(device=device)
+    elif args.model == "CNN14":
+        adapter = Cnn14Adapter(device=device)
+    elif args.model == "GtzanCNN":
+        adapter = GtzanCNNAdapter(model_path=GTZAN_MODEL_PATH, device=device)
     else:
-        print('Invalid value for -m/--model argument, available: [sota_music, paans, gtzan].')
+        print('Invalid value for -m/--model argument, available: [HCNN, CNN14, GtzanCNN].')
         return
     
-    print(f'Adapter(): {adapter}')
-    
     view_type = ViewType.WEBVIEW if args.visualize else ViewType.DEBUG
+    expl_count = len(expls)
+
+    # Attempt parsing label as an integer, if it fails then assume it's a string label
+    try:
+        target = int(args.target)
+    except ValueError:
+        target = args.target
 
     # copy input audio to workdir
     context.write_audio(args.input, os.path.join("input.wav"))
     context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
     
-    expls = args.explainer.split(",")
-    
     if "lime" in expls:
-        explainer = LimeExplainer(adapter, context, view_type=view_type)
+        view = view_type if expl_count == 1 else ViewType.NONE
+        expl_count -= 1
+        explainer = LimeExplainer(adapter, context, view_type=view)
         explainer.explain(args.input, target=None)
     if "lrp" in expls:
+        view = view_type if expl_count == 1 else ViewType.NONE
+        expl_count -= 1
         audio, _ = torchaudio.load(args.input, normalize=True)
-        # extract genre from filename
-        #genre = args.input.split("/")[-2]
-        #label_id = adapter.predictor.label_to_id[genre]
-        audio = audio.to(DEVICE)
-        
-        explainer = LRPExplainer(adapter, context, DEVICE, view_type=view_type)
-        explainer.explain(audio, target="")
+        audio = audio.to(device)
+        explainer = LRPExplainer(adapter, context, device, view_type=view)
     if "shap" in expls:
+        view = view_type if expl_count == 1 else ViewType.NONE
+        expl_count -= 1
         audio, _ = torchaudio.load(args.input, normalize=True)
-        print(f'torchaudio.load({args.input}, normalize=True) -> {audio.shape}')
-        # extract genre from filename
-        #genre = args.input.split("/")[-2]
-        #label_id = adapter.predictor.label_to_id[genre]
-        audio = audio.to(DEVICE)
-
-        explainer = ShapExplainer(adapter, context, DEVICE, view_type=view_type)
-        explainer.explain(audio, target=0)
+        audio = audio.to(device)
+        explainer = ShapExplainer(adapter, context, device, view_type=view)
+        explainer.explain(audio, target=target)
 
 if __name__ == '__main__':
     main()

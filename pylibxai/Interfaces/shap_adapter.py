@@ -11,3 +11,7 @@ class ShapAdapter(ABC):
     @abstractmethod
     def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor: pass
     """Returns a function that takes an audio input and returns the model's prediction for that input."""
+
+    @abstractmethod
+    def shap_map_target_to_id(self, target: str) -> int: pass
+    """Maps a target label to its corresponding ID."""

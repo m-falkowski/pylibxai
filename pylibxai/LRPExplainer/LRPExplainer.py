@@ -63,6 +63,8 @@ class LRPExplainer:
         return smoothed_attribution
     
     def explain(self, audio, target):
+        if isinstance(target, str):
+            target = self.model_adapter.shap_map_target_to_id(target)
         fig, _ = self.explain_instance_visualize(audio, target=target, type="original_image")
         self.context.write_plt_image(fig, os.path.join("lrp", "lrp_spectogram.png"))
 

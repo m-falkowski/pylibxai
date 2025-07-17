@@ -11,13 +11,10 @@ class PylibxaiContext:
         self.workdir = workdir
         
         if not os.path.exists(workdir):
-            #print(f'Workdir {workdir} exists, using it...')
             os.makedirs(workdir, exist_ok=True)
         elif workdir is None:
-            #print(f'Workdir {workdir} does not exist, creating it...')
             self.workdir = tempfile.mkdtemp()
             shutil.copytree(workdir, self.workdir)
-            #print(f'Created temp workdir: {self.workdir}')
 
         if not os.path.exists(os.path.join(self.workdir, "shap")):
             os.makedirs(os.path.join(self.workdir, "shap"))
@@ -39,7 +36,6 @@ class PylibxaiContext:
             }, f, indent=4)
 
     def write_label_mapping(self, labels, suffix):
-        print(f'labels: {labels}')
         path = os.path.join(self.workdir, suffix)
         with open(path, 'w') as f:
             json.dump(labels, f, indent=4)

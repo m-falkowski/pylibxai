@@ -3,12 +3,10 @@ import argparse
 import torchaudio
 import os
 
-from pylibxai.LRPExplainer import LRPExplainer
-from pylibxai.ShapExplainer.ShapExplainer import ShapExplainer
 from pylibxai.model_adapters import HarmonicCNN, Cnn14Adapter, GtzanCNNAdapter
 from pylibxai.pylibxai_context import PylibxaiContext
-from pylibxai.Explainers import LimeExplainer
-from pylibxai.Interfaces import ViewType
+from pylibxai.Explainers import LimeExplainer, ShapExplainer, LRPExplainer
+from pylibxai.Interfaces import ViewType, ModelLabelProvider
 from utils import get_install_path
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -64,7 +62,8 @@ def main():
 
     # copy input audio to workdir
     context.write_audio(args.input, os.path.join("input.wav"))
-    context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
+    if issubclass(type(adapter), ModelLabelProvider):
+        context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
     
     if "lime" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE

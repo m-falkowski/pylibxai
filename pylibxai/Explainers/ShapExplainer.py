@@ -9,7 +9,7 @@ import torch
 import os
 
 class ShapExplainer:
-    def __init__(self, model_adapter, context, device, view_type=None):
+    def __init__(self, model_adapter, context, device, view_type=None, port=9000):
         self.model_adapter = model_adapter
         predict_fn = model_adapter.get_shap_predict_fn()
         self.explainer = IntegratedGradients(predict_fn)
@@ -19,7 +19,7 @@ class ShapExplainer:
         self.context = context
         self.view_type = view_type
         if view_type == ViewType.WEBVIEW:
-            self.view = WebView(context, port=9000)
+            self.view = WebView(context, port=port)
         elif view_type == ViewType.DEBUG:
             self.view = DebugView(context)
 
@@ -63,7 +63,9 @@ class ShapExplainer:
     
     def explain(self, audio, target):
         if isinstance(target, str):
-            target = self.model_adapter.shap_map_target_to_id(target)
+            if not hasattr(self.model_adapter, 'map_target_to_id'):
+                raise ValueError("Model adapter does not support mapping target to ID.")
+            target = self.model_adapter.map_target_to_id(target)
         fig, _ = self.explain_instance_visualize(audio, target=target, type="original_image")
         self.context.write_plt_image(fig, os.path.join("shap", "shap_spectogram.png"))
 

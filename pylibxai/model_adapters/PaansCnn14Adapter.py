@@ -61,6 +61,12 @@ class Cnn14Adapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
     def get_label_mapping(self):
         """Returns the label mapping for the model."""
         return self.id_to_label
+    
+    def map_target_to_id(self, target: str) -> int:
+        if target in self.label_to_id:
+            return self.label_to_id[target]
+        else:
+            raise ValueError(f"Target '{target}' not found in label mapping.")
 
     def inference(self, audio):
         audio = move_data_to_device(audio, self.device)
@@ -97,19 +103,6 @@ class Cnn14Adapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
             return output_dict['clipwise_output']
 
         return predict_fn
-    
-    def shap_map_target_to_id(self, target: str) -> int:
-        if target in self.label_to_id:
-            return self.label_to_id[target]
-        else:
-            raise ValueError(f"Target '{target}' not found in label mapping.")
-
-    def lrp_map_target_to_id(self, target: str) -> int:
-        if target in self.label_to_id:
-            return self.label_to_id[target]
-        else:
-            raise ValueError(f"Target '{target}' not found in label mapping.")
-    
 
     def get_lime_predict_fn(self, input_length=None):
         length = 5 * 16000 if not input_length else input_length

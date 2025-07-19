@@ -9,7 +9,7 @@ import torch
 import os
 
 class LRPExplainer:
-    def __init__(self, model_adapter, context, device, view_type=None):
+    def __init__(self, model_adapter, context, device, view_type=None, port=9000):
         predict_fn = model_adapter.get_lrp_predict_fn()
         self.explainer = LRP(predict_fn)
         self.device = device
@@ -18,7 +18,7 @@ class LRPExplainer:
         self.context = context
         self.view_type = view_type
         if view_type == ViewType.WEBVIEW:
-            self.view = WebView(context, port=9000)
+            self.view = WebView(context, port=port)
         elif view_type == ViewType.DEBUG:
             self.view = DebugView(context)
 
@@ -64,7 +64,7 @@ class LRPExplainer:
     
     def explain(self, audio, target):
         if isinstance(target, str):
-            target = self.model_adapter.shap_map_target_to_id(target)
+            target = self.model_adapter.map_target_to_id(target)
         fig, _ = self.explain_instance_visualize(audio, target=target, type="original_image")
         self.context.write_plt_image(fig, os.path.join("lrp", "lrp_spectogram.png"))
 

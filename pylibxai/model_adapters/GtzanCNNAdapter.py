@@ -26,6 +26,9 @@ class GtzanCNNAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
     
     def get_label_mapping(self) -> Dict[int, str]:
         return self.predictor.label_to_id
+    
+    def map_target_to_id(self, target: str) -> int:
+        return self.predictor.label_to_id[target]
 
     def get_lime_predict_fn(self):
         self.predictor.model.eval()
@@ -63,12 +66,6 @@ class GtzanCNNAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
         x = convert_to_spectrogram(x, self.device)
         x.requires_grad_(True)
         return x
-    
-    def shap_map_target_to_id(self, target: str) -> int:
-        return self.predictor.label_to_id[target]
-
-    def lrp_map_target_to_id(self, target: str) -> int:
-        return self.predictor.label_to_id[target]
 
     def get_lrp_predict_fn(self):
         class GtzanNNWrapper(torch.nn.Module):

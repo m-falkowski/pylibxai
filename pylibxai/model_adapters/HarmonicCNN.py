@@ -5,6 +5,7 @@ from argparse import Namespace
 import torch
 from torch.autograd import Variable
 import numpy as np
+from typing import Callable
 
 from pathlib import Path
 from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider
@@ -17,8 +18,8 @@ from training.eval import Predict  # can only be imported after appending path_s
 TAGS = ['genre---downtempo', 'genre---ambient', 'genre---rock', 'instrument---synthesizer', 'genre---atmospheric', 'genre---indie', 'instrument---electricpiano', 'genre---newage', 'instrument---strings', 'instrument---drums', 'instrument---drummachine', 'genre---techno', 'instrument---guitar', 'genre---alternative', 'genre---easylistening', 'genre---instrumentalpop', 'genre---chillout', 'genre---metal', 'mood/theme---happy', 'genre---lounge', 'genre---reggae', 'genre---popfolk', 'genre---orchestral', 'instrument---acousticguitar', 'genre---poprock', 'instrument---piano', 'genre---trance', 'genre---dance', 'instrument---electricguitar', 'genre---soundtrack', 'genre---house', 'genre---hiphop', 'genre---classical', 'mood/theme---energetic', 'genre---electronic', 'genre---world', 'genre---experimental', 'instrument---violin', 'genre---folk', 'mood/theme---emotional', 'instrument---voice', 'instrument---keyboard', 'genre---pop', 'instrument---bass', 'instrument---computer', 'mood/theme---film', 'genre---triphop', 'genre---jazz', 'genre---funk', 'mood/theme---relaxing']
 
 class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
-    def __init__(self, device='cuda', **kwargs):
-        """Audio tagging inference wrapper.
+    def __init__(self, device='cuda'):
+        """Harmonic CNN model adapter for music tagging.
         """
         assert device in ['cpu', 'cuda']
         
@@ -27,32 +28,16 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
         else:
             self.device = 'cpu'
             
-        self.model_map = {
-            'fcn': 29 * 16000,
-            'musicnn': 3 * 16000,
-            'crnn': 29 * 16000,
-            'sample': 59049,
-            'se': 59049,
-            'attention': 15 * 16000,
-            'hcnn': 5 * 16000,
-            'short': 59049,
-            'short_res': 59049
-        }
-    
         path_models = os.path.join(path_sota, 'models')
 
-        config = Namespace()
-        if kwargs.get('dataset') is not None:
-            config.dataset = kwargs['dataset']
-        else:
-            config.dataset = "jamendo"  # we use the model trained on MSD
-        
         self.label_to_id = {i: v for i, v in enumerate(TAGS)}
         self.id_to_label = {v: i for i, v in enumerate(TAGS)}
 
+        config = Namespace()
+        config.dataset = "jamendo"  # we use the model trained on MSD
         config.model_type = "hcnn"
         config.model_load_path = os.path.join(path_models, config.dataset, config.model_type, 'best_model.pth')
-        config.input_length = self.model_map["hcnn"]
+        config.input_length = 5 * 16000
         config.batch_size = 1  # we analyze one chunk of the audio
         self.model = Predict.get_model(config)
         
@@ -63,8 +48,14 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
     def get_label_mapping(self):
         """Returns the label mapping for the model."""
         return self.label_to_id
-    
-    def get_shap_predict_fn(self):
+
+    def map_target_to_id(self, target: str) -> int:
+        if target in self.label_to_id:
+            return self.label_to_id[target]
+        else:
+            raise ValueError(f"Target '{target}' not found in label mapping.")
+
+    def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
         self.model.load_state_dict(self.model_state)
         self.model.cuda()
         self.model.eval()
@@ -90,23 +81,10 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
     def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
         return x
     
-    def shap_map_target_to_id(self, target: str) -> int:
-        if target in self.label_to_id:
-            return self.label_to_id[target]
-        else:
-            raise ValueError(f"Target '{target}' not found in label mapping.")
-
-
-    def lrp_map_target_to_id(self, target: str) -> int:
-        if target in self.label_to_id:
-            return self.label_to_id[target]
-        else:
-            raise ValueError(f"Target '{target}' not found in label mapping.")
-
-    def get_lrp_predict_fn(self):
-        class SotaNNWrapper(torch.nn.Module):
+    def get_lrp_predict_fn(self) -> torch.nn.Module:
+        class HarmonicCNNWrapper(torch.nn.Module):
             def __init__(self, model, device, model_state):
-                super(SotaNNWrapper, self).__init__()
+                super(HarmonicCNNWrapper, self).__init__()
                 self.model_state = model_state
                 self.model = model 
                 self.device = device
@@ -119,7 +97,7 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
                 # Make sure input requires gradients for SHAP
                 if not x.requires_grad:
                     x = x.detach().clone().requires_grad_(True)
-            
+
                 if x.device.type != 'cuda':
                     x = x.cuda()
 
@@ -127,9 +105,9 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
                 output_tensor = output_dict
                 return output_tensor
 
-        return SotaNNWrapper(self.model, self.device, self.model_state)
+        return HarmonicCNNWrapper(self.model, self.device, self.model_state)
 
-    def get_lime_predict_fn(self):
+    def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
         self.model.load_state_dict(self.model_state)
         self.model.cuda()
         self.model.eval()
@@ -148,8 +126,3 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
             return np.array(output_tensor)
 
         return predict_fn
-
-def composition_fn(x):
-    if torch.is_tensor(x):
-        x = x.detach().cpu().numpy()
-    return x

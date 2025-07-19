@@ -5,12 +5,12 @@ from pylibxai.Views import WebView, DebugView
 import os
 
 class LimeExplainer:
-    def __init__(self, adapter, context, view_type):
+    def __init__(self, adapter, context, view_type, port=9000):
         self.adapter = adapter
         self.context = context
         self.view_type = view_type
         if view_type == ViewType.WEBVIEW:
-            self.view = WebView(context, port=9000)
+            self.view = WebView(context, port=port)
         elif view_type == ViewType.DEBUG:
             self.view = DebugView(context)
 

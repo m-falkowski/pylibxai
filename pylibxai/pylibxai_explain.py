@@ -28,10 +28,17 @@ def main():
                         help="Path to the input file or directory.") 
     parser.add_argument('-w', '--workdir', type=str, required=True,
                         help="Path to the workdir directory.")
+    parser.add_argument('-p', '--port', type=str, required=True,
+                        help="Port to use for the web server.")
     parser.add_argument('-d', '--device', type=str, default=DEVICE,
                         help="Device to use for computation [cpu, cuda]. Default is 'cuda' if available, otherwise 'cpu'.")
     args = parser.parse_args()
-    
+   
+    try:
+        port = int(args.port) if args.port else 9000
+    except ValueError:
+        raise ValueError(f"Invalid port number: {args.port}.")
+
     device = args.device if args.device is not None else DEVICE
     assert device in ['cpu', 'cuda'], "Device must be either 'cpu' or 'cuda'."
     
@@ -68,20 +75,20 @@ def main():
     if "lime" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE
         expl_count -= 1
-        explainer = LimeExplainer(adapter, context, view_type=view)
+        explainer = LimeExplainer(adapter, context, view_type=view, port=port)
         explainer.explain(args.input, target=None)
     if "lrp" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE
         expl_count -= 1
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
-        explainer = LRPExplainer(adapter, context, device, view_type=view)
+        explainer = LRPExplainer(adapter, context, device, view_type=view, port=port)
     if "shap" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE
         expl_count -= 1
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
-        explainer = ShapExplainer(adapter, context, device, view_type=view)
+        explainer = ShapExplainer(adapter, context, device, view_type=view, port=port)
         explainer.explain(audio, target=target)
 
 if __name__ == '__main__':

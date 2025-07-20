@@ -1,11 +1,13 @@
 from pylibxai.AudioLoader import RawAudioLoader
 from pylibxai.audioLIME import lime_audio, SpleeterFactorization
-from pylibxai.Interfaces import ViewType
+from pylibxai.Interfaces import ViewType, LimeAdapter
 from pylibxai.Views import WebView, DebugView
 import os
 
 class LimeExplainer:
     def __init__(self, adapter, context, view_type, port=9000):
+        if not issubclass(type(adapter), LimeAdapter):
+            raise TypeError("LimeExplainer must be initialized with a model adapter that implements LimeAdapter interface.")
         self.adapter = adapter
         self.context = context
         self.view_type = view_type
@@ -13,6 +15,10 @@ class LimeExplainer:
             self.view = WebView(context, port=port)
         elif view_type == ViewType.DEBUG:
             self.view = DebugView(context)
+        elif view_type == ViewType.NONE:
+            self.view = None
+        else:
+            raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
 
     def explain(self, audio, target=None): 
         audio_loader = RawAudioLoader(audio)

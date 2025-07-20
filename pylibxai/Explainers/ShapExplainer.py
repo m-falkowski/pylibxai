@@ -2,7 +2,7 @@ from captum.attr import IntegratedGradients
 from captum.attr import visualization as viz
 import numpy as np
 from pylibxai.models.GtzanCNN.preprocessing import convert_to_spectrogram
-from pylibxai.Interfaces import ViewType
+from pylibxai.Interfaces import ViewType, ShapAdapter
 from pylibxai.Views import WebView, DebugView
 import matplotlib.pyplot as plt
 import torch
@@ -10,6 +10,8 @@ import os
 
 class ShapExplainer:
     def __init__(self, model_adapter, context, device, view_type=None, port=9000):
+        if not issubclass(type(model_adapter), ShapAdapter):
+            raise TypeError("ShapExplainer must be initialized with a model adapter that implements ShapAdapter interface.")
         self.model_adapter = model_adapter
         predict_fn = model_adapter.get_shap_predict_fn()
         self.explainer = IntegratedGradients(predict_fn)
@@ -22,6 +24,10 @@ class ShapExplainer:
             self.view = WebView(context, port=port)
         elif view_type == ViewType.DEBUG:
             self.view = DebugView(context)
+        elif view_type == ViewType.NONE:
+            self.view = None
+        else:
+            raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
 
     def explain_instance(self, audio, target, background=None):
         audio = self.model_adapter.shap_prepare_inference_input(audio)

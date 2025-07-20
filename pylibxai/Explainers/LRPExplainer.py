@@ -2,7 +2,7 @@ from captum.attr import LRP
 from captum.attr import visualization as viz
 import numpy as np
 from pylibxai.models.GtzanCNN.preprocessing import convert_to_spectrogram
-from pylibxai.Interfaces import ViewType
+from pylibxai.Interfaces import ViewType, LrpAdapter 
 from pylibxai.Views import WebView, DebugView
 import matplotlib.pyplot as plt
 import torch
@@ -10,6 +10,8 @@ import os
 
 class LRPExplainer:
     def __init__(self, model_adapter, context, device, view_type=None, port=9000):
+        if not issubclass(type(model_adapter), LrpAdapter):
+            raise TypeError("LRPExplainer must be initialized with a model adapter that implements LRPAdapter interface.")
         predict_fn = model_adapter.get_lrp_predict_fn()
         self.explainer = LRP(predict_fn)
         self.device = device
@@ -21,6 +23,10 @@ class LRPExplainer:
             self.view = WebView(context, port=port)
         elif view_type == ViewType.DEBUG:
             self.view = DebugView(context)
+        elif view_type == ViewType.NONE:
+            self.view = None
+        else:
+            raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
 
     def explain_instance(self, audio, target, background=None):
         audio = convert_to_spectrogram(audio, self.device)

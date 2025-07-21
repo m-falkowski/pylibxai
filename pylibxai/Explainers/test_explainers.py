@@ -5,10 +5,10 @@ import numpy as np
 from unittest.mock import Mock, MagicMock, patch
 from pathlib import Path
 
-from pylibxai.Explainers import LimeExplainer, ShapExplainer, LRPExplainer
+from pylibxai.Explainers import LimeExplainer, IGradientsExplainer, LRPExplainer
 from pylibxai.Interfaces import (
     LimeAdapter, 
-    ShapAdapter, 
+    IGradientsAdapter, 
     LrpAdapter, 
     ViewType,
     ModelLabelProvider
@@ -33,20 +33,20 @@ class TestExplainerTypeChecking:
         
         assert "LimeExplainer must be initialized with a model adapter that implements LimeAdapter interface" in str(excinfo.value)
 
-    def test_shap_explainer_with_non_shap_adapter_raises_error(self):
-        """Test ShapExplainer rejects adapters that don't implement ShapAdapter"""
+    def test_igrad_explainer_with_non_igrad_adapter_raises_error(self):
+        """Test IGradientsExplainer rejects adapters that don't implement IGradientsAdapter"""
         
-        class NonShapAdapter:
+        class NonIGradientsAdapter:
             def random_method(self):
-                return "not a shap adapter"
+                return "not a integrated gradients adapter"
         
         context = Mock()
-        adapter = NonShapAdapter()
+        adapter = NonIGradientsAdapter()
         
         with pytest.raises(TypeError) as excinfo:
-            ShapExplainer(adapter, context, "cpu")
+            IGradientsExplainer(adapter, context, "cpu")
         
-        assert "ShapExplainer must be initialized with a model adapter that implements ShapAdapter interface" in str(excinfo.value)
+        assert "IGradientsExplainer must be initialized with a model adapter that implements IGradientsAdapter interface" in str(excinfo.value)
 
     def test_lrp_explainer_with_non_lrp_adapter_raises_error(self):
         """Test LRPExplainer rejects adapters that don't implement LrpAdapter"""
@@ -82,7 +82,7 @@ class TestExplainerTypeChecking:
                 LimeExplainer(invalid_adapter, context, ViewType.DEBUG)
             
             with pytest.raises(TypeError):
-                ShapExplainer(invalid_adapter, context, "cpu")
+                IGradientsExplainer(invalid_adapter, context, "cpu")
             
             with pytest.raises(TypeError):
                 LRPExplainer(invalid_adapter, context, "cpu")
@@ -99,14 +99,14 @@ class TestViewTypeValidation:
         return MockLimeAdapter()
 
     @pytest.fixture
-    def mock_shap_adapter(self):
-        class MockShapAdapter(ShapAdapter):
-            def get_shap_predict_fn(self):
+    def mock_igrad_adapter(self):
+        class MockIGradientsAdapter(IGradientsAdapter):
+            def get_igrad_predict_fn(self):
                 return lambda x: torch.tensor([0.1, 0.9])
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x.unsqueeze(0)
-        return MockShapAdapter()
+        return MockIGradientsAdapter()
 
     @pytest.fixture
     def mock_lrp_adapter(self):
@@ -139,12 +139,12 @@ class TestViewTypeValidation:
             assert "Invalid view type" in str(excinfo.value)
             assert "Must be one of WEBVIEW, DEBUG, or NONE" in str(excinfo.value)
 
-    def test_shap_explainer_invalid_view_type_raises_error(self, mock_shap_adapter):
-        """Test ShapExplainer with invalid ViewType"""
+    def test_igrad_explainer_invalid_view_type_raises_error(self, mock_igrad_adapter):
+        """Test IGradientsExplainer with invalid ViewType"""
         context = Mock()
         
         with pytest.raises(ValueError) as excinfo:
-            ShapExplainer(mock_shap_adapter, context, "cpu", view_type="invalid")
+            IGradientsExplainer(mock_igrad_adapter, context, "cpu", view_type="invalid")
         
         assert "Invalid view type: invalid" in str(excinfo.value)
 
@@ -157,24 +157,24 @@ class TestViewTypeValidation:
         
         assert "Invalid view type: 999" in str(excinfo.value)
 
-    def test_valid_view_types_work(self, mock_shap_adapter):
+    def test_valid_view_types_work(self, mock_igrad_adapter):
         """Test that valid ViewType enums work correctly"""
         context = Mock()
         
         # Test WEBVIEW - just verify it creates an explainer without error
         with patch('captum.attr.IntegratedGradients'):
-            explainer = ShapExplainer(mock_shap_adapter, context, "cpu", view_type=ViewType.WEBVIEW, port=8080)
+            explainer = IGradientsExplainer(mock_igrad_adapter, context, "cpu", view_type=ViewType.WEBVIEW, port=8080)
             assert explainer.view is not None
         
         # Test DEBUG
         with patch('captum.attr.IntegratedGradients'):
-            explainer = ShapExplainer(mock_shap_adapter, context, "cpu", view_type=ViewType.DEBUG)
+            explainer = IGradientsExplainer(mock_igrad_adapter, context, "cpu", view_type=ViewType.DEBUG)
             assert explainer.view is not None
         
         # Test NONE
         with patch('captum.attr.IntegratedGradients'):
-            explainer = ShapExplainer(mock_shap_adapter, context, "cpu", view_type=ViewType.NONE)
-            # Note: ShapExplainer creates DebugView for NONE, similar to LimeExplainer
+            explainer = IGradientsExplainer(mock_igrad_adapter, context, "cpu", view_type=ViewType.NONE)
+            # Note: IGradientsExplainer creates DebugView for NONE, similar to LimeExplainer
             assert explainer.view is not None
 
 
@@ -193,14 +193,14 @@ class TestExplainerInitialization:
         return ValidLimeAdapter()
 
     @pytest.fixture
-    def valid_shap_adapter(self):
-        class ValidShapAdapter(ShapAdapter):
-            def get_shap_predict_fn(self):
+    def valid_igrad_adapter(self):
+        class ValidIGradientsAdapter(IGradientsAdapter):
+            def get_igrad_predict_fn(self):
                 return lambda x: torch.tensor([0.2, 0.8])
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x
-        return ValidShapAdapter()
+        return ValidIGradientsAdapter()
 
     @pytest.fixture
     def valid_lrp_adapter(self):
@@ -220,11 +220,11 @@ class TestExplainerInitialization:
         assert explainer.view is not None
 
     @patch('captum.attr.IntegratedGradients')
-    def test_shap_explainer_initialization_success(self, mock_ig, valid_shap_adapter, context):
-        """Test successful ShapExplainer initialization"""
-        explainer = ShapExplainer(valid_shap_adapter, context, "cuda", ViewType.NONE)
+    def test_igrad_explainer_initialization_success(self, mock_ig, valid_igrad_adapter, context):
+        """Test successful IGradientsExplainer initialization"""
+        explainer = IGradientsExplainer(valid_igrad_adapter, context, "cuda", ViewType.NONE)
         
-        assert explainer.model_adapter == valid_shap_adapter
+        assert explainer.model_adapter == valid_igrad_adapter
         assert explainer.context == context
         assert explainer.device == "cuda"
         assert explainer.view_type == ViewType.NONE
@@ -269,12 +269,12 @@ class TestExplainerMethodBehavior:
         return context
 
     @pytest.fixture
-    def shap_adapter_with_label_provider(self):
-        class ShapAdapterWithLabels(ShapAdapter, ModelLabelProvider):
-            def get_shap_predict_fn(self):
+    def igrad_adapter_with_label_provider(self):
+        class IGradientsAdapterWithLabels(IGradientsAdapter, ModelLabelProvider):
+            def get_igrad_predict_fn(self):
                 return lambda x: torch.tensor([0.1, 0.9])
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x.unsqueeze(0) if len(x.shape) == 1 else x
             
             def get_label_mapping(self):
@@ -284,7 +284,7 @@ class TestExplainerMethodBehavior:
                 mapping = {"rock": 0, "pop": 1}
                 return mapping.get(target, -1)
         
-        return ShapAdapterWithLabels()
+        return IGradientsAdapterWithLabels()
 
     @pytest.fixture
     def lrp_adapter_with_label_provider(self):
@@ -302,18 +302,18 @@ class TestExplainerMethodBehavior:
         return LrpAdapterWithLabels()
 
     @patch('captum.attr.IntegratedGradients')
-    def test_shap_explainer_adapter_without_label_mapping_raises_error(self, mock_ig, mock_context):
-        """Test SHAP explainer with adapter that doesn't support label mapping"""
+    def test_igrad_explainer_adapter_without_label_mapping_raises_error(self, mock_ig, mock_context):
+        """Test Integrated Gradients explainer with adapter that doesn't support label mapping"""
         
-        class ShapAdapterWithoutLabels(ShapAdapter):
-            def get_shap_predict_fn(self):
+        class IGradientsAdapterWithoutLabels(IGradientsAdapter):
+            def get_igrad_predict_fn(self):
                 return lambda x: torch.tensor([0.1, 0.9])
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x
         
-        adapter = ShapAdapterWithoutLabels()
-        explainer = ShapExplainer(adapter, mock_context, "cpu", ViewType.NONE)
+        adapter = IGradientsAdapterWithoutLabels()
+        explainer = IGradientsExplainer(adapter, mock_context, "cpu", ViewType.NONE)
         
         audio = torch.randn(1, 100)
         
@@ -359,28 +359,28 @@ class TestExplainerErrorHandling:
         assert explainer.context is None
 
     def test_explainer_with_invalid_device(self):
-        """Test SHAP/LRP explainers with invalid device strings"""
+        """Test IntegratedGradients/LRP explainers with invalid device strings"""
         
-        class MockShapAdapter(ShapAdapter):
-            def get_shap_predict_fn(self):
+        class MockIGradientsAdapter(IGradientsAdapter):
+            def get_igrad_predict_fn(self):
                 return lambda x: torch.tensor([0.1, 0.9])
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x
         
-        adapter = MockShapAdapter()
+        adapter = MockIGradientsAdapter()
         context = Mock()
         
         # Invalid device should still initialize but may cause issues later
-        explainer = ShapExplainer(adapter, context, "invalid_device", ViewType.NONE)
+        explainer = IGradientsExplainer(adapter, context, "invalid_device", ViewType.NONE)
         assert explainer.device == "invalid_device"
 
     @patch('captum.attr.IntegratedGradients')
-    def test_shap_explainer_attribution_error_handling(self, mock_ig):
-        """Test SHAP explainer handles attribution errors"""
+    def test_igrad_explainer_attribution_error_handling(self, mock_ig):
+        """Test Integrated Gradients explainer handles attribution errors"""
         
-        class MockShapAdapter(ShapAdapter):
-            def get_shap_predict_fn(self):
+        class MockIGradientsAdapter(IGradientsAdapter):
+            def get_igrad_predict_fn(self):
                 # Return proper batch output for target selection
                 def predict_fn(x):
                     if len(x.shape) == 1:
@@ -390,7 +390,7 @@ class TestExplainerErrorHandling:
                     return output
                 return predict_fn
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x
         
         # Mock explainer that raises an error
@@ -398,9 +398,9 @@ class TestExplainerErrorHandling:
         mock_explainer.attribute.side_effect = RuntimeError("Attribution failed")
         mock_ig.return_value = mock_explainer
         
-        adapter = MockShapAdapter()
+        adapter = MockIGradientsAdapter()
         context = Mock()
-        explainer = ShapExplainer(adapter, context, "cpu", ViewType.NONE)
+        explainer = IGradientsExplainer(adapter, context, "cpu", ViewType.NONE)
         
         audio = torch.randn(100)
         
@@ -417,14 +417,14 @@ class TestExplainerIntegration:
     @pytest.fixture
     def full_adapter(self):
         """Adapter implementing all interfaces"""
-        class FullAdapter(LimeAdapter, ShapAdapter, LrpAdapter, ModelLabelProvider):
+        class FullAdapter(LimeAdapter, IGradientsAdapter, LrpAdapter, ModelLabelProvider):
             def get_lime_predict_fn(self):
                 return lambda x: np.array([0.3, 0.7])
             
-            def get_shap_predict_fn(self):
+            def get_igrad_predict_fn(self):
                 return lambda x: torch.tensor([0.2, 0.8])
             
-            def shap_prepare_inference_input(self, x):
+            def igrad_prepare_inference_input(self, x):
                 return x.unsqueeze(0) if len(x.shape) == 1 else x
             
             def get_lrp_predict_fn(self):
@@ -447,14 +447,14 @@ class TestExplainerIntegration:
         lime_explainer = LimeExplainer(full_adapter, context, ViewType.NONE)
         
         with patch('captum.attr.IntegratedGradients'):
-            shap_explainer = ShapExplainer(full_adapter, context, "cpu", ViewType.NONE)
+            igrad_explainer = IGradientsExplainer(full_adapter, context, "cpu", ViewType.NONE)
         
         with patch('captum.attr.LRP'):
             lrp_explainer = LRPExplainer(full_adapter, context, "cpu", ViewType.NONE)
         
         # All should reference the same adapter
         assert lime_explainer.adapter == full_adapter
-        assert shap_explainer.model_adapter == full_adapter
+        assert igrad_explainer.model_adapter == full_adapter
         # Note: LRP explainer doesn't store adapter reference directly
 
     def test_explainer_view_management(self, full_adapter):

@@ -23,12 +23,12 @@ function Sidebar({ onNavigate, currentSection }) {
           Model Information
         </Nav.Link>
         <Nav.Link 
-          href="#shap" 
-          className={`d-flex align-items-center${currentSection === 'shap' ? ' active' : ''}`}
-          onClick={() => onNavigate('shap')}
+          href="#igradients" 
+          className={`d-flex align-items-center${currentSection === 'igradients' ? ' active' : ''}`}
+          onClick={() => onNavigate('igradients')}
         >
           <FontAwesomeIcon icon={faChartBar} className="me-2" />
-          SHAP
+          Integrated gradients
         </Nav.Link>
         <Nav.Link 
           href="#lime" 

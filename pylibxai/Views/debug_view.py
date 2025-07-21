@@ -18,7 +18,7 @@ class DebugView(ViewInterface):
         print()
         
         # Display content of each subdirectory
-        subdirs = ["shap", "lrp", "lime"]
+        subdirs = ["igradients", "lrp", "lime"]
         for subdir in subdirs:
             subdir_path = os.path.join(self.context.workdir, subdir)
             if os.path.exists(subdir_path):

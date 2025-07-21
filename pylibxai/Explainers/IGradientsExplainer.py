@@ -2,18 +2,18 @@ from captum.attr import IntegratedGradients
 from captum.attr import visualization as viz
 import numpy as np
 from pylibxai.models.GtzanCNN.preprocessing import convert_to_spectrogram
-from pylibxai.Interfaces import ViewType, ShapAdapter
+from pylibxai.Interfaces import ViewType, IGradientsAdapter
 from pylibxai.Views import WebView, DebugView
 import matplotlib.pyplot as plt
 import torch
 import os
 
-class ShapExplainer:
+class IGradientsExplainer:
     def __init__(self, model_adapter, context, device, view_type=None, port=9000):
-        if not issubclass(type(model_adapter), ShapAdapter):
-            raise TypeError("ShapExplainer must be initialized with a model adapter that implements ShapAdapter interface.")
+        if not issubclass(type(model_adapter), IGradientsAdapter):
+            raise TypeError("IGradientsExplainer must be initialized with a model adapter that implements IGradientsAdapter interface.")
         self.model_adapter = model_adapter
-        predict_fn = model_adapter.get_shap_predict_fn()
+        predict_fn = model_adapter.get_igrad_predict_fn()
         self.explainer = IntegratedGradients(predict_fn)
         self.device = device
         self.attribution = None
@@ -30,12 +30,12 @@ class ShapExplainer:
             raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
 
     def explain_instance(self, audio, target, background=None):
-        audio = self.model_adapter.shap_prepare_inference_input(audio)
+        audio = self.model_adapter.igrad_prepare_inference_input(audio)
         attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
         return attributions, delta
     
     def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):
-        audio = self.model_adapter.shap_prepare_inference_input(audio)
+        audio = self.model_adapter.igrad_prepare_inference_input(audio)
         attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
         self.attribution = attributions
         self.delta = delta
@@ -73,13 +73,13 @@ class ShapExplainer:
                 raise ValueError("Model adapter does not support mapping target to ID.")
             target = self.model_adapter.map_target_to_id(target)
         fig, _ = self.explain_instance_visualize(audio, target=target, type="original_image")
-        self.context.write_plt_image(fig, os.path.join("shap", "shap_spectogram.png"))
+        self.context.write_plt_image(fig, os.path.join("igrad", "igrad_spectogram.png"))
 
         fig, _ = self.explain_instance_visualize(audio, target=target, type="heat_map")
-        self.context.write_plt_image(fig, os.path.join("shap", "shap_attribution_heat_map.png"))
+        self.context.write_plt_image(fig, os.path.join("igrad", "igrad_attribution_heat_map.png"))
 
         attribution = self.get_smoothed_attribution()
-        self.context.write_attribution(attribution, os.path.join("shap", "shap_attributions.json"))
+        self.context.write_attribution(attribution, os.path.join("igrad", "igrad_attributions.json"))
        
         if self.view_type == ViewType.WEBVIEW:
             self.view.start()

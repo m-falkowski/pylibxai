@@ -16,8 +16,8 @@ class PylibxaiContext:
             self.workdir = tempfile.mkdtemp()
             shutil.copytree(workdir, self.workdir)
 
-        if not os.path.exists(os.path.join(self.workdir, "shap")):
-            os.makedirs(os.path.join(self.workdir, "shap"))
+        if not os.path.exists(os.path.join(self.workdir, "igrad")):
+            os.makedirs(os.path.join(self.workdir, "igrad"))
 
         if not os.path.exists(os.path.join(self.workdir, "lrp")):
             os.makedirs(os.path.join(self.workdir, "lrp"))

@@ -3,7 +3,7 @@ from torch.autograd import Variable
 from .panns_inference import Cnn14, labels
 import numpy as np
 
-from pylibxai.Interfaces import LimeAdapter, ShapAdapter, ModelLabelProvider
+from pylibxai.Interfaces import LimeAdapter, IGradientsAdapter, ModelLabelProvider
 from utils import get_install_path
 
 def move_data_to_device(x, device):
@@ -16,7 +16,7 @@ def move_data_to_device(x, device):
 
     return x.to(device)
 
-class Cnn14Adapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
+class Cnn14Adapter(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
     def __init__(self, device='cuda'):
         """Audio tagging inference wrapper.
         """
@@ -80,12 +80,12 @@ class Cnn14Adapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
 
         return clipwise_output, embedding
     
-    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+    def igrad_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
         return x
     
-    def get_shap_predict_fn(self):
+    def get_igrad_predict_fn(self):
         def predict_fn(x):
-            # Make sure input requires gradients for SHAP
+            # Make sure input requires gradients for Integrated Gradients
             if not x.requires_grad:
                 x = x.detach().clone().requires_grad_(True)
                 

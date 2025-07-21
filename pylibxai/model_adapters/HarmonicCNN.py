@@ -8,7 +8,7 @@ import numpy as np
 from typing import Callable
 
 from pathlib import Path
-from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider
+from pylibxai.Interfaces import LrpAdapter, LimeAdapter, IGradientsAdapter, ModelLabelProvider
 
 path_sota = str(Path.home() / 'Desktop' / 'pylibxai' / 'pylibxai' / 'models' / 'sota-music-tagging-models')
 sys.path.append(path_sota)
@@ -17,7 +17,7 @@ from training.eval import Predict  # can only be imported after appending path_s
 
 TAGS = ['genre---downtempo', 'genre---ambient', 'genre---rock', 'instrument---synthesizer', 'genre---atmospheric', 'genre---indie', 'instrument---electricpiano', 'genre---newage', 'instrument---strings', 'instrument---drums', 'instrument---drummachine', 'genre---techno', 'instrument---guitar', 'genre---alternative', 'genre---easylistening', 'genre---instrumentalpop', 'genre---chillout', 'genre---metal', 'mood/theme---happy', 'genre---lounge', 'genre---reggae', 'genre---popfolk', 'genre---orchestral', 'instrument---acousticguitar', 'genre---poprock', 'instrument---piano', 'genre---trance', 'genre---dance', 'instrument---electricguitar', 'genre---soundtrack', 'genre---house', 'genre---hiphop', 'genre---classical', 'mood/theme---energetic', 'genre---electronic', 'genre---world', 'genre---experimental', 'instrument---violin', 'genre---folk', 'mood/theme---emotional', 'instrument---voice', 'instrument---keyboard', 'genre---pop', 'instrument---bass', 'instrument---computer', 'mood/theme---film', 'genre---triphop', 'genre---jazz', 'genre---funk', 'mood/theme---relaxing']
 
-class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
+class HarmonicCNN(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
     def __init__(self, device='cuda'):
         """Harmonic CNN model adapter for music tagging.
         """
@@ -55,13 +55,13 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
         else:
             raise ValueError(f"Target '{target}' not found in label mapping.")
 
-    def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
+    def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
         self.model.load_state_dict(self.model_state)
         self.model.cuda()
         self.model.eval()
 
         def predict_fn(x):
-            # Make sure input requires gradients for SHAP
+            # Make sure input requires gradients for Integrated Gradients
             if not x.requires_grad:
                 x = x.detach().clone().requires_grad_(True)
             
@@ -73,12 +73,11 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
             output_dict = self.model(x)
             
             output_tensor = output_dict
-            print(f'SHAP output_tensor shape: {output_tensor.shape}, type: {type(output_tensor)}')
             return output_tensor
 
         return predict_fn
     
-    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+    def igrad_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
         return x
     
     def get_lrp_predict_fn(self) -> torch.nn.Module:
@@ -94,7 +93,7 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
                 self.model.cuda()
                 self.model.eval()
 
-                # Make sure input requires gradients for SHAP
+                # Make sure input requires gradients for Integrated Gradients
                 if not x.requires_grad:
                     x = x.detach().clone().requires_grad_(True)
 

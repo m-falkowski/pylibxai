@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState, useContext } from 'react'
 import Chart from 'chart.js/auto'
 import WaveSurfer from 'wavesurfer.js'
-import './Shap.css'
+import './Igradients.css'
 import { NotificationContext } from '../App'
 
-function Shap() {
+function Igradients() {
   const chartRef = useRef(null)
   const chartInstance = useRef(null)
   const waveformRef = useRef(null)
@@ -47,11 +47,11 @@ function Shap() {
   }
 
   useEffect(() => {
-    // Fetch SHAP attributions data
+    // Fetch Integrated Gradients attributions data
     const fetchAttributions = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch(`${staticBaseUrl}/shap/shap_attributions.json`)
+        const response = await fetch(`${staticBaseUrl}/igrad/igrad_attributions.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
@@ -63,7 +63,7 @@ function Shap() {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        pushNotification({ type: 'error', message: `SHAP: ${error.message}` })
+        pushNotification({ type: 'error', message: `Integrated Gradients: ${error.message}` })
       }
     }
     fetchAttributions()
@@ -84,7 +84,7 @@ function Shap() {
       data: {
         labels: labels,
         datasets: [{
-          label: `SHAP Attribution Values`,
+          label: `Integrated Gradients Attribution Values`,
           data: attributions,
           fill: false,
           borderColor: 'rgb(42, 123, 198)',
@@ -97,7 +97,7 @@ function Shap() {
         plugins: {
           title: {
             display: true,
-            text: 'SHAP Attributions'
+            text: 'Integrated Gradients Attributions'
           },
           tooltip: {
             callbacks: {
@@ -146,7 +146,7 @@ function Shap() {
       try {
         await wavesurfer.current.load(`${staticBaseUrl}/input.wav`)
       } catch (error) {
-        pushNotification({ type: 'error', message: `SHAP: Failed to load audio: ${error.message}` })
+        pushNotification({ type: 'error', message: `Integrated Gradients: Failed to load audio: ${error.message}` })
       }
     }
     loadAudio()
@@ -189,7 +189,7 @@ function Shap() {
         </section>
         <section className="mb-5">
           <div className="section-header">
-            <h2 className="fw-bolder">SHAP Attribution Image</h2>
+            <h2 className="fw-bolder">Integrated Gradients Attribution Image</h2>
             <div className="d-flex align-items-center gap-2">
               <button 
                 className="collapse-toggle"
@@ -201,11 +201,11 @@ function Shap() {
             </div>
           </div>
           <div className={`image-container ${imageCollapsed ? 'd-none' : ''} ${imageAnimating ? (imageCollapsed ? 'collapsing' : 'expanding') : ''}`}>
-            <p>Visual representation of SHAP attributions</p>
+            <p>Visual representation of Integrated Gradients attributions</p>
             <img 
-              src={`${staticBaseUrl}/shap/${showAttribution ? 'shap_attribution_heat_map.png' : 'shap_spectogram.png'}`} 
-              alt={showAttribution ? "SHAP Attribution Heatmap" : "Audio Spectrogram"}
-              className="shap-image"
+              src={`${staticBaseUrl}/igrad/${showAttribution ? 'igrad_attribution_heat_map.png' : 'igrad_spectogram.png'}`} 
+              alt={showAttribution ? "Integrated Gradients Attribution Heatmap" : "Audio Spectrogram"}
+              className="igradients-image"
             />
               <button 
                 className="view-toggle"
@@ -218,7 +218,7 @@ function Shap() {
         </section>
         <section className="mb-5">
           <div className="section-header">
-            <h2 className="fw-bolder">SHAP Attributions</h2>
+            <h2 className="fw-bolder">Integrated Gradients Attributions</h2>
             <button 
               className="collapse-toggle"
               onClick={() => handleCollapse('stats')}
@@ -229,10 +229,10 @@ function Shap() {
           </div>
           <div className={`chart-container ${statsCollapsed ? 'd-none' : ''} ${statsAnimating ? (statsCollapsed ? 'collapsing' : 'expanding') : ''}`}>
             {isLoading ? (
-              <p>Loading SHAP attributions data...</p>
+              <p>Loading Integrated Gradients attributions data...</p>
             ) : (
               <>
-                <p>SHAP attributions visualization showing the importance of each frame in the audio sample.</p>
+                <p>Integrated Gradients attributions visualization showing the importance of each frame in the audio sample.</p>
                 <p><small>Total frames: {attributions.length}</small></p>
                 <canvas ref={chartRef}></canvas>
               </>
@@ -243,4 +243,4 @@ function Shap() {
   )
 }
 
-export default Shap
+export default Igradients

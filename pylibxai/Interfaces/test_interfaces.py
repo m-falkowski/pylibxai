@@ -5,7 +5,7 @@ import numpy as np
 from typing import Dict, Callable
 from pylibxai.Interfaces import (
     LimeAdapter, 
-    ShapAdapter, 
+    IGradientsAdapter, 
     LrpAdapter, 
     ModelLabelProvider, 
     ViewInterface,
@@ -44,55 +44,55 @@ class TestAbstractMethodEnforcement:
         result = predict_fn(np.array([1, 2, 3]))
         assert isinstance(result, np.ndarray)
 
-    # ShapAdapter Tests
-    def test_shap_adapter_incomplete_implementation_raises_error(self):
-        """Test that ShapAdapter raises TypeError when abstract methods are not implemented"""
+    # IGradientsAdapter Tests
+    def test_igrad_adapter_incomplete_implementation_raises_error(self):
+        """Test that IGradientsAdapter raises TypeError when abstract methods are not implemented"""
         
-        class IncompleteShapAdapter(ShapAdapter):
+        class IncompleteIGradientsAdapter(IGradientsAdapter):
             # Missing both abstract methods
             pass
         
         with pytest.raises(TypeError) as excinfo:
-            IncompleteShapAdapter()
+            IncompleteIGradientsAdapter()
         
         assert "abstract method" in str(excinfo.value).lower()
 
-    def test_shap_adapter_partial_implementation_raises_error(self):
-        """Test that ShapAdapter raises TypeError when only one abstract method is implemented"""
+    def test_igrad_adapter_partial_implementation_raises_error(self):
+        """Test that IGradientsAdapter raises TypeError when only one abstract method is implemented"""
         
-        class PartialShapAdapter(ShapAdapter):
-            def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
+        class PartialIGradientsAdapter(IGradientsAdapter):
+            def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
                 def predict(x):
                     return torch.tensor([0.1, 0.9])
                 return predict
-            # Missing shap_prepare_inference_input
+            # Missing igrad_prepare_inference_input
         
         with pytest.raises(TypeError) as excinfo:
-            PartialShapAdapter()
+            PartialIGradientsAdapter()
         
         assert "abstract method" in str(excinfo.value).lower()
-        assert "shap_prepare_inference_input" in str(excinfo.value)
+        assert "igrad_prepare_inference_input" in str(excinfo.value)
 
-    def test_shap_adapter_complete_implementation_works(self):
-        """Test that ShapAdapter works when all abstract methods are implemented"""
+    def test_igrad_adapter_complete_implementation_works(self):
+        """Test that IGradientsAdapter works when all abstract methods are implemented"""
         
-        class CompleteShapAdapter(ShapAdapter):
-            def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
+        class CompleteIGradientsAdapter(IGradientsAdapter):
+            def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
                 def predict(x):
                     return torch.tensor([0.1, 0.9])
                 return predict
             
-            def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+            def igrad_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
                 return x.unsqueeze(0)
         
         # Should not raise an error
-        adapter = CompleteShapAdapter()
-        predict_fn = adapter.get_shap_predict_fn()
+        adapter = CompleteIGradientsAdapter()
+        predict_fn = adapter.get_igrad_predict_fn()
         result = predict_fn(torch.tensor([1.0, 2.0]))
         assert isinstance(result, torch.Tensor)
         
         input_tensor = torch.tensor([1.0, 2.0, 3.0])
-        prepared = adapter.shap_prepare_inference_input(input_tensor)
+        prepared = adapter.igrad_prepare_inference_input(input_tensor)
         assert prepared.shape[0] == 1  # Should have batch dimension
 
     # LrpAdapter Tests
@@ -234,12 +234,12 @@ class TestAbstractMethodEnforcement:
     def test_multiple_interfaces_incomplete_raises_error(self):
         """Test class implementing multiple interfaces with missing methods"""
         
-        class MultipleInterfaceAdapter(LimeAdapter, ShapAdapter):
+        class MultipleInterfaceAdapter(LimeAdapter, IGradientsAdapter):
             def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
                 def predict(x):
                     return np.array([0.1, 0.9])
                 return predict
-            # Missing ShapAdapter methods
+            # Missing IGradientsAdapter methods
         
         with pytest.raises(TypeError) as excinfo:
             MultipleInterfaceAdapter()
@@ -249,18 +249,18 @@ class TestAbstractMethodEnforcement:
     def test_multiple_interfaces_complete_works(self):
         """Test class implementing multiple interfaces with all methods"""
         
-        class CompleteMultipleInterfaceAdapter(LimeAdapter, ShapAdapter, ModelLabelProvider):
+        class CompleteMultipleInterfaceAdapter(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
             def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
                 def predict(x):
                     return np.array([0.1, 0.9])
                 return predict
             
-            def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
+            def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
                 def predict(x):
                     return torch.tensor([0.1, 0.9])
                 return predict
             
-            def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+            def igrad_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
                 return x.unsqueeze(0)
             
             def get_label_mapping(self) -> Dict[int, str]:
@@ -278,10 +278,10 @@ class TestAbstractMethodEnforcement:
         lime_result = lime_predict(np.array([1, 2, 3]))
         assert isinstance(lime_result, np.ndarray)
         
-        # Test ShapAdapter functionality
-        shap_predict = adapter.get_shap_predict_fn()
-        shap_result = shap_predict(torch.tensor([1.0, 2.0]))
-        assert isinstance(shap_result, torch.Tensor)
+        # Test IGradientsAdapter functionality
+        igrad_predict = adapter.get_igrad_predict_fn()
+        igrad_result = igrad_predict(torch.tensor([1.0, 2.0]))
+        assert isinstance(igrad_result, torch.Tensor)
         
         # Test ModelLabelProvider functionality
         labels = adapter.get_label_mapping()

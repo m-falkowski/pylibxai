@@ -3,12 +3,12 @@ from pylibxai.utils import get_install_path
 import torch
 import numpy as np
 from pylibxai.models.GtzanCNN.preprocessing import convert_to_spectrogram
-from pylibxai.Interfaces import LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider
+from pylibxai.Interfaces import LrpAdapter, LimeAdapter, IGradientsAdapter, ModelLabelProvider
 import torch.nn.functional as F
 from typing import Dict
 MODEL_PATH = get_install_path() / "pylibxai" / "models" / "GtzanCNN" / "best_model.ckpt"
 
-class GtzanCNNAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
+class GtzanCNNAdapter(LrpAdapter, LimeAdapter, IGradientsAdapter, ModelLabelProvider):
     def __init__(self, model_path, device='cuda'):
         self.predictor = GtzanPredictor(model_path, device)
         self.predictor.load_model()
@@ -62,7 +62,7 @@ class GtzanCNNAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
 
         return predict_fn
     
-    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
+    def igrad_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor:
         x = convert_to_spectrogram(x, self.device)
         x.requires_grad_(True)
         return x
@@ -80,8 +80,8 @@ class GtzanCNNAdapter(LrpAdapter, LimeAdapter, ShapAdapter, ModelLabelProvider):
 
         return GtzanNNWrapper(self.predictor, self.device)
 
-    def get_shap_predict_fn(self):
-        def shap_fn(x):
+    def get_igrad_predict_fn(self):
+        def igrad_fn(x):
             self.predictor.model.eval()
             return self.predictor.model(x)
-        return shap_fn
+        return igrad_fn

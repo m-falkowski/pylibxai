@@ -5,7 +5,7 @@ import os
 
 from pylibxai.model_adapters import HarmonicCNN, Cnn14Adapter, GtzanCNNAdapter
 from pylibxai.pylibxai_context import PylibxaiContext
-from pylibxai.Explainers import LimeExplainer, ShapExplainer, LRPExplainer
+from pylibxai.Explainers import LimeExplainer, IGradientsExplainer, LRPExplainer
 from pylibxai.Interfaces import ViewType, ModelLabelProvider
 from utils import get_install_path
 
@@ -20,7 +20,7 @@ def main():
     parser.add_argument('-u', '--visualize', action='store_true',
                         help="Enable visualization of audio in browser-based UI.")
     parser.add_argument('-e', '--explainer', type=str, required=True,
-                        help="Name of the explainer to use [lime, shap, lrp].")
+                        help="Name of the explainer to use [lime, integrated-gradients, lrp].")
     parser.add_argument('-t', '--target', type=str, required=True,
                         help="Name or index of the label to explain.\
                               Mapping is done automatically based on the model if the model provides it.") 
@@ -42,8 +42,8 @@ def main():
     assert device in ['cpu', 'cuda'], "Device must be either 'cpu' or 'cuda'."
     
     expls = args.explainer.split(",")
-    assert all(ex in ["lime", "shap", "lrp"] for ex in expls), \
-        "Invalid explainer specified. Available options: [lime, shap, lrp]."
+    assert all(ex in ["lime", "integrated-gradients", "lrp"] for ex in expls), \
+        "Invalid explainer specified. Available options: [lime, integrated-gradients, lrp]."
 
     context = PylibxaiContext(args.workdir)
 
@@ -82,12 +82,12 @@ def main():
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
         explainer = LRPExplainer(adapter, context, device, view_type=view, port=port)
-    if "shap" in expls:
+    if "integrated-gradients" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE
         expl_count -= 1
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
-        explainer = ShapExplainer(adapter, context, device, view_type=view, port=port)
+        explainer = IGradientsExplainer(adapter, context, device, view_type=view, port=port)
         explainer.explain(audio, target=target)
 
 if __name__ == '__main__':

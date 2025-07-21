@@ -39,7 +39,7 @@ class TestPylibxaiContext:
     
     def test_constructor_creates_subdirectories(self, context, temp_dir):
         """Test that required subdirectories are created"""
-        assert os.path.exists(os.path.join(temp_dir, "shap"))
+        assert os.path.exists(os.path.join(temp_dir, "igradients"))
         assert os.path.exists(os.path.join(temp_dir, "lrp"))
         assert os.path.exists(os.path.join(temp_dir, "lime"))
     
@@ -236,7 +236,7 @@ class TestPylibxaiContext:
         """Test complete workflow with multiple file operations"""
         # Write attribution
         attribution_data = np.array([0.5, 0.7, 0.2])
-        context.write_attribution(attribution_data, "shap/attribution.json")
+        context.write_attribution(attribution_data, "igradients/attribution.json")
         
         # Write label mapping
         labels = {"0": "class_a", "1": "class_b"}
@@ -248,7 +248,7 @@ class TestPylibxaiContext:
         context.write_plt_image(fig, "lrp/plot.png")
         
         # Verify all files exist
-        assert os.path.exists(os.path.join(temp_dir, "shap", "attribution.json"))
+        assert os.path.exists(os.path.join(temp_dir, "igradients", "attribution.json"))
         assert os.path.exists(os.path.join(temp_dir, "labels.json"))
         assert os.path.exists(os.path.join(temp_dir, "lrp", "plot.png"))
         
@@ -265,11 +265,11 @@ class TestPylibxaiContext:
     def test_subdirectory_structure_maintained(self, context, temp_dir):
         """Test that subdirectory structure is maintained across operations"""
         # Perform operations in different subdirectories
-        context.write_attribution(np.array([1]), "shap/test1.json")
+        context.write_attribution(np.array([1]), "igradients/test1.json")
         context.write_attribution(np.array([2]), "lrp/test2.json")
         context.write_attribution(np.array([3]), "lime/test3.json")
         
         # Verify directory structure is maintained
-        assert os.path.exists(os.path.join(temp_dir, "shap", "test1.json"))
+        assert os.path.exists(os.path.join(temp_dir, "igradients", "test1.json"))
         assert os.path.exists(os.path.join(temp_dir, "lrp", "test2.json"))
         assert os.path.exists(os.path.join(temp_dir, "lime", "test3.json"))

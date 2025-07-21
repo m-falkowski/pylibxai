@@ -63,9 +63,9 @@
 %------------------
 % Strona tytułowa
 %------------------
-\instytut{Instytut Automatyki i Informatyki Stosowanej}
-\kierunek{Computer Science}
-\specjalnosc{Computer Science}
+\instytut{Control and Computation Engineering}
+\kierunek{computer science}
+\specjalnosc{Internet Management Support Systems}
 \title{
     Machine learning framework for explainable artificial intelligence models
 }
@@ -79,9 +79,9 @@
 \poltitle{
     Machine learning framework for explainable artificial intelligence models
 }
-\author{Maciej Falkowski}
+\author{Maciej Falkowski, BSc}
 \album{329117}
-\promotor{dr inż. Mateusz Modrzejewski}
+\promotor{Mateusz Modrzejewski, PhD}
 \date{\the\year}
 \maketitle
 
@@ -91,17 +91,25 @@
 %-------------------------------------
 \cleardoublepage % Zaczynamy od nieparzystej strony
 \abstract
-The aim of this thesis is to present a system that aims to simplify the analysis of explainable artificial intelligence (XAI) techniques in audio machine learning models.
+The aim of this thesis is to present a system that aims to simplify the analysis of explainable artificial
+intelligence (XAI) techniques in audio machine learning models.
 
 The proposed system is a framework that integrates selected XAI techniques such as
-audioLIME, SHAP (Shapley Additive explanations), and Layer-wise Relevance Propagation (LRP). The framework aims to provide a unified and extensible infrastructure for creating, managing, and visualizing model explanations.
+audioLIME, SHAP (Shapley Additive explanations), and Layer-wise Relevance Propagation (LRP). The framework aims
+to provide a unified and extensible infrastructure for creating, managing, and visualizing model explanations.
 
-The proposed system is structured using the Model-View-Controller (MVC) design pattern, ensuring modularity, scalability, and separation of concerns. The Model layer encapsulates operations and the machine learning models. The View layer 
+The framework offers an application programming interface
+in a form of a Python library and supporting tools that will allow its user
+to integrate their model into the system and launch different XAI techniques on their model.
+It is structured using the Model-View-Controller (MVC) design pattern, ensuring modularity,
+scalability, and separation of concerns. The Model layer encapsulates operations and the machine learning
+models.
 
-defines an intuitive user interface tailored to data scientists and machine learning engineers, enabling interactive exploration of explanation outputs; and the Controller layer manages communication between the model and interface components.
+The View layer defines an intuitive user interface tailored to data scientists and machine learning engineers, enabling interactive exploration of explanation outputs; and the Controller layer manages communication between the model and interface components.
 
 % Ważne by napisać czym praca nie jesy
-The aim of the thesis is not to provide 
+The aim of the thesis is not to perform any research about integrated machine learning models and explanation
+techniques. The thesis does not evaluate any of their metrics such as performance or accuracy, nor it compares them one to another.
 
 A key contribution of this work is the formalization of design principles and integration strategies that support multimodal explanations, including both visual and auditory outputs, with a focus on interpretability and usability.
 
@@ -114,9 +122,9 @@ This work lays the groundwork for future research and development in human-centr
 % Streszczenie po angielsku dla \langpol
 % Polish abstract if \langeng is set
 %----------------------------------------
-%\clearpage
-%\secondabstract \kant[1-3]
-%\secondkeywords XXX, XXX, XXX
+\clearpage
+\secondabstract \kant[1-3]
+\secondkeywords XXX, XXX, XXX
 
 \pagestyle{plain}
 
@@ -144,7 +152,7 @@ This work lays the groundwork for future research and development in human-centr
 \lipsum[1] \cite{goossens93}
 
 % Przykładowy obrazek
-\begin{figure}[!h]
+\begin{figure}%[!h]
     % Wyrównanie obrazka, szerokość i plik
     % Zamiast width można też użyć height, etc.
     \centering \includegraphics[width=0.5\linewidth]{logopw.png}
@@ -257,6 +265,7 @@ To the best of our knowledge this is the ...
 \subsection{Model explanation}
 \subsubsection{definition}
 \subsubsection{Locality-awareness}
+\subsection{Attribution intensity} \label{ch2:AttrIntensity}
 
 \subsection{Selection of explanation methods for framework}
 \subsubsection{Criteria - interpretability, attribution, model-agnostic}
@@ -264,14 +273,14 @@ To the best of our knowledge this is the ...
 \subsubsection{Shapley Additive Explanations} \label{ch1:ShapMethod}
 \subsubsection{Layer-wise Relevance Propagation} \label{ch1:LrpMethod}
 
-\subsection{Selection of model for integration}
+\subsection{Selection of model for integration} \label{ch1:ModelSelection}
 \subsubsection{Criteria - practicality}
-\subsubsection{State-of-art Music Models}
-\subsubsection{Paans}
-\subsubsection{Paast}
-\subsubsection{Handmade Gtzan}
+\subsubsection{HarmonicCNN}
+HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging Models} \cite{Won2020-ej}.
+\subsubsection{CNN14}
+\subsubsection{Handmade Gtzan / GtzanCNN}
 
-\subsection{ML Explanation framework overview}
+\subsection{ML Explanation framework overview} \label{ch2:ArchitectureOverview}
 \subsubsection{Framework components - library, UI, terminal command}
 
 \subsection{Visualizing ML Explanation framework overview} 
@@ -415,7 +424,7 @@ To the best of our knowledge this is the ...
     \item \textbf{Display of user's input overlayed with attribution}
 
         The user interface must display attribution overlaid on user's input for both SHAP and LIME explanations.
-    Attribution values are visualized as color heatmaps on the user's spectrogram which enables a user to
+    Attribution values are visualized as color heatmaps on the user's spectrogram which eDables a user to
     understand which frequency components at a given time interval influenced the model's decision.
     This method works very well when the input provided to the model is a spectrogram.
 
@@ -530,14 +539,14 @@ A declarative JavaScript library that has revolutionized user interface developm
 \subsection{Installation process overview}
 \subsubsection{Installation steps}
 
-\subsection{Command-line tool for simple explanations}
+\subsection{Command-line tool for simple explanations} \label{ch4:CmdTool}
 
 \subsection{Web interface for explanation}
 \subsubsection{Initalizing web interface}
 \subsubsection{Displaying LIME results}
 \subsubsection{Displaying LRP results}
 \subsubsection{Displaying SHAP results}
-\subsubsection{Displaying software warning}
+\subsubsection{Displaying software warning} \label{ch4:NotificationPanel}
 \subsubsection{Version information}
 
 % #############################################
@@ -554,9 +563,8 @@ A declarative JavaScript library that has revolutionized user interface developm
 \subsection{Software architecture overview}
 
     The architecture of the project consists of three main components that are library, web interface, and command-line helper script.
-    These component implement all steps of a full-pipeline from prereprocessing
-    user's input up to visualizing explanation results as discussed in
-    %\ref{fig:PipelineArchitecture}. TODO
+    These component implement all steps of a full-pipeline from preprocessing
+    user's input up to visualizing explanation results as discussed in Sec. \ref{ch2:ArchitectureOverview}.
 
 \begin{enumerate}
     \item \textbf{Library} - Provides the main logic and implementation. It is interfacing directly with a user and
@@ -570,7 +578,7 @@ A declarative JavaScript library that has revolutionized user interface developm
     it in the form of a browser page. The communication process between user application and framework is shown in
     \ref{fig:CommunicationArchitecture}.
 
-    \item \textbf{Command-line helper script} - It is a toolchain's helper script and serves the purpose of quickly 
+    \item \textbf{Command-line explanation runner} - It is a toolchain's helper script and serves the purpose of quickly 
     launching a typical usage type of the library, which is loading an input audio file and then launching a chosen set 
     of explanations on the chosen library's provided model.
 \end{enumerate}
@@ -593,13 +601,11 @@ A declarative JavaScript library that has revolutionized user interface developm
 	\item \textbf{Explainers/} - Contains explainer classes for LIME, SHAP, and LRP methods,
 	\item \textbf{pylibxai\_explain.py} - Main command-line entry point for running explanations on audio models,
 	\item \textbf{Interfaces/} - Defines abstract base classes and interfaces for model adapters and views,
-	\item \textbf{LRPExplainer/} - Contains Layer-wise Relevance Propagation  explainer implementation,
 	\item \textbf{model\_adapters/} - Implements adapter classes for integrating different audio models with the framework,
 	\item \textbf{models/} - Contains pretrained model files and checkpoints for supported audio models,
 	\item \textbf{pylibxai\_context/} - Implements context management for storing explanation state and working directories,
-	\item \textbf{pylibxai\_server/} - Contains web server implementation for serving explanation results through HTTP,
+	\item \textbf{Views/} - Contains implementations of different views, such as web view for serving explanation results through HTTP to the web page, or debug view for quick debugging,
 	\item \textbf{pylibxai-ui/} - Frontend React application providing web-based user interface for visualization,
-	\item \textbf{ShapExplainer/} - Contains SHAP (Shapley Additive Explanations) explainer implementation.
 \end{itemize}
 
 \subsection{Model-View-Controller implementation overview}
@@ -611,23 +617,30 @@ A declarative JavaScript library that has revolutionized user interface developm
     \label{fig:ClassDiagram}
 \end{figure}
 
-    The thesis utilizes Model-View-Controller (MVC) architectural pattern (Sec. \ref{ch1:ModelViewController}) to obtain extendable architecture that satisfies one of core requirements of the thesis that is modularity as discussed in Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extandable with a new explanation types, model predictors, and views separating these three from each other so that the developer might work on one of these exclusively.
+    The thesis utilizes Model-View-Controller (MVC) architectural pattern (Sec. \ref{ch1:ModelViewController}) to obtain extendable architecture that satisfies one of core requirements of the thesis that is modularity as discussed in Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extendable with a new explanation types, machine learning models, and views separating these three from each other so that the developer might work on one of these exclusively.
 
     The Model-View-Controller is implemented using
     the following classes visible in the class diagram \ref{fig:ClassDiagram}. The implementation and details of these classes are discussed later in the chapter:
     \begin{description}
-        \item[Model] The function of the model in the framework is realized using adapter classes for user models, such as \texttt{SotaMusicModelsAdapter} (Sec. TODO) or \texttt{PaansAdapter} (Sec. TODO). These classes operate on user data passed to them from controller classes, performing data manipulation, which is an inference in this case. The interface for these classes is discussed in Sec. TODO,
+        \item[Model] The function of the model in the framework is realized using adapter classes for user
+        models, such as \texttt{HarmonicCNN} or \texttt{Cnn14} (Sec. \ref{ch1:ModelSelection}). These classes
+        operate on user data passed to them from controller classes, performing data manipulation, which is an
+        inference in this case. They need to be implemented by the user to provide their support to the framework and they usually come in a form of an adapter class.
+        The interface required for implementation of these classes is discussed     
+        in Sec. \ref{ch5:AdapterInterfaces},
 
-        \item[View] The function of view in the framework is realized using classes such as \texttt{WebView} or \texttt{DebugView}. These classes receive explanation results specified in the \texttt{Context} class as required by the \texttt{ViewInterface} class and process them to display the results to the user,
+        \item[View] The function of view in the framework is realized using classes such as \texttt{WebView}
+        or \texttt{DebugView}. These classes receive explanation results specified in the \texttt{Context}
+        class as required by the \texttt{ViewInterface} class and process them to display the results
+        to the user,
 
         \item[Controller] The purpose of this part is to pass the user’s input into the model
         classes for data manipulation and to later pass the results of data manipulation into 
         the view. This functionality is achieved by classes implementing explainers' logic, 
         such as \texttt{LimeExplainer} or \texttt{ShapExplainer}.
-
     \end{description}
 
-\subsection{Interfaces for model adapters}
+\subsection{Interfaces for model adapters} \label{ch5:AdapterInterfaces}
 
     Model adapters require a set of interfaces that specify the required behavior that a user
     must fulfill to make their model work properly within the framework. For that reason, the 
@@ -656,7 +669,7 @@ class LimeAdapter(ABC):
     """Abstract base class for LIME (Local Interpretable
        Model-agnostic Explanations) adapters"""
     @abstractmethod
-    def get_lime_predict_fn(self) -> np.array: pass
+    def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]: pass
     """Returns a function that takes an audio input and
        returns the model's prediction for that input."""
 \end{minted}
@@ -674,18 +687,17 @@ class LimeAdapter(ABC):
     This is required as interface for explainers accept user's waveform input but they do expect an input which is the same as model's input which may be either waveform or a spectogram which requires additional conversion.
 
 \begin{figure}%[h]
-\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 class ShapAdapter(ABC):
     """Abstract base class for SHAP (SHapley Additive exPlanations)
        adapters"""
     @abstractmethod
-    def get_shap_predict_fn(self) -> np.array: pass
+    def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]: pass
     """Returns a function that takes an audio input and returns
     the model's prediction for that input."""
 
     @abstractmethod
-    def shap_prepare_inference_input(self, x: torch.Tensor) \
-        -> torch.Tensor: pass
+    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor: pass
     """Returns a function that takes an audio input
     and returns the model's prediction for that input."""
 \end{minted}
@@ -703,7 +715,7 @@ class ShapAdapter(ABC):
     \end{example}
 
 \begin{figure}%[h]
-\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 from pylibxai.Interfaces import LrpAdapter
 
 class MyModelAdapter(LrpAdapter):
@@ -728,15 +740,13 @@ class MyModelAdapter(LrpAdapter):
 \label{fig:UserAdapterExample}
 \end{figure}
 
-
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
 class LrpAdapter(ABC):
     """Abstract base class for LRP (Layer-wise Relevance Propagation)
        adapters"""
     @abstractmethod
-    def get_lrp_predict_fn(self)\
-    \-> nn.Module: pass
+    def get_lrp_predict_fn(self) -> nn.Module: pass
     """Returns a function that takes an audio input and
        returns the model's prediction for that input."""
 \end{minted}
@@ -744,45 +754,223 @@ class LrpAdapter(ABC):
 \label{fig:LrpAdapter}
 \end{figure}
 
-\subsection{Model adapter implementation}
+\subsubsection{ModelLabelProvider interface}
 
-\
+The framework offers an additional interface for model adapters to pass their labels into the system.
+The function requires the model to return a dictionary that maps a given class
+name to its corresponding identifier, as shown in Fig. \ref{fig:ModelLabelProvider}.
 
-\subsubsection{GtzanCNN model adapter}
-\subsubsection{SOTA model adapter}
-\subsubsection{Paans model adapter}
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, xleftmargin=12pt, linenos, mathescape]{py}
+class ModelLabelProvider(ABC):
+    """Abstract base class for providing labels for model predictions"""
+    @abstractmethod
+    def get_label_mapping(self) -> Dict[int, str]: pass
+    """Returns a mapping from label IDs to label names."""
+
+    @abstractmethod
+    def map_target_to_id(self, target: str) -> int: pass
+    """Maps a target label to its corresponding ID."""
+\end{minted}
+\caption{Class definition of \texttt{ModelLabelProvider}.}
+\label{fig:ModelLabelProvider}
+\end{figure}
+
+\subsection{Model adapters} \label{ch5:ModelAdapters}
+
+The framework requires users to provide their ML (machine learning) models
+in an adapter class and includes a set of interfaces that define how these
+adapters should be implemented (Sec. \ref{ch5:AdapterInterfaces}). These user-supplied classes adjust
+model definition and wrap around logic responsible for model inference to allow
+them to be used within the framework.
+
+Adapters of users’ ML models serve as model classes in a Model-View-Controller,
+where they are responsible for data processing. They are used by controller classes,
+which are explainer classes in the case of the framework that pass the user’s input to them.
+This way, the data manipulation is separated from the rest of the framework,
+and new models may be integrated without modifying the rest of the codebase, which provides modularity.
+The user may select individual interfaces that the framework’s API provides,
+which allows them to implement only a subset of the functionality that a framework
+offers and to skip unneeded parts. The user then may freely decide which interface
+they would like to implement for their model between 
+\texttt{LrpAdapter}, \texttt{LimeAdapter}, \texttt{ShapAdapter}, and \texttt{ModelLabelProvider}.
+
+There are three adapters integrated into the library, which are HarmonicCNN, Cnn14, and GtzanCNN
+(Sec. \ref{ch1:ModelSelection}). As their implementation is similar and long, HarmonicCNN is the model
+that will described with a precision in the rest of this chapter.
+
+%\subsubsection{HarmonicCNN adapter}
+The given adapter first inherits the required interfaces to overload the required methods.
+This is shown in Fig. \ref{fig:HarmonicCNNInit}, where the HarmonicCNN class inherits three classes:
+\texttt{LimeAdapter}, \texttt{ShapAdapter}, and \texttt{ModelLabelProvider}:
+
+The class initialization (Fig. \ref{fig:HarmonicCNNInit}) involves importing the model’s class definition
+from the \textit{SotaMusicModels} repository \cite{Won2020-ej}. As the repository hosts a collection
+of models and offers the retrieval of a given model through filling \mintinline{py}{config = Namespace()} with
+configuration parameters, such as the model name specified as a \mintinline{py}{"hcnn"} string.
+The HCNN (HermeticCNN) model is then retrieved \mintinline{py}{self.model = Predict.get_model(config)}.
+In the last step, the model state is then loaded using \mintinline{py}{torch.load()} method.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
+    def __init__(self, device='cuda'):
+        # ...
+        path_models = os.path.join(path_sota, 'models')
+
+        # ...
+
+        config = Namespace()
+        config.dataset = "jamendo"  # we use the model trained on MSD
+        config.model_type = "hcnn"
+        config.model_load_path = os.path.join(path_models, config.dataset, config.model_type, 'best_model.pth')
+        config.input_length = 5 * 16000
+        config.batch_size = 1  # we analyze one chunk of the audio
+        self.model = Predict.get_model(config)
+        
+        self.model_state = torch.load(config.model_load_path, map_location=self.device)
+        self.model.cuda()
+        self.config = config
+    # ...
+\end{minted}
+\caption{Model initialization in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicCNNInit}
+\end{figure}
+
+To implement \texttt{ModelLabelProvider} interface, the class creates a mapping of model's class
+labels stored in global variable \texttt{TAGS} and later uses them to overload
+a method \mintinline{py}{get_label_mapping()} as shown in Fig. \ref{fig:HarmonicLabelMapping}.
+
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+TAGS = ['genre---downtempo', 'genre---ambient', ...]
+
+class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
+    def __init__(self, device='cuda'):
+        # ...
+        self.label_to_id = {i: v for i, v in enumerate(TAGS)}
+        self.id_to_label = {v: i for i, v in enumerate(TAGS)}
+        # ...
+    def get_label_mapping(self):
+        """Returns the label mapping for the model."""
+        return self.label_to_id
+    # ...
+\end{minted}
+\caption{Set up of label classes in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicLabelMapping}
+\end{figure}
+
+The adapter defines a method \mintinline{py}{get_shap_predict_fn()} that implements
+the \texttt{ShapAdapter} interface as shown in Fig. \ref{fig:HarmonicShapOverload}.
+This method must return a function with a type \mintinline{py}{Callable[[torch.Tensor], torch.Tensor]}, % TODO: overflow hbox
+that takes Pytorch \mintinline{py}{torch.Tensor} both as an argument and return type.
+The callback then defines an inner function \mintinline{py}{predict_fn(x)} that contains
+the standard inference code of HarmonicCNN, and then it returns that function.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
+    # ...
+    def predict_fn(x):
+        # ... 
+        output_dict = self.model(x)
+        output_tensor = output_dict
+        return output_tensor
+    return predict_fn
+\end{minted}
+\caption{Supporting SHAP method in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicShapOverload}
+\end{figure}
+
+To implement \texttt{LrpAdapter} the adapter provides a definition for LRP
+callback as shown in Fig. \ref{fig:HarmonicLrpOverload}. This method must return
+a function object that returns a Python's \mintinline{py}{torch.nn.Module} meaning
+that a user must create a wrapper class around it's model's implementation.
+The function defines a \mintinline{py}{HarmonicCNNWrapper} that inherits from 
+\mintinline{py}{torch.nn.Module} class and provides a required
+\mintinline{py}{forward()} method where a HarmonicCNN inference is placed.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+def get_lrp_predict_fn(self):
+    class HarmonicCNNWrapper(torch.nn.Module):
+        def __init__(self, model, device, model_state):
+            super(SotaNNWrapper, self).__init__()
+            self.model_state = model_state
+            self.model = model 
+            self.device = device
+        def forward(self, x):
+            #...
+
+            output_dict = self.model(x)
+            output_tensor = output_dict
+            return output_tensor
+    return HarmonicCNNWrapper(self.model, self.device, self.model_state)
+\end{minted}
+\caption{Support of LRP method in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicLrpOverload}
+\end{figure}
+
+The last implementation is a support for the LIME method in Fig. \ref{fig:HarmonicLLIMEOverload}.
+This method must return a function with a type \mintinline{py}{Callable[[np.ndarray], np.ndarray]}
+to fulfill the implementation of framework’s \texttt{LimeExplainer} which is based on \textit{audioLIME}
+implementation mthat operates on numpy’s array types. The function then must
+take a numpy \texttt{np.ndarray} as an input and also return it.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
+    # ...
+
+    def predict_fn(x_array):
+        # convert numpy array into tensor
+        audio = torch.zeros(len(x_array), self.config.input_length)
+        for i in range(len(x_array)):
+            audio[i] = torch.Tensor(x_array[i]).unsqueeze(0)
+        audio = audio.cuda()
+        audio = Variable(audio)
+        output_dict = self.model(audio) # inference here (input is passed into model)
+        output_tensor = output_dict.detach().cpu().numpy()
+        return np.array(output_tensor)
+
+    return predict_fn
+\end{minted}
+\caption{Support of LIME method in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicLLIMEOverload}
+\end{figure}
+
+%\subsubsection{CNN14 adapter} TODO: potrzebne?
+%\subsubsection{GtzanCNN adapter} TODO: potrzebne?
 
 \subsection{Explainer classes implementation}
 
 Explanation methods are implemented as separate classes including \texttt{LimeAdapter}, \texttt{ShapExplainer}, and \texttt{LrpAdapter}.
 The purpose of these classes is to implem TODO
 
-These classes serves a purpose of controllers as part of Model-View-Controller pattern so their purpose include managing 
+These classes serves a purpose of controllers as part of Model-View-Controller
+pattern so their purpose include managing k
+
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+
+\end{minted}
+\caption{Support of LIME method in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicLLIMEOverload}
+\end{figure}
 
 
 \subsubsection{LIME explainer}
-\subsubsection{SHAP explainer}
+\subsubsection{SHAP and LRP explainers}
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 class ShapExplainer:
     def __init__(self, model_adapter, context, device, view_type=None):
-        self.model_adapter = model_adapter
-        predict_fn = model_adapter.get_shap_predict_fn()
-        self.explainer = IntegratedGradients(predict_fn)
-        self.device = device
-        self.attribution = None
-        self.delta = None
-        self.context = context
-        self.view_type = view_type
-        if view_type == ViewType.WEBVIEW:
-            self.view = WebView(context, port=9000)
-        elif view_type == ViewType.DEBUG:
-            pass
 
     def explain_instance(self, audio, target, background=None):
         pass
     
-    def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):
+    def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):  
         pass
 
     def get_attribution(self):
@@ -797,20 +985,21 @@ class ShapExplainer:
 \caption{Class definition of \texttt{ShapExplainer}.}
 \label{fig:ShapExplainer}
 \end{figure}
-\subsubsection{LRP explainer}
 
 \subsection{Context class definition}
 
-The \texttt{PylibxaiContext} class manages the data and encapsulates the data saving process.
+The \texttt{PylibxaiContext} class ma`nages the data and encapsulates the data saving process.
 It is an important bridge between model and view classes, formalizing how explanation results
 are saved and accessed through a framework.
-The class also implements the requirement \textit{Context Management} and \textit{Ensure persistent result storage} as described in Sec. (\ref{ch:NonFuncRequirements}), fully encapsulating the process of
+The class also implements the requirement \textit{Context Management}
+and \textit{Ensure persistent result storage} as described
+in Sec. (\ref{ch:NonFuncRequirements}), fully encapsulating the process of
 saving the explanation results into the persistent storage. For the simplicity of design and also the purpose of serving
 explanation result to the web frontend as discussed later in \ref{ch:ch5WebFrontend},
 the implementation of this class saves all explanation results as files in a tree structure in a given working directory.
 
 \begin{example}
-    An exemplary implementation of \texttt{write\_attribution} method of \\
+    An exemplary implementation of the \texttt{write\_attribution} method that is defined in the
     \texttt{PylibxaiContext} class. The method saves an attribution of the explanation to a file in \texttt{JSON} format
     as shown in Fig. \ref{fig:WriteAttributionMethod}.
 \end{example}
@@ -824,7 +1013,7 @@ def write_attribution(self, smoothed_attribution, suffix):
             "attributions": smoothed_attribution.tolist(),
         }, f, indent=4)
 \end{minted}
-\caption{The implementation of \texttt{write\_attribution} method.}
+\caption{The implementation of \texttt{write\_attribution} method of \texttt{PylibxaiContext} class.}
 \label{fig:WriteAttributionMethod}
 \end{figure}
 
@@ -869,7 +1058,7 @@ This interface \texttt{ViewInterface} requires a user to define the necessary
 methods required to initialize, start, and stop the given view as shown in Fig. \ref{fig:ViewType}.
 
 \begin{itemize}
-    \item \mintinline{py}{__init__(self, context, port)} - A given view is initialized with a provided context class.
+    \item \mintinline{py}{__init__(self, context)} - A given view is initialized with a provided context class.
     The view then may utilize the accumulated results of explanation in that class and present them to the user,
 
     \item \mintinline{py}{start(self)} - The start method is responsible for launching the given view. In the case of \texttt{WebView},
@@ -885,9 +1074,8 @@ class ViewInterface(ABC):
     """Abstract base class for View Interface
     """
     @abstractmethod
-    def __init__(self, context, port):
+    def __init__(self, context):
         self.context = context
-        self.port = port
 
     @abstractmethod
     def start(self) -> None: pass
@@ -975,26 +1163,477 @@ class WebView(ViewInterface):
  
 \subsubsection{Debug View}
 
+The purpose of the\texttt{DebugView} class is to enable quick debugging of the explanation
+framework, displaying information about results to a terminal without launching any external windows or software.
+It also shows an alternative view implementation to the \texttt{WebView} that shows the modularity of the explanation framework.
+
+The implementation iterates over the content of the context class and displays its content in a structured manner to the user
+using Python's \mintinline{py}{print()} function, as shown in the class implementation in Fig. \ref{fig:DebugView}. It does not contain any cleanup functionality, hence its \mintinline{py}{stop()} method has an empty body.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class DebugView(ViewInterface):
+    def __init__(self, context):
+        super().__init__(context)
+        self.context = context
+
+    def start(self):
+        print("=== DEBUG VIEW: PylibxaiContext Content ===")
+        print(f"Working directory: {self.context.workdir}")
+        print()
+        
+        # Display directory structure
+        print("Directory structure:")
+        self._print_directory_tree(self.context.workdir)
+        print()
+        
+        # Display content of each subdirectory
+        subdirs = ["shap", "lrp", "lime"]
+        for subdir in subdirs:
+            subdir_path = os.path.join(self.context.workdir, subdir)
+            if os.path.exists(subdir_path):
+                print(f"=== {subdir.upper()} Directory Content ===")
+                self._display_directory_content(subdir_path)
+                print()
+        
+        # Display any JSON files in the root directory
+        print("=== Root Directory Files ===")
+        self._display_directory_content(self.context.workdir, root_only=True)
+        print()
+        
+        print("=== DEBUG VIEW: Content Display Complete ===")
+
+    def stop(self):
+        pass
+\end{minted}
+\caption{Class definition of \texttt{DebugView}.}
+\label{fig:DebugView}
+\end{figure}
+
+\subsection{Backend Server implementation} \label{ch5:FileServer}
+
+The backend server implementation is implemented using Python's built-in \texttt{TCPServer} class from
+\texttt{socketserver} module. It allows serving files placed in a given directory provided as an input.
+This allows serving explanation results that are contained in an instance of \texttt{PylibxaiContext} that
+are passed to the view class from the framework.
+
+Initially, the system path is changed into the working directory as shown in Fig. \ref{fig:BackendServer},
+so that the server is launched serving the files inside, creating endpoints for each stored resource.
+The advantage of such an implementation is automatic scalability with the content of a working directory,
+which provides simplicity of the implementation. The server is launched in a separate thread using the 
+\mintinline{py}{threading.Thread} module over a given port provided as an input
+\mintinline{py}{socketserver.TCPServer(("", port), handler)}.
+
+Additionally, the server sets up a minimal CORS access control rules by defining a custom
+class \texttt{CORSHTTPRequestHandler} as shown in Fig \ref{fig:CORSHTTPRequestHandler}.
+
+\begin{example}
+    An exemplary explanation result which is explanation's attribution saved as a file \texttt{workdir/lrp/attribution.json}
+    will have an HTTP endpoint generated by the backend server of \texttt{/lrp/attribution.json}.
+\end{example}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+def run_file_server(directory, port=9000):
+    """Start a file server in a background thread."""
+    os.chdir(directory)
+
+    handler = CORSHTTPRequestHandler
+    httpd = socketserver.TCPServer(("", port), handler)
+
+    print(f"Serving files from {directory} at http://localhost:{port}/")
+
+    # Run in background thread
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+
+    return httpd  # To stop later with httpd.shutdown()
+
+\end{minted}
+\caption{Implementation of backend server.}
+\label{fig:BackendServer}
+\end{figure}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class CORSHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        # Add CORS headers
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With')
+
+        
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        return super().end_headers()
+
+    def do_OPTIONS(self):
+        # Handle preflight requests
+        self.send_response(200)
+        self.end_headers()
+\end{minted}
+\caption{Class definition of \texttt{CORSHTTPRequestHandler}.}
+\label{fig:CORSHTTPRequestHandler}
+\end{figure}
+
 \subsection{Web frontend implementation} \label{ch:ch5WebFrontend}
 
-% Figure: Communication scheme Backend <-> Frontend
+The main visualization of explanation results is created in the form of a web page displaying different results of
+an explanation, such as audio waveform visualization, explanation’s attribution, or spectrograms graphically in a
+browser. The frontend implementation is built using the React JavaScript library \cite{ReactDOC}
+and Bootstrap CSS framework \cite{BootstrapDOC} and follows a component-based architecture where each interface
+element is encapsulated as a reusable React component
 
-\subsubsection{File server backend} \label{ch5:FileServer}
+%\subsubsection{Frontend layout organization}
 
-%\begin{example}
-% Show that a path workdir/lrp/attribution.json will be under path /lrp/attribution.json    
-%\end{example}
+The main objective of web page design is to offer a separate display of each explanation method to not
+confusing the results with each other, as discussed in Sec. \ref{ch:ch3LabelSpec}.
+The Web page’s layout is organized to emphasize the separation of different explanation methods to allow
+a user to quickly switch between them. For that, the web page organizes different data displayed in
+separate sections and provides a sidebar to switch between them.
 
-\subsubsection{Frontend UI class}
+The organization of the website's layout is shown in Fig. \ref{fig:PageLayout} and includes:
 
-\subsection{Frontend web interface view implementation}
-%\subsubsection{Main component}
-%\subsubsection{Sidebar component}
-%\subsubsection{Model information component}
-%\subsubsection{Notification tab implementation}
-%\subsubsection{LIME component}
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=15cm]{page_layout.png}
+    \caption{The organization of website. Each components is identified by a number.}
+    \label{fig:PageLayout}
+\end{figure}
 
-\subsection{Command-line helper tool implementation}
+\begin{itemize}
+    \item \textbf{Sidebar (1)} - Sidebar allows users to navigate between different sections, including mode
+        information, SHAP, LIME, and LRP explanations, using a list of buttons, highlighting
+        the actively shown tab,
+    \item \textbf{Navigation bar (2)} - The Navigation bar is a permanently visible page element that is sticky
+        to its upper side. It contains various control icons on its left side, including a notification
+        bell icon or a help icon,
+    \item \textbf{Notification panel and help (3)} - these utilities elements are provided
+        to a user to show them helper information such as framework's versioning or any errors
+        and notifications that were encountered through the process of explanation visualization.
+        The exemplary content of notification panel is discussed in the Sec.\ref{ch4:NotificationPanel}. 
+    \item \textbf{Main content area (4)} - Main content area display currently selected section
+        where the data displayed is organized vertically in a folded sections, allowing a user
+        to hide unwanted information. Displayed information include model information, audio playback,
+        attribution visualization, or explanation results.
+\end{itemize}
+
+\subsubsection{Frontend component overview}
+
+The implementation consists of multiple components,
+each defined in a separate file, including:
+
+\begin{itemize}[itemsep=1\baselineskip]
+	\item \textbf{App} - Main application component that manages global state,
+        including managing the notification queue or the currently selected page to render,
+    \item \textbf{Navbar} - Fixed navigation bar displaying supporting components,
+        including notification bell, or version details,
+    \item \textbf{ContentPage} - Manages rendering of the main content area and
+        routing between different result sections of the interface,
+    \item \textbf{ModelInfo} - Component that displays model information,
+        such a label mappings, presenting their names along with a class identifier,
+    \item \textbf{Lime, Shap, Lrp} - Each of these components manages the display of its
+        respective explanation method’s result. This includes displaying audio playback,
+        attribution visualizations, or interactive charts,
+    \item \textbf{Footer} - Provides footer of the web page.
+\end{itemize}
+
+Frontend retrieves explanation results data from the backend server that was set up by the
+\texttt{WebView} class to serve collected data through the process of explanation.
+Both servers are set up by the view class and operate on localhost. 
+Frontend retrieves the backend server's port from environmental variables using the \mintinline{js}{meta.env}
+module:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
+import.meta.env.VITE_PYLIBXAI_STATIC_PORT
+\end{minted}
+
+Based on that, we define a URL of the backend server from which all frontends’ requests
+will be made, which is stored in a variable:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
+staticBaseUrl = `http://localhost:\${staticPort}`.
+\end{minted}
+The requests are done using JavaScript's built-in Fetch API utilizing \mintinline{js}{fetch()} method.
+An example of data fetching from backend which is fetching of explanation's attribution
+contained in a file in a JSON format as seen in Fig. \ref{fig:ShapComponentDataFetching}.
+
+An instance of an HTTP request is generated using the \mintinline{js}{fetch()} method. After that, the data is processed further by the frontend to create a visualization of it
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
+const response = await fetch(`\${staticBaseUrl}/shap/shap_attributions.json`)
+\end{minted}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{js}
+function Shap() {
+  // [...]
+
+  // Get the static file server port from environment variables
+  const staticPort = import.meta.env.VITE_PYLIBXAI_STATIC_PORT || '9000'
+  const staticBaseUrl = `http://localhost:${staticPort}`
+
+  // [...]
+
+  useEffect(() => {
+    // Fetch SHAP attributions data
+    const fetchAttributions = async () => {
+      try {
+        setIsLoading(true)
+        const response = await fetch(`${staticBaseUrl}/shap/shap_attributions.json`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        const data = await response.json()
+        if (!data.attributions || !Array.isArray(data.attributions)) {
+          throw new Error('Data is not in the expected format (object with attributions array)')
+        }
+        setAttributions(data.attributions)
+        setIsLoading(false)
+      } catch (error) {
+        setIsLoading(false)
+        pushNotification({ type: 'error', message: `SHAP: ${error.message}` })
+      }
+    }
+    fetchAttributions()
+  }, [staticBaseUrl, pushNotification])
+}
+\end{minted}
+\caption{Data fetching logic defined in a \texttt{Shap} component.}
+\label{fig:ShapComponentDataFetching}
+\end{figure}
+    
+\subsubsection{Visualization of audio waveform}
+
+The frontend provides visualization and audio playback functionality of
+different audio pieces that appear through the process of explanation:
+
+\begin{itemize}
+    \item Original input - it is visualized so that a user access and listen
+          to the original input,
+    \item Lime method explanation - the LIME method provides a result in a form of an audio
+          where an explanation which is the part of input that was the most important for
+          the decision of explanation is preserved in the audio and the rest is muted.
+\end{itemize}
+
+The visualization and playback of the audio pieces is implemented using the Wavesurfer.js
+library \cite{WavesurferDOC}. It is used in the \texttt{Lime}, \texttt{Shap}, and \texttt{Lrp}
+components to visualize the input audio, and the LIME method component also uses it for the
+visualization of its explanation. The advantage of the Wavesurfer.js library is that it
+provides interactive playback functionality meaning that a user may listen to the original
+audio and select any moment of the audio to listen to.
+
+The exemplary initialization of WaveSurfer's audio playback in the \texttt{Shap} component is shown
+in Fig. \ref{fig:ShapAudioPlayback}. The use is analogous for the \texttt{Lime} and \texttt{Lrp} components.
+An audio playback defined in this way will generate the following view as shown Fig. \ref{fig:AudioPlayback}.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{js}
+function Shap() {
+  // [...]
+
+  wavesurfer.current = WaveSurfer.create({
+    container: waveformRef.current,
+    waveColor: '#4F4A85',
+    progressColor: '#383351',
+    cursorColor: '#383351',
+    barWidth: 2,
+    barRadius: 3,
+    responsive: true,
+    height: 100,
+    barGap: 3
+  })
+
+  // [...]
+}
+\end{minted}
+\caption{Audio playback definition in a \texttt{Shap} component.}
+\label{fig:ShapAudioPlayback}
+\end{figure}
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=15cm]{audio_playback.png}
+    \caption{The visualization of audio playback.}
+    \label{fig:AudioPlayback}
+\end{figure}
+
+%\subsubsection{Visualization of attribution intensity}
+
+The frontend must also provide a visualization of attribution intensity (Sec. \ref{ch2:AttrIntensity}) over time.
+This functionality is implemented using ChartJS library \cite{ChartJsDoc}.
+The attribution intensity is a summation of all waveform frequencies over a time so it may
+be displayed using a simple linear plot that the ChartJS library provides.
+The exemplary attribution plot definition is shown in Fig. \ref{fig:ShapAttrPlot}
+and the generated plot corresponding to it is shown in Fig. \ref{fig:AttrPlot}.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=15cm]{attribution_plot.png}
+    \caption{The linear plot displaying attribution during time of an audio.}
+    \label{fig:AttrPlot}
+\end{figure}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{js}
+    chartInstance.current = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{ label: `SHAP Attribution Values`, data: attributions,
+          fill: false, borderColor: 'rgb(42, 123, 198)', tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display: true, text: 'SHAP Attributions' },
+          tooltip: {
+            callbacks: {
+              title: (tooltipItems) => { return `Frame: ${tooltipItems[0].label}` },
+              label: (tooltipItem) => { return `Value: ${tooltipItem.raw.toFixed(4)}` }
+            }
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Frame Index' } },
+          y: { beginAtZero: true, title: { display: true, text: 'Attribution Value' }
+          }
+        }
+      }
+    })
+\end{minted}
+\caption{Definition of attribution plot defined in the \texttt{Shap} component.}
+\label{fig:ShapAttrPlot}
+\end{figure}
+
+\subsubsection{Error and Notification system}
+
+The notification panel is responsible for displaying to the user any notifications
+and errors that appear during the execution of the frontend. It is implemented as
+a fixed-size bounded queue of size 10, meaning than any new errors that would exceed
+the maximal limit of the queue.
+
+The logic of pushing any new notification into the queue is implemented in the function
+\mintinline{js}{pushNotification()} as shown in Fig. \ref{fig:NotificationImpl}.
+The function adds new notification at the start of the array:
+
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
+const next = [
+  { id: Date.now() + Math.random(), ...notification },
+    ...prev
+  ];
+\end{minted}
+
+It then discards the oldest notifications when the limit exceeds the maximum size:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
+next.slice(0, maxNotifications);
+\end{minted}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{js}
+// Notification context
+export const NotificationContext = createContext({
+  notifications: [],
+  pushNotification: () => {},
+});
+
+function App() {
+  const [notifications, setNotifications] = useState([]); // {id, type, message}
+  const maxNotifications = 10;
+  const handleNavigation = (section) => {
+    setCurrentSection(section);
+  };
+
+  // Push notification (circular queue)
+  const pushNotification = useCallback((notification) => {
+    setNotifications(prev => {
+      const next = [
+        { id: Date.now() + Math.random(), ...notification },
+        ...prev
+      ];
+      return next.slice(0, maxNotifications);
+    });
+  }, []);
+}
+\end{minted}
+\caption{The implementation of ring-buffer responsible for storing notifications.}
+\label{fig:NotificationImpl}
+\end{figure}
+
+Later, the notification queue may be used across the frontend code to handle different
+events that have occurred. The user provides a type of event into the \mintinline{js}{'type'} key and
+the message into the \mintinline{js}{'message'} key:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
+pushNotification({ type: 'error', message: `SHAP: Failed to load audio: ${error.message}` })
+\end{minted}
+
+\clearpage % TODO: usuń
+\subsection{Explanation runner command-line script}
+
+The framework provides a command-line tool script as a helper tool for quick execution
+of explanation methods on the user’s input using models integrated into the library
+(Sec. \ref{ch5:ModelAdapters}). The full script implementation
+is shown in Appendix. \ref{appendix:ScriptListing}.
+
+For this, the script sets up terminal options as described in Sec. \ref{ch4:CmdTool}, with a use of Python's \texttt{argparse.ArgumentParser} class:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+parser = argparse.ArgumentParser(description="Process a model name and input path.")
+    
+parser.add_argument('-m', '--model', type=str, required=True,
+                    help="Name of the model to use [{sota_music, paans, gtzan},]...")
+# [...]
+args = parser.parse_args()
+\end{minted}
+
+Then, to launch a given explanation method, an instance of the \texttt{PylibxaiContext} class
+is set up with a directory provided by the user through command-line options:
+
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+context = PylibxaiContext(args.workdir)
+\end{minted}
+
+The script then initializes the appropriate model adapter provided by the user through the \texttt{-m/--model} parameter: 
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+if args.model == "HCNN":
+    adapter = HarmonicCNN(device=device)
+elif args.model == "CNN14":
+    adapter = Cnn14Adapter(device=device)
+elif args.model == "GtzanCNN":
+    adapter = GtzanCNNAdapter(model_path=GTZAN_MODEL_PATH, device=device)
+else:
+    print('Invalid value for -m/--model argument, available: [HCNN, CNN14, GtzanCNN].')
+    return
+\end{minted}
+
+The script then sets up the web page view if it was selected or defaults to debug view otherwise: 
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+view_type = ViewType.WEBVIEW if args.visualize else ViewType.DEBUG
+\end{minted}
+
+Then, the initial files are saved into the current context, which includes original audio input
+and a mapping of class labels into their identifiers. The mapping is performed conditionally,
+whether the model adapter implements \texttt{ModelLabelProvider}.
+
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+context.write_audio(args.input, os.path.join("input.wav"))
+if issubclass(type(adapter), ModelLabelProvider):
+    context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
+\end{minted}
+
+Finally, after setting up required classes and parsing all command-line options,
+the script invokes selected explanation methods by running their
+explainer class on the user’s input:
+
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+if "lime" in expls:
+    view = view_type if expl_count == 1 else ViewType.NONE
+    expl_count -= 1
+    explainer = LimeExplainer(adapter, context, view_type=view)
+    explainer.explain(args.input, target=None)
+if "lrp" in expls:
+    # [...]
+if "shap" in expls:
+    # [...]
+\end{minted}
 
 % #############################################
 %
@@ -1035,7 +1674,9 @@ class WebView(ViewInterface):
 \acronym{WEIRD}{ang. \emph{Western, Educated, Industrialized, Rich and Democratic}}
 \acronym{SOTA}{State-of-art Music Models}
 \acronym{LRP}{Layerwise propagation}
-\texttt{JSON}{JavaScript Object Notation}
+\acronym{JSON}{JavaScript Object Notation}
+\acronym{CORS}{Cross-origin resource sharing}
+\acronym{HTTP}{Hypertext Transfer Protocol}
 \vspace{0.8cm}
 
 %--------------------------------------
@@ -1059,13 +1700,100 @@ class WebView(ViewInterface):
 
 % Załącznik 1
 \clearpage
-\appendix{Nazwa załącznika 1}
-\lipsum[1-3]
-\begin{figure}[!h]
-	\centering \includegraphics[width=0.5\linewidth]{logopw2.png}
-	\caption{Obrazek w załączniku.}
-\end{figure}
-\lipsum[4-7]
+
+\appendix{Listing of the script \texttt{pylibxai\_explain.py}} \label{appendix:ScriptListing}
+\begin{minted}[numbersep=12pt, fontsize=\scriptsize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+import torch
+import argparse
+import torchaudio
+import os
+
+from pylibxai.model_adapters import HarmonicCNN, Cnn14Adapter, GtzanCNNAdapter
+from pylibxai.pylibxai_context import PylibxaiContext
+from pylibxai.Explainers import LimeExplainer, ShapExplainer, LRPExplainer
+from pylibxai.Interfaces import ViewType, ModelLabelProvider
+from utils import get_install_path
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+GTZAN_MODEL_PATH= get_install_path() / "pylibxai" / "models" / "GtzanCNN" / "gtzan_cnn.ckpt"
+
+def main():
+    parser = argparse.ArgumentParser(description="Process a model name and input path.")
+    
+    parser.add_argument('-m', '--model', type=str, required=True,
+                        help="Name of the model to use [{sota_music, paans, gtzan},]...")
+    parser.add_argument('-u', '--visualize', action='store_true',
+                        help="Enable visualization of audio in browser-based UI.")
+    parser.add_argument('-e', '--explainer', type=str, required=True,
+                        help="Name of the explainer to use [lime, shap, lrp].")
+    parser.add_argument('-t', '--target', type=str, required=True,
+                        help="Name or index of the label to explain.\
+                              Mapping is done automatically based on the model if the model provides it.") 
+    parser.add_argument('-i', '--input', type=str, required=True,
+                        help="Path to the input file or directory.") 
+    parser.add_argument('-w', '--workdir', type=str, required=True,
+                        help="Path to the workdir directory.")
+    parser.add_argument('-d', '--device', type=str, default=DEVICE,
+                        help="Device to use for computation [cpu, cuda]. Default is 'cuda' if available, otherwise 'cpu'.")
+    args = parser.parse_args()
+    
+    device = args.device if args.device is not None else DEVICE
+    assert device in ['cpu', 'cuda'], "Device must be either 'cpu' or 'cuda'."
+    
+    expls = args.explainer.split(",")
+    assert all(ex in ["lime", "shap", "lrp"] for ex in expls), \
+        "Invalid explainer specified. Available options: [lime, shap, lrp]."
+
+    context = PylibxaiContext(args.workdir)
+
+    if args.model == "HCNN":
+        adapter = HarmonicCNN(device=device)
+    elif args.model == "CNN14":
+        adapter = Cnn14Adapter(device=device)
+    elif args.model == "GtzanCNN":
+        adapter = GtzanCNNAdapter(model_path=GTZAN_MODEL_PATH, device=device)
+    else:
+        print('Invalid value for -m/--model argument, available: [HCNN, CNN14, GtzanCNN].')
+        return
+    
+    view_type = ViewType.WEBVIEW if args.visualize else ViewType.DEBUG
+    expl_count = len(expls)
+
+    # Attempt parsing label as an integer, if it fails then assume it's a string label
+    try:
+\end{minted}
+\begin{minted}[numbersep=12pt, firstnumber=59, fontsize=\scriptsize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+        target = int(args.target)
+    except ValueError:
+        target = args.target
+
+    # copy input audio to workdir
+    context.write_audio(args.input, os.path.join("input.wav"))
+    if issubclass(type(adapter), ModelLabelProvider):
+        context.write_label_mapping(adapter.get_label_mapping(), os.path.join("labels.json"))
+    
+    if "lime" in expls:
+        view = view_type if expl_count == 1 else ViewType.NONE
+        expl_count -= 1
+        explainer = LimeExplainer(adapter, context, view_type=view)
+        explainer.explain(args.input, target=None)
+    if "lrp" in expls:
+        view = view_type if expl_count == 1 else ViewType.NONE
+        expl_count -= 1
+        audio, _ = torchaudio.load(args.input, normalize=True)
+        audio = audio.to(device)
+        explainer = LRPExplainer(adapter, context, device, view_type=view)
+    if "shap" in expls:
+        view = view_type if expl_count == 1 else ViewType.NONE
+        expl_count -= 1
+        audio, _ = torchaudio.load(args.input, normalize=True)
+        audio = audio.to(device)
+        explainer = ShapExplainer(adapter, context, device, view_type=view)
+        explainer.explain(audio, target=target)
+
+if __name__ == '__main__':
+    main()
+\end{minted}
 
 % Załącznik 2
 \clearpage

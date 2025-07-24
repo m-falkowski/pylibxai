@@ -48,11 +48,11 @@ class DebugView(ViewInterface):
                 is_last = i == len(items) - 1
                 
                 if os.path.isdir(item_path):
-                    print(f"{prefix}{'└── ' if is_last else '├── '}{item}/")
-                    extension = "    " if is_last else "│   "
+                    print(f"{prefix}{'`-- ' if is_last else '|-- '}{item}/")
+                    extension = "    " if is_last else "|   "
                     self._print_directory_tree(item_path, prefix + extension, max_depth, current_depth + 1)
                 else:
-                    print(f"{prefix}{'└── ' if is_last else '├── '}{item}")
+                    print(f"{prefix}{'`-- ' if is_last else '|-- '}{item}")
         except PermissionError:
             print(f"{prefix}[Permission Denied]")
 

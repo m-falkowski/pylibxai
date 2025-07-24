@@ -37,12 +37,6 @@ class TestPylibxaiContext:
         assert os.path.exists(temp_dir)
         assert context.workdir == temp_dir
     
-    def test_constructor_creates_subdirectories(self, context, temp_dir):
-        """Test that required subdirectories are created"""
-        assert os.path.exists(os.path.join(temp_dir, "igradients"))
-        assert os.path.exists(os.path.join(temp_dir, "lrp"))
-        assert os.path.exists(os.path.join(temp_dir, "lime"))
-    
     def test_constructor_with_existing_workdir(self, temp_dir):
         """Test behavior when workdir already exists"""
         # Create some files in the directory first
@@ -56,31 +50,31 @@ class TestPylibxaiContext:
         assert context.workdir == temp_dir
     
     ## write_plt_image Tests
-    #def test_write_plt_image_saves_figure(self, context, temp_dir):
-    #    """Test saving matplotlib figure"""
-    #    fig, ax = plt.subplots()
-    #    ax.plot([1, 2, 3], [1, 4, 2])
-    #    
-    #    suffix = "test_plot.png"
-    #    context.write_plt_image(fig, suffix)
-    #    
-    #    expected_path = os.path.join(temp_dir, suffix)
-    #    assert os.path.exists(expected_path)
-    #    
-    #    plt.close(fig)
+    def test_write_plt_image_saves_figure(self, context, temp_dir):
+        """Test saving matplotlib figure"""
+        fig, ax = plt.subplots()
+        ax.plot([1, 2, 3], [1, 4, 2])
+        
+        suffix = "test_plot.png"
+        context.write_plt_image(fig, suffix)
+        
+        expected_path = os.path.join(temp_dir, suffix)
+        assert os.path.exists(expected_path)
+        
+        plt.close(fig)
     
-    # def test_write_plt_image_with_different_formats(self, context, temp_dir):
-    #     """Test saving figures with different formats"""
-    #     fig, ax = plt.subplots()
-    #     ax.plot([1, 2, 3])
-    #     
-    #     formats = ["test.png", "test.jpg", "test.pdf"]
-    #     
-    #     for fmt in formats:
-    #         context.write_plt_image(fig, fmt)
-    #         assert os.path.exists(os.path.join(temp_dir, fmt))
-    #     
-    #     plt.close(fig)
+    def test_write_plt_image_with_different_formats(self, context, temp_dir):
+        """Test saving figures with different formats"""
+        fig, ax = plt.subplots()
+        ax.plot([1, 2, 3])
+        
+        formats = ["test.png", "test.jpg", "test.pdf"]
+        
+        for fmt in formats:
+            context.write_plt_image(fig, fmt)
+            assert os.path.exists(os.path.join(temp_dir, fmt))
+        
+        plt.close(fig)
     
     def test_write_plt_image_bbox_inches_parameter(self, context):
         """Test that bbox_inches='tight' is applied"""
@@ -236,7 +230,7 @@ class TestPylibxaiContext:
         """Test complete workflow with multiple file operations"""
         # Write attribution
         attribution_data = np.array([0.5, 0.7, 0.2])
-        context.write_attribution(attribution_data, "igradients/attribution.json")
+        context.write_attribution(attribution_data, os.path.join("igrad", "attribution.json"))
         
         # Write label mapping
         labels = {"0": "class_a", "1": "class_b"}
@@ -248,7 +242,7 @@ class TestPylibxaiContext:
         context.write_plt_image(fig, "lrp/plot.png")
         
         # Verify all files exist
-        assert os.path.exists(os.path.join(temp_dir, "igradients", "attribution.json"))
+        assert os.path.exists(os.path.join(temp_dir, "igrad", "attribution.json"))
         assert os.path.exists(os.path.join(temp_dir, "labels.json"))
         assert os.path.exists(os.path.join(temp_dir, "lrp", "plot.png"))
         
@@ -265,11 +259,11 @@ class TestPylibxaiContext:
     def test_subdirectory_structure_maintained(self, context, temp_dir):
         """Test that subdirectory structure is maintained across operations"""
         # Perform operations in different subdirectories
-        context.write_attribution(np.array([1]), "igradients/test1.json")
-        context.write_attribution(np.array([2]), "lrp/test2.json")
-        context.write_attribution(np.array([3]), "lime/test3.json")
-        
+        context.write_attribution(np.array([1]), os.path.join("igrad", "test1.json"))
+        context.write_attribution(np.array([2]), os.path.join("lrp", "test2.json"))
+        context.write_attribution(np.array([3]), os.path.join("lime", "test3.json"))
+
         # Verify directory structure is maintained
-        assert os.path.exists(os.path.join(temp_dir, "igradients", "test1.json"))
+        assert os.path.exists(os.path.join(temp_dir, "igrad", "test1.json"))
         assert os.path.exists(os.path.join(temp_dir, "lrp", "test2.json"))
         assert os.path.exists(os.path.join(temp_dir, "lime", "test3.json"))

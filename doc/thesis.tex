@@ -22,10 +22,16 @@
 % Do debugowania czy tekst wychodzi poza margines
 %\usepackage{showframe}
 
+\usepackage{booktabs} % for better table lines
 \usepackage{minted}
 \usepackage{mdframed}
 \usepackage{float}
 \newtheorem{example}{Example}
+\usepackage{pifont}   % for ding symbols
+\usepackage{svg}
+
+\newcommand{\cmark}{\ding{51}} % checkmark
+\newcommand{\xmark}{\ding{55}} % cross
 
 \mdfdefinestyle{mintedframe}{
     innertopmargin=1mm,
@@ -94,8 +100,8 @@
 The aim of this thesis is to present a system that aims to simplify the analysis of explainable artificial
 intelligence (XAI) techniques in audio machine learning models.
 
-The proposed system is a framework that integrates selected XAI techniques such as
-audioLIME, SHAP (Shapley Additive explanations), and Layer-wise Relevance Propagation (LRP). The framework aims
+The proposed Audio XAI Framework is a framework that integrates selected XAI techniques such as
+audioLIME, Integrated gradients, and Layer-wise Relevance Propagation (LRP). The framework aims
 to provide a unified and extensible infrastructure for creating, managing, and visualizing model explanations.
 
 The framework offers an application programming interface
@@ -148,84 +154,7 @@ This work lays the groundwork for future research and development in human-centr
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{Introduction} \label{ch:introduction}
 
-% Akapit z cytatem
-\lipsum[1] \cite{goossens93}
-
-% Przykładowy obrazek
-\begin{figure}%[!h]
-    % Wyrównanie obrazka, szerokość i plik
-    % Zamiast width można też użyć height, etc.
-    \centering \includegraphics[width=0.5\linewidth]{logopw.png}
-    % Podpis umieszczamy pod obrazkiem
-    % znacznik \caption służy również do wygenerowania numeru obrazka
-    \caption{Tradycyjne godło Politechniki Warszawskiej}
-    % \label pozwala odwołać się do obrazka w innych miejscach za pomocą \ref
-    % odwołanie \ref renderuje się jako numer obrazka,
-    % dlatego zawsze najpierw używaj \caption a potem \label
-    \label{fig:tradycyjne-logo-pw}
-\end{figure}
-
-% \ref wyrenderuje się jako 'Reference to image 1.1'
-\lipsum[2] Reference to image \ref{fig:tradycyjne-logo-pw}.
-
-% Lista punktowana
-% Parametr label ustawia symbol punktora
-\begin{itemize}
-    \item Item 1:
-    \begin{itemize}[label=---]
-        \item item 1.1;
-        \item item 1.2;
-    \end{itemize}
-    \item Item 2;
-    \item Item 3.
-\end{itemize}
-
-\lipsum[3]
-
-% Lista numerowana w formacie 1.a).ii
-% Tutaj również można stosować \label
-\begin{enumerate}
-    \item Item 1:
-    \begin{enumerate}
-        \item item 1.1;
-        \item item 1.2:
-        \begin{enumerate}
-            \item item 1.2.1;
-            \item item 1.2.2;
-        \end{enumerate}
-        \item item 1.3;
-    \end{enumerate}
-    \item Item 2;
-    \item Item 3.
-\end{enumerate}
-
-% Przypis dolny \footnote
-\lipsum[4] Lorem ipsum dolor sit amet\footnote{Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.}, consectetur adipiscing elit.
-
-% Przykładowa tabela: wyśrodkowana i renderowana
-% w miejscu wstawienia: !h = !h[ere]
-% Domyślnie tabele trafiają na górę strony
-\begin{table}[!h] \centering
-    % Podpis tabeli umieszczamy od góry
-    \caption{Przykładowa tabela.}
-    \label{tab:tabela1}
-
-    % Tabela z trzema kolumnami:
-    % dwie wyrównanie do środka [c], a ostatnia do prawej [r]
-    % szerokość kolumn automatyczna (równa szerokości tekstu)
-    \begin{tabular}{| c | c | r |} \hline
-        Kolumna 1       & Kolumna 2 & Liczba \\ \hline\hline
-        cell1           & cell2     & 60     \\ \hline
-        cell4           & cell5     & 43     \\ \hline
-        cell7           & cell8     & 20,45  \\ \hline
-        % Komórka o szerokości dwóch kolumn, wyrównana do prawej
-        % Przypisy dolne w tabelach wstawiamy przez \tablefootnote
-        \multicolumn{2}{|r|}{Suma\tablefootnote{Table footnote.}} & 123,45 \\ \hline
-    \end{tabular}
-
-\end{table}
-
-Lorem ipsum dolor sit amet.
+Introduction TODO
 
 % #############################################
 %
@@ -236,59 +165,105 @@ Lorem ipsum dolor sit amet.
 \section{Problem analysis} \label{ch1:probAnalysis}
 
 This chapter provides an overview of terminology and methods used in the thesis,
-which describes essentials of machine learning explanations, description of explanation methods used in the thesis which are audioLIME, LRP, SHAP, and software engineering principles used for designing a framework for audio machine learning explanations.
+which describes essentials of machine learning explanations, description of explanation methods
+used in the thesis which are LIME, LRP, Integrated Gradients, and software engineering principles
+used for designing an Audio XAI framework.
 
 \subsection{Black box interpretation of ML predictors} % Why explanation framework for audio - the problem
 \subsubsection{Why explanation framework for audio - the problem}
 
+\subsection{Definition of user}
+\subsection{Program architecture selection} % overview of framework, monolithic UI etc.}
+
 \subsection{Similar solutions}
 
-To the best of our knowledge this is the ...
+To the best of our knowledge this is 
 
-\subsection{Selection of methodology - overview of framework, monolithic UI etc.}
-
-\subsection{Framework definition}
-\subsubsection{Definition}
-\subsubsection{Modularity}
-\subsubsection{Dependency injection}
-
-\subsection{Definition of user}
-
-\subsection{Definition of ML explanation}
+\subsection{Explainable artificial intelligence} % Definition of ML explanation
 \subsubsection{Locality-awareness}
 \subsubsection{Model-agnostic}
 
 \subsection{Audio processing}
 \subsubsection{Waveform representation}
-\subsubsection{Mel-spectogram}
+\subsubsection{Mel-spectrogram}
 
-\subsection{Model explanation}
-\subsubsection{definition}
-\subsubsection{Locality-awareness}
+\subsection{Model explanation} % Definition, Locality-awareness, model-agnostic
+
+\subsection{Attribution method} \label{ch2:AttributionMethod}
+
+Attribution method is:
+
 \subsection{Attribution intensity} \label{ch2:AttrIntensity}
 
-\subsection{Selection of explanation methods for framework}
-\subsubsection{Criteria - interpretability, attribution, model-agnostic}
-\subsubsection{AudioLIME} \label{ch1:audioLIME}
-\subsubsection{Shapley Additive Explanations} \label{ch1:ShapMethod}
-\subsubsection{Layer-wise Relevance Propagation} \label{ch1:LrpMethod}
+% #############################################
 
-\subsection{Selection of model for integration} \label{ch1:ModelSelection}
+\subsection{Selection of explanation methods for framework}
+\subsubsection{Criteria - interpretability, attribution, model-agnostic, simplicity}
+\subsubsection{Local Interpretable Model Explanation} \label{ch2:audioLIME} % AudioLIME
+\subsubsection{Integrated gradients} \label{ch2:IgradMethod}
+\subsubsection{Layer-wise Relevance Propagation} \label{ch2:LrpMethod}
+
+LRP (Layer-wise Relevance Propagation) \cite{Binder2016-oa} is a ...
+
+\subsection{Selection of model for integration} \label{ch2:ModelSelection}
 \subsubsection{Criteria - practicality}
 \subsubsection{HarmonicCNN}
 HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging Models} \cite{Won2020-ej}.
 \subsubsection{CNN14}
 \subsubsection{Handmade Gtzan / GtzanCNN}
 
-\subsection{ML Explanation framework overview} \label{ch2:ArchitectureOverview}
-\subsubsection{Framework components - library, UI, terminal command}
+% #############################################
 
-\subsection{Visualizing ML Explanation framework overview} 
+\subsection{Dependency inversion principle} \label{ch2:DependencyInversion}
 
-\subsection{Model-View-Controller} \label{ch1:ModelViewController}
-\subsubsection{Architecture of Model-View Controller}
-\subsubsection{Characteristic of Model, View and Controller}
-\subsubsection{Separation of operations on data and visualization}
+\subsection{Software framework} % Definition, Modularity, Dependency inversion/injection
+
+\subsection{Model-View-Presenter} \label{ch2:ModelViewController}
+
+MVP (Model-View-Presenter) \cite{Potel2011} is an architectural design pattern that is a variation
+of the MVC (Model-View-Controller) that aims to provide a separation of concerns between
+data processing (business logic) and user interface.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    %\includegraphics[width=5cm]{MVP-Pattern.png}
+    \includesvg[width=6cm]{MVP-Pattern.svg}
+    \caption{The diagram depicts Model-View-Presenter pattern organization.}
+    \label{fig:MvpDiagram}
+\end{figure}
+
+The MVP pattern separates a program’s logic into the three components, which are
+\emph{Model}, \emph{View}, and \emph{Presenter}. The organization of the relation
+between components is shown in Fig. \ref{fig:MvpDiagram}.
+
+\begin{description}
+    \item[Model] The model is responsible for information processing and
+        generating a data to be displayed,
+    \item[View] It is a \textbf{passive} component that is responsible for presenting 
+        generated data results to the user. The key distinction of the MVP pattern
+        to the classic MVC pattern is that the view does not communicate with a
+        model in any way and rather it is immutable. The example of such a view
+        could be a static web page,
+    \item[Presenter] The component that links the other two. Presenter retrieves model's
+        results and formats them for the view.
+        It manages user's input and commands and passes them to the model and view appropriately.
+\end{description}
+
+A key aspect identified when designing an Audio XAI framework was that data processing needs
+to be performed for multiple user-supplied models, and their results are subsequently visualized.
+This situation allowed adaptation of the MVP pattern to ensure modularity of the solution,
+bringing a necessary separation of concerns to the solution so that data processing and
+visualization are independent of each other, controlled through a presenter class.
+The Audio XAI framework implemented in the thesis generates a static web page which
+distinguish its MVP implementation from a typical one as view does not communicate completely
+with a presenter class.
+
+\subsection{Audio XAI Framework architecture} \label{ch2:ArchitectureOverview}
+%\subsubsection{Framework components - API/Application programming interface(library),
+ %UI, terminal command}
+%\subsection{Visualizing ML Explanation framework overview}
+
+% Image (MVP architecture)
 
 % #############################################
 %
@@ -324,12 +299,12 @@ HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging M
 
         The library API must offer base classes for implementing a given explanation method.
     Each adapter type must define specific methods required for the corresponding explanation algorithm,
-    including LIME, SHAP, or LRP, ensuring a consistent interface for different explanation methods.
+    including LIME, Integrated gradients, or LRP, ensuring a consistent interface for different explanation methods.
 
     \item \textbf{Explanation method Selection}
 
         The library API must offer users the ability to choose which explanation methods are displayed in the view.
-    Users can select from available explainers including LIME, SHAP, and LRP through library API or through
+    Users can select from available explainers including LIME, Integrated gradients, and LRP through library API or through
     command-line arguments in case when using a helper tool. This allows users to focus on specific explanation
     approaches relevant to their use case.
 
@@ -358,7 +333,7 @@ HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging M
 
     \item \textbf{Support for selected explanation methods}
 
-        The library API must provide explanation methods selected for the thesis, such as LIME, SHAP, and LRP.
+        The library API must provide explanation methods selected for the thesis, such as LIME, Integrated gradients, and LRP.
     These methods should be implemented as classes, and they also serve as controllers within
     the Model-View-Controller pattern and coordinate between model adapters, explanation algorithms, and view components. They encapsulate the complete explanation workflow from input processing to result visualization.
 
@@ -382,7 +357,7 @@ HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging M
     \item \textbf{Separate tab for each explanation result}
 
             The user interface must aggregate the results of each explanation method in separate tabs to organize
-        outcomes and enable switching between them. Each explanation method, which is LIME, SHAP, or LRP,
+        outcomes and enable switching between them. Each explanation method, which is LIME, Integrated gradients, or LRP,
         should get its dedicated tab. This should allow users to easily navigate different explanation approaches
         to compare results. The sidebar should provide a structured view of all generated explanations in a single
         interface and allow you to switch between them.
@@ -419,12 +394,12 @@ HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging M
     \item \textbf{Visualize attribution intensity}
 
         The user interface must show plot of attribution intensity of user's input audio
-    for both SHAP and LIME explanations. The attribution scores given to various audio input segments are displayed in these plots. This enables users to determine which audio signal regions had the biggest impact on the model's prediction.
+    for both Integrated gradients and LIME explanations. The attribution scores given to various audio input segments are displayed in these plots. This enables users to determine which audio signal regions had the biggest impact on the model's prediction.
 
     \item \textbf{Display of user's input overlayed with attribution}
 
-        The user interface must display attribution overlaid on user's input for both SHAP and LIME explanations.
-    Attribution values are visualized as color heatmaps on the user's spectrogram which eDables a user to
+        The user interface must display attribution overlaid on user's input for both Integrated gradients and LIME explanations.
+    Attribution values are visualized as color heatmaps on the user's spectrogram which enables a user to
     understand which frequency components at a given time interval influenced the model's decision.
     This method works very well when the input provided to the model is a spectrogram.
 
@@ -446,7 +421,7 @@ HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging M
 
     \item \textbf{Provide selection of one or more explanation method}
 
-        The application must enable users to select one or more explanation methods offered by the framework which are LIME, SHAP, or LRP.
+        The application must enable users to select one or more explanation methods offered by the framework which are LIME, Integrated gradients, or LRP.
 
     \item \textbf{Provide selection of audio model}
 
@@ -467,18 +442,19 @@ HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging M
 \subsection{Non-functional requirements} \label{ch:NonFuncRequirements}
 
     The implementation of an audio XAI framework must meet several criteria
-    top ensure proper behavior for the user and quality criteria.
+    to ensure proper behavior for the user and quality criteria.
     The most important criteria are modularity, usability, and persistency.
 
 \begin{description}
     \item \textbf{Modularity}
 
          The project thesis aims to provide a general and extensible audio explanation framework. The system must be 
-    designed with a modular structure, where key components such as explanation methods, model adapters, and view renderers
-    are implemented as independent modules. For that, the system must adhere to the pattern principles of Model-View-
-    Controller architecture as discussed in <Sec. TODO> This modularity allows for the seamless integration of new 
-    functionalities, such as adding additional explanation algorithms or supporting new audio models, without requiring 
-    modifications to the core of the system.
+    designed with a modular structure, where key components such as explanation methods, model adapters, and view
+    renderers are implemented as independent modules. For that, the system must adhere 
+    to the pattern principles of Model-View-Controller architecture as discussed
+    in Sec. \ref{ch2:ModelViewController}. This modularity allows for the seamless integration of new 
+    functionalities, such as adding additional explanation algorithms or
+    supporting new audio models, without requiring  modifications to the core of the system.
 
     \item \textbf{Reliability}
 
@@ -536,16 +512,17 @@ A declarative JavaScript library that has revolutionized user interface developm
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{External specification} \label{ch:externalSpec}
 
+\subsection{Development Setup} \label{ch4:DevelopmentSetup}
 \subsection{Installation process overview}
 \subsubsection{Installation steps}
 
 \subsection{Command-line tool for simple explanations} \label{ch4:CmdTool}
 
 \subsection{Web interface for explanation}
-\subsubsection{Initalizing web interface}
+\subsubsection{Initializing web interface}
 \subsubsection{Displaying LIME results}
 \subsubsection{Displaying LRP results}
-\subsubsection{Displaying SHAP results}
+\subsubsection{Displaying Integrated gradients results}
 \subsubsection{Displaying software warning} \label{ch4:NotificationPanel}
 \subsubsection{Version information}
 
@@ -598,7 +575,7 @@ A declarative JavaScript library that has revolutionized user interface developm
 \begin{itemize}[itemsep=1\baselineskip]
 	\item \textbf{audioLIME/} - Contains implementation of audioLIME explanation method,
 	\item \textbf{AudioLoader/} - Provides utilities for loading and preprocessing audio files,
-	\item \textbf{Explainers/} - Contains explainer classes for LIME, SHAP, and LRP methods,
+	\item \textbf{Explainers/} - Contains explainer classes for LIME, Integrated gradients, and LRP methods,
 	\item \textbf{pylibxai\_explain.py} - Main command-line entry point for running explanations on audio models,
 	\item \textbf{Interfaces/} - Defines abstract base classes and interfaces for model adapters and views,
 	\item \textbf{model\_adapters/} - Implements adapter classes for integrating different audio models with the framework,
@@ -617,13 +594,13 @@ A declarative JavaScript library that has revolutionized user interface developm
     \label{fig:ClassDiagram}
 \end{figure}
 
-    The thesis utilizes Model-View-Controller (MVC) architectural pattern (Sec. \ref{ch1:ModelViewController}) to obtain extendable architecture that satisfies one of core requirements of the thesis that is modularity as discussed in Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extendable with a new explanation types, machine learning models, and views separating these three from each other so that the developer might work on one of these exclusively.
+    The thesis utilizes Model-View-Controller (MVC) architectural pattern (Sec. \ref{ch2:ModelViewController}) to obtain extendable architecture that satisfies one of core requirements of the thesis that is modularity as discussed in Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extendable with a new explanation types, machine learning models, and views separating these three from each other so that the developer might work on one of these exclusively.
 
     The Model-View-Controller is implemented using
     the following classes visible in the class diagram \ref{fig:ClassDiagram}. The implementation and details of these classes are discussed later in the chapter:
     \begin{description}
         \item[Model] The function of the model in the framework is realized using adapter classes for user
-        models, such as \texttt{HarmonicCNN} or \texttt{Cnn14} (Sec. \ref{ch1:ModelSelection}). These classes
+        models, such as \texttt{HarmonicCNN} or \texttt{Cnn14} (Sec. \ref{ch2:ModelSelection}). These classes
         operate on user data passed to them from controller classes, performing data manipulation, which is an
         inference in this case. They need to be implemented by the user to provide their support to the framework and they usually come in a form of an adapter class.
         The interface required for implementation of these classes is discussed     
@@ -637,7 +614,7 @@ A declarative JavaScript library that has revolutionized user interface developm
         \item[Controller] The purpose of this part is to pass the user’s input into the model
         classes for data manipulation and to later pass the results of data manipulation into 
         the view. This functionality is achieved by classes implementing explainers' logic, 
-        such as \texttt{LimeExplainer} or \texttt{ShapExplainer}.
+        such as \texttt{LimeExplainer} or \texttt{IGradientsExplainer}.
     \end{description}
 
 \subsection{Interfaces for model adapters} \label{ch5:AdapterInterfaces}
@@ -656,7 +633,7 @@ A declarative JavaScript library that has revolutionized user interface developm
     
 \subsubsection{LIME method adapter}
 
-    Adapter for LIME method (\ref{ch1:audioLIME}) defines the interface that the user's model needs to satisfy to be able to launch \texttt{audioLIME} explanation on it.
+    Adapter for LIME method (\ref{ch2:audioLIME}) defines the interface that the user's model needs to satisfy to be able to launch \texttt{audioLIME} explanation on it.
     This interface requires from user defining a single method \mintinline{py}{get_lime_predict_fn(self)}
     that must return a \mintinline{py}{np.array}.
 
@@ -677,37 +654,38 @@ class LimeAdapter(ABC):
 \label{fig:LimeAdapter}
 \end{figure}
 
-\subsubsection{SHAP method adapter}
+\subsubsection{Integrated gradients method adapter}
 
-    In the same way, adapter for SHAP method (\ref{ch1:ShapMethod}) defines the interface that the user's model needs to satisfy to be able to launch Shapley-Additive explanation on it.
-    This interface requires from user defining a single method \mintinline{py}{get_shap_predict_fn(self)}
+    In the same way, adapter for Integrated gradients method (\ref{ch2:IgradMethod}) defines the interface that the
+    user's model needs to satisfy to be able to launch Integrated gradients method on it.
+    This interface requires from user defining a single method \mintinline{py}{get_igrad_predict_fn(self)}
     that must return an \mintinline{py}{np.array}.
 
-    Additionally, SHAP interface requires defining a \mintinline{py}{shap_prepare_inference_input} method that serves a purpose of additionally preprocessing data for a given model as shown in \ref{fig:ShapAdapter}.
-    This is required as interface for explainers accept user's waveform input but they do expect an input which is the same as model's input which may be either waveform or a spectogram which requires additional conversion.
+    Additionally, Integrated gradients interface requires defining a \mintinline{py}{igrad_prepare_inference_input}
+    method that serves a purpose of additionally preprocessing data for a given model as shown in
+    \ref{fig:IGradientsAdapter}. This is required as interface for explainers accept user's waveform input but they
+    do expect an input which is the same as model's input which may be either waveform or a spectrogram which
+    requires additional conversion.
 
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
-class ShapAdapter(ABC):
-    """Abstract base class for SHAP (SHapley Additive exPlanations)
-       adapters"""
+class IGradientsAdapter(ABC):
+    """Abstract base class for Integrated gradients method adapters"""
     @abstractmethod
-    def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]: pass
-    """Returns a function that takes an audio input and returns
-    the model's prediction for that input."""
+    def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]: pass
+    """Returns a function that takes an audio input and returns the model's prediction for that input."""
 
     @abstractmethod
-    def shap_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor: pass
-    """Returns a function that takes an audio input
-    and returns the model's prediction for that input."""
+    def igrad_prepare_inference_input(self, x: torch.Tensor) -> torch.Tensor: pass
+    """Returns a function that takes an audio input and returns the model's prediction for that input."""
 \end{minted}
-\caption{Class definition of \texttt{ShapExplainer}.}
-\label{fig:ShapAdapter}
+\caption{Class definition of \texttt{IGradientsAdapter}.}
+\label{fig:IGradientsAdapter}
 \end{figure}
 
 \subsubsection{LRP method adapter}
 
-    The last method adapter for LRP method (\ref{ch1:LrpMethod}) also requires the user to define a single method \mintinline{py}{get_lime_predict_fn(self)} that must return \mintinline{py}{nn.Module}. This return type is required as Captum's LRP implementation takes it as an input.
+    The last method adapter for LRP method (\ref{ch2:LrpMethod}) also requires the user to define a single method \mintinline{py}{get_lime_predict_fn(self)} that must return \mintinline{py}{nn.Module}. This return type is required as Captum's LRP implementation takes it as an input.
 
     \begin{example}
         An exemplary implementation of LrpAdapter for an exemplary user's adapter \texttt{MyModelAdapter}
@@ -793,16 +771,16 @@ The user may select individual interfaces that the framework’s API provides,
 which allows them to implement only a subset of the functionality that a framework
 offers and to skip unneeded parts. The user then may freely decide which interface
 they would like to implement for their model between 
-\texttt{LrpAdapter}, \texttt{LimeAdapter}, \texttt{ShapAdapter}, and \texttt{ModelLabelProvider}.
+\texttt{LrpAdapter}, \texttt{LimeAdapter}, \texttt{IGradientsAdapter}, and \texttt{ModelLabelProvider}.
 
 There are three adapters integrated into the library, which are HarmonicCNN, Cnn14, and GtzanCNN
-(Sec. \ref{ch1:ModelSelection}). As their implementation is similar and long, HarmonicCNN is the model
+(Sec. \ref{ch2:ModelSelection}). As their implementation is similar and long, HarmonicCNN is the model
 that will described with a precision in the rest of this chapter.
 
 %\subsubsection{HarmonicCNN adapter}
 The given adapter first inherits the required interfaces to overload the required methods.
 This is shown in Fig. \ref{fig:HarmonicCNNInit}, where the HarmonicCNN class inherits three classes:
-\texttt{LimeAdapter}, \texttt{ShapAdapter}, and \texttt{ModelLabelProvider}:
+\texttt{LimeAdapter}, \texttt{IGradientsAdapter}, and \texttt{ModelLabelProvider}:
 
 The class initialization (Fig. \ref{fig:HarmonicCNNInit}) involves importing the model’s class definition
 from the \textit{SotaMusicModels} repository \cite{Won2020-ej}. As the repository hosts a collection
@@ -813,7 +791,7 @@ In the last step, the model state is then loaded using \mintinline{py}{torch.loa
 
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
-class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
+class HarmonicCNN(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
     def __init__(self, device='cuda'):
         # ...
         path_models = os.path.join(path_sota, 'models')
@@ -845,7 +823,7 @@ a method \mintinline{py}{get_label_mapping()} as shown in Fig. \ref{fig:Harmonic
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 TAGS = ['genre---downtempo', 'genre---ambient', ...]
 
-class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
+class HarmonicCNN(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
     def __init__(self, device='cuda'):
         # ...
         self.label_to_id = {i: v for i, v in enumerate(TAGS)}
@@ -860,8 +838,8 @@ class HarmonicCNN(LimeAdapter, ShapAdapter, ModelLabelProvider):
 \label{fig:HarmonicLabelMapping}
 \end{figure}
 
-The adapter defines a method \mintinline{py}{get_shap_predict_fn()} that implements
-the \texttt{ShapAdapter} interface as shown in Fig. \ref{fig:HarmonicShapOverload}.
+The adapter defines a method \mintinline{py}{get_igrad_predict_fn()} that implements
+the \texttt{IGradientsAdapter} interface as shown in Fig. \ref{fig:HarmonicIgradOverload}.
 This method must return a function with a type \mintinline{py}{Callable[[torch.Tensor], torch.Tensor]}, % TODO: overflow hbox
 that takes Pytorch \mintinline{py}{torch.Tensor} both as an argument and return type.
 The callback then defines an inner function \mintinline{py}{predict_fn(x)} that contains
@@ -869,7 +847,7 @@ the standard inference code of HarmonicCNN, and then it returns that function.
 
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
-def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
+def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
     # ...
     def predict_fn(x):
         # ... 
@@ -878,8 +856,8 @@ def get_shap_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
         return output_tensor
     return predict_fn
 \end{minted}
-\caption{Supporting SHAP method in adapter \texttt{HarmonicCNN}.}
-\label{fig:HarmonicShapOverload}
+\caption{Supporting Integrated gradients method in adapter \texttt{HarmonicCNN}.}
+\label{fig:HarmonicIgradOverload}
 \end{figure}
 
 To implement \texttt{LrpAdapter} the adapter provides a definition for LRP
@@ -942,49 +920,104 @@ def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
 %\subsubsection{CNN14 adapter} TODO: potrzebne?
 %\subsubsection{GtzanCNN adapter} TODO: potrzebne?
 
-\subsection{Explainer classes implementation}
+\subsection{Explainer classes}
 
-Explanation methods are implemented as separate classes including \texttt{LimeAdapter}, \texttt{ShapExplainer}, and \texttt{LrpAdapter}.
-The purpose of these classes is to implem TODO
+The explainer classes are the core component of the framework that is responsible
+for the launching of the explanation methods on the user input and the
+selected model. Their primary purpose is to manage perform explanation
+on the user's model and manipulation of the resulting data based on the users decision.
+They offload from the user a need to visualize 
 
-These classes serves a purpose of controllers as part of Model-View-Controller
-pattern so their purpose include managing k
+These classes serve a purpose of controllers as part of the Model-View-Controller
+pattern though this name is not taken directly in their classes names.
+As controllers they manage the model and view classes and they
 
+Explanation methods are implemented as separate classes including \texttt{LimeExplainer},
+\texttt{IGradientsExplainer}, and \texttt{LrpAdapter}.
+
+\subsubsection{Integrated gradients and LRP explainers}
+
+The explainer implementation for integrated gradients and LRP are equal as
+they both use implementation from the Captum library which
+exposes method's results through attribution method \ref{ch2:AttributionMethod}.
+
+Both implementation define the ...
 
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
-
+class IGradientsExplainer:
+    def __init__(self, model_adapter, context, device, view_type=None, port=9000):
+        # ...
+        self.model_adapter = model_adapter
+        predict_fn = model_adapter.get_igrad_predict_fn()
+        self.explainer = IntegratedGradients(predict_fn)
+        # ...
+        self.view_type = view_type
+        if view_type == ViewType.WEBVIEW:
+            self.view = WebView(context, port=port)
+        elif view_type == ViewType.DEBUG:
+            self.view = DebugView(context)
+        elif view_type == ViewType.NONE:
+            self.view = None
+        else:
+            raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
 \end{minted}
-\caption{Support of LIME method in adapter \texttt{HarmonicCNN}.}
-\label{fig:HarmonicLLIMEOverload}
+\caption{Class definition of \texttt{IGradientsExplainer}.}
+\label{fig:IGradientsExplainer}
 \end{figure}
 
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class IGradientsExplainer:
+    def explain_instance(self, audio, target, background=None):
+        audio = self.model_adapter.igrad_prepare_inference_input(audio)
+        attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
+        return attributions, delta
+\end{minted}
+\caption{Class definition of \texttt{IGradientsExplainer}.}
+\label{fig:explain_instance}
+\end{figure}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class IGradientsExplainer:
+    def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):
+        audio = self.model_adapter.igrad_prepare_inference_input(audio)
+        attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
+        # ...
+        plt.ioff()
+        return viz.visualize_image_attr(attributions,
+                                        audio,
+                                        type,
+                                        attr_sign,
+                                        fig_size=(24,16),
+                                        show_colorbar=True,
+                                        outlier_perc=50)
+\end{minted}
+\caption{Class definition of \texttt{IGradientsExplainer}.}
+\label{fig:explain_instance_visualize}
+\end{figure}
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class IGradientsExplainer:
+    def get_smoothed_attribution(self):
+        def moving_average(data, window_size=15):
+            return np.convolve(data, np.ones(window_size)/window_size, mode='same')
+
+        attribution = self.attribution.squeeze()
+        positive_attribution = torch.clamp(attribution, min=0.0)
+        summed_attribution = positive_attribution.sum(dim=0).detach().cpu().numpy()  # Shape: [1292]
+        smoothed_attribution = moving_average(summed_attribution)
+        return smoothed_attribution
+\end{minted}
+\caption{Class definition of \texttt{IGradientsExplainer}.}
+\label{fig:get_smoothed_attribution}
+\end{figure}
 
 \subsubsection{LIME explainer}
-\subsubsection{SHAP and LRP explainers}
-\begin{figure}%[h]
-\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
-class ShapExplainer:
-    def __init__(self, model_adapter, context, device, view_type=None):
 
-    def explain_instance(self, audio, target, background=None):
-        pass
-    
-    def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):  
-        pass
-
-    def get_attribution(self):
-        pass
-
-    def get_smoothed_attribution(self):
-        pass
-    
-    def explain(self, audio, target):
-        pass
-\end{minted}
-\caption{Class definition of \texttt{ShapExplainer}.}
-\label{fig:ShapExplainer}
-\end{figure}
+% ...
 
 \subsection{Context class definition}
 
@@ -1022,15 +1055,15 @@ def write_attribution(self, smoothed_attribution, suffix):
 class PylibxaiContext:
     def __init__(self, workdir):
         self.workdir = workdir
-        # [...]
+        # ...
     
-    def write_plt_image(self, fig, suffix): pass # [...]
+    def write_plt_image(self, fig, suffix): pass # ...
     
-    def write_attribution(self, smoothed_attribution, suffix): pass # [...]
+    def write_attribution(self, smoothed_attribution, suffix): pass # ...
 
-    def write_label_mapping(self, labels, suffix): pass # [...]
+    def write_label_mapping(self, labels, suffix): pass # ...
     
-    def write_audio(self, audio, suffix, *args, **kwargs): pass # [...]
+    def write_audio(self, audio, suffix, *args, **kwargs): pass # ...
 \end{minted}
 \caption{Class definition of \texttt{PylibxaiContext}.}
 \label{fig:PylibxaiContext}
@@ -1188,7 +1221,7 @@ class DebugView(ViewInterface):
         print()
         
         # Display content of each subdirectory
-        subdirs = ["shap", "lrp", "lime"]
+        subdirs = ["integrated-gradients", "lrp", "lime"]
         for subdir in subdirs:
             subdir_path = os.path.join(self.context.workdir, subdir)
             if os.path.exists(subdir_path):
@@ -1303,7 +1336,7 @@ The organization of the website's layout is shown in Fig. \ref{fig:PageLayout} a
 
 \begin{itemize}
     \item \textbf{Sidebar (1)} - Sidebar allows users to navigate between different sections, including mode
-        information, SHAP, LIME, and LRP explanations, using a list of buttons, highlighting
+        information, Integrated gradients, LIME, and LRP explanations, using a list of buttons, highlighting
         the actively shown tab,
     \item \textbf{Navigation bar (2)} - The Navigation bar is a permanently visible page element that is sticky
         to its upper side. It contains various control icons on its left side, including a notification
@@ -1332,7 +1365,7 @@ each defined in a separate file, including:
         routing between different result sections of the interface,
     \item \textbf{ModelInfo} - Component that displays model information,
         such a label mappings, presenting their names along with a class identifier,
-    \item \textbf{Lime, Shap, Lrp} - Each of these components manages the display of its
+    \item \textbf{Lime, Igradients, Lrp} - Each of these components manages the display of its
         respective explanation method’s result. This includes displaying audio playback,
         attribution visualizations, or interactive charts,
     \item \textbf{Footer} - Provides footer of the web page.
@@ -1354,16 +1387,16 @@ staticBaseUrl = `http://localhost:\${staticPort}`.
 \end{minted}
 The requests are done using JavaScript's built-in Fetch API utilizing \mintinline{js}{fetch()} method.
 An example of data fetching from backend which is fetching of explanation's attribution
-contained in a file in a JSON format as seen in Fig. \ref{fig:ShapComponentDataFetching}.
+contained in a file in a JSON format as seen in Fig. \ref{fig:IgradComponentDataFetching}.
 
 An instance of an HTTP request is generated using the \mintinline{js}{fetch()} method. After that, the data is processed further by the frontend to create a visualization of it
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
-const response = await fetch(`\${staticBaseUrl}/shap/shap_attributions.json`)
+const response = await fetch(`\${staticBaseUrl}/igrad/igrad_attributions.json`)
 \end{minted}
 
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{js}
-function Shap() {
+function Igradients() {
   // [...]
 
   // Get the static file server port from environment variables
@@ -1373,11 +1406,11 @@ function Shap() {
   // [...]
 
   useEffect(() => {
-    // Fetch SHAP attributions data
+    // Fetch Integrated gradients attributions data
     const fetchAttributions = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch(`${staticBaseUrl}/shap/shap_attributions.json`)
+        const response = await fetch(`${staticBaseUrl}/igrad/igrad_attributions.json`)
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
@@ -1389,15 +1422,15 @@ function Shap() {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        pushNotification({ type: 'error', message: `SHAP: ${error.message}` })
+        pushNotification({ type: 'error', message: `Integrated gradients: ${error.message}` })
       }
     }
     fetchAttributions()
   }, [staticBaseUrl, pushNotification])
 }
 \end{minted}
-\caption{Data fetching logic defined in a \texttt{Shap} component.}
-\label{fig:ShapComponentDataFetching}
+\caption{Data fetching logic defined in a \texttt{Igradients} component.}
+\label{fig:IgradComponentDataFetching}
 \end{figure}
     
 \subsubsection{Visualization of audio waveform}
@@ -1414,19 +1447,19 @@ different audio pieces that appear through the process of explanation:
 \end{itemize}
 
 The visualization and playback of the audio pieces is implemented using the Wavesurfer.js
-library \cite{WavesurferDOC}. It is used in the \texttt{Lime}, \texttt{Shap}, and \texttt{Lrp}
+library \cite{WavesurferDOC}. It is used in the \texttt{Lime}, \texttt{Igradients}, and \texttt{Lrp}
 components to visualize the input audio, and the LIME method component also uses it for the
 visualization of its explanation. The advantage of the Wavesurfer.js library is that it
 provides interactive playback functionality meaning that a user may listen to the original
 audio and select any moment of the audio to listen to.
 
-The exemplary initialization of WaveSurfer's audio playback in the \texttt{Shap} component is shown
-in Fig. \ref{fig:ShapAudioPlayback}. The use is analogous for the \texttt{Lime} and \texttt{Lrp} components.
+The exemplary initialization of WaveSurfer's audio playback in the \texttt{Igradients} component is shown
+in Fig. \ref{fig:IgradientsAudioPlayback}. The use is analogous for the \texttt{Lime} and \texttt{Lrp} components.
 An audio playback defined in this way will generate the following view as shown Fig. \ref{fig:AudioPlayback}.
 
 \begin{figure}%[h]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{js}
-function Shap() {
+function Igradients() {
   // [...]
 
   wavesurfer.current = WaveSurfer.create({
@@ -1444,8 +1477,8 @@ function Shap() {
   // [...]
 }
 \end{minted}
-\caption{Audio playback definition in a \texttt{Shap} component.}
-\label{fig:ShapAudioPlayback}
+\caption{Audio playback definition in a \texttt{Igradients} component.}
+\label{fig:IgradientsAudioPlayback}
 \end{figure}
 
 \begin{figure}[h!] % TODO: h! musi być wyłączone
@@ -1461,7 +1494,7 @@ The frontend must also provide a visualization of attribution intensity (Sec. \r
 This functionality is implemented using ChartJS library \cite{ChartJsDoc}.
 The attribution intensity is a summation of all waveform frequencies over a time so it may
 be displayed using a simple linear plot that the ChartJS library provides.
-The exemplary attribution plot definition is shown in Fig. \ref{fig:ShapAttrPlot}
+The exemplary attribution plot definition is shown in Fig. \ref{fig:IgradientsAttrPlot}
 and the generated plot corresponding to it is shown in Fig. \ref{fig:AttrPlot}.
 
 \begin{figure}[h!] % TODO: h! musi być wyłączone
@@ -1477,7 +1510,7 @@ and the generated plot corresponding to it is shown in Fig. \ref{fig:AttrPlot}.
       type: 'line',
       data: {
         labels: labels,
-        datasets: [{ label: `SHAP Attribution Values`, data: attributions,
+        datasets: [{ label: `Integrated gradients Attribution Values`, data: attributions,
           fill: false, borderColor: 'rgb(42, 123, 198)', tension: 0.1
         }]
       },
@@ -1485,7 +1518,7 @@ and the generated plot corresponding to it is shown in Fig. \ref{fig:AttrPlot}.
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: { display: true, text: 'SHAP Attributions' },
+          title: { display: true, text: 'Integrated gradients Attributions' },
           tooltip: {
             callbacks: {
               title: (tooltipItems) => { return `Frame: ${tooltipItems[0].label}` },
@@ -1501,8 +1534,8 @@ and the generated plot corresponding to it is shown in Fig. \ref{fig:AttrPlot}.
       }
     })
 \end{minted}
-\caption{Definition of attribution plot defined in the \texttt{Shap} component.}
-\label{fig:ShapAttrPlot}
+\caption{Definition of attribution plot defined in the \texttt{Igradients} component.}
+\label{fig:IgradientsAttrPlot}
 \end{figure}
 
 \subsubsection{Error and Notification system}
@@ -1563,7 +1596,7 @@ Later, the notification queue may be used across the frontend code to handle dif
 events that have occurred. The user provides a type of event into the \mintinline{js}{'type'} key and
 the message into the \mintinline{js}{'message'} key:
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{js}
-pushNotification({ type: 'error', message: `SHAP: Failed to load audio: ${error.message}` })
+pushNotification({ type: 'error', message: `Integrated Gradients: Failed to load audio: ${error.message}` })
 \end{minted}
 
 \clearpage % TODO: usuń
@@ -1580,7 +1613,7 @@ parser = argparse.ArgumentParser(description="Process a model name and input pat
     
 parser.add_argument('-m', '--model', type=str, required=True,
                     help="Name of the model to use [{sota_music, paans, gtzan},]...")
-# [...]
+# ...
 args = parser.parse_args()
 \end{minted}
 
@@ -1630,9 +1663,9 @@ if "lime" in expls:
     explainer = LimeExplainer(adapter, context, view_type=view)
     explainer.explain(args.input, target=None)
 if "lrp" in expls:
-    # [...]
-if "shap" in expls:
-    # [...]
+    # ...
+if "integrated-gradients" in expls:
+    # ...
 \end{minted}
 
 % #############################################
@@ -1641,11 +1674,272 @@ if "shap" in expls:
 %
 % #############################################
 \clearpage % Rozdziały zaczynamy od nowej strony.
-\section{Verification} \label{ch:verification}
+\section{Verification and validation} \label{ch:verification}
 
-\subsection{Case study: integrating Simple GTZAN model into framework}
-\subsection{Unit test organization}
-\subsection{Model tests, adapter test, backend tests}
+This chapter presents testing performed to ensure the correctness of the Audio XAI framework
+implemented as part of the thesis. It also summarizes the results obtained during thesis implementation,
+particularly the support of the chosen ML models and the explanation methods.
+The project unit tests have been implemented using \emph{pytest} \cite{PytestDoc}, a testing framework for Python.
+
+%\subsection{Case study: integrating Simple GTZAN model into framework} TODO: Robić???
+\subsection{Explanation support for models}
+
+The thesis aimed to provide suitable explanation methods and integrated models to give a base functionality
+to work with the framework. The implemented explanation methods by the framework were implemented for
+each of the integrated models. The results of the supported explanation framework for the implemented models
+in the framework are shown in the Table. \ref{table:AvalibilityTable} where \emph{supported} methods by the model
+are marked using the symbol \cmark and \emph{unsupported} methods using \xmark. Some explanation methods had not
+been launched properly in some models due to various integration issues that were caused either by the development
+setup (Sec. \ref{ch4:DevelopmentSetup}) or library issues.
+
+\begin{table}[h]\centering
+    \caption{Availability of Explanation Methods per Model}
+    \begin{tabular}{lccc}
+    \toprule
+    \textbf{Model} & \textbf{LIME} & \textbf{Integrated Gradients} & \textbf{LRP} \\
+    \midrule
+    CNN14         & \cmark        & \cmark                         & \xmark       \\
+    GtzanCNN      & \xmark        & \cmark                         & \cmark       \\
+    HarmonicCNN   & \cmark        & \cmark                         & \xmark       \\
+    \bottomrule
+    \end{tabular}
+\label{table:AvalibilityTable}
+
+\hfill
+
+\textbf{Where:} \cmark\ - method has been implemented successfully; \xmark\ - method has not been implemented.
+\end{table}
+
+Firstly, the LIME method has been implemented for the \emph{GtzanCNN} model, but launching any
+input on this model required more memory than the GPU on the development setup and
+caused a memory error, as shown in Fig. \ref{fig:LimeGtzanCNN}.
+%This issue is because \emph{GtzanCNN}, in contrast to other supported models,
+%uses a spectrogram as an input rather
+%than taking a waveform, which is a 1D consecutive tensor, and converts it internally to the spectrogram.
+%Spectrogram tensor is a 2D tensor having a much bigger memory footprint, which causes a LIME
+%implementation to allocate significantly more memory.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{text}
+$ python pylibxai_explain.py -w ./gtzancnn_expl/ -m GtzanCNN --explainer=lime --target=jazz -i ../data/gtzan_jazz.wav
+Colocations handled automatically by placer.
+Creating explanation object
+Starting LIME explanation
+Traceback (most recent call last):
+  File "pylibxai\pylibxai\pylibxai_explain.py", line 94, in <module>
+    main()
+  # Skipped stack trace
+  File "torch\nn\functional.py", line 5209, in pad
+    return torch._C._nn.pad(input, pad, mode, value)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 5.05 GiB. GPU 0 has a total capacity of 15.99 GiB of which 0 bytes is free. Of the allocated memory 25.28 GiB is allocated by PyTorch, and 77.97 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+\end{minted}
+\caption{The out of memory error occurring during LIME explanation on \emph{GtzanCNN} model.}
+\label{fig:LimeGtzanCNN}
+\end{figure}
+
+In the second case, the implementation of the Layer-wise relevance propagation method has been impossible for
+\emph{CNN14} and \emph{GtzanCNN} models. This is because the LRP implementation, the one used from the
+\emph{Captum} framework, is based on a backward propagation mechanism that is sequentially applied to every
+model. \emph{Captum} requires per-layer rules defined for each of the layers used in machine learning models.
+Audio models frequently contain audio-specific layers performing, for example, waveform to spectrogram conversion,
+as in the case of the layer \texttt{torchlibrosa.stft.LogmelFilterBank} in \emph{CNN14} and \emph{GtzanCNN}. 
+This disallows the LRP algorithm from running as shown in Fig. \ref{fig:LrpMissingLayer},
+and such layers’ enablement in the Captum library is out of scope of the thesis.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{text}
+  File "pylibxai\captum\captum\attr\_core\lrp.py", line 202, in attribute
+    self._check_and_attach_rules()
+  File "pylibxai\captum\captum\attr\_core\lrp.py", line 313, in _check_and_attach_rules
+    raise TypeError(
+TypeError: Module of type <class 'torchlibrosa.stft.LogmelFilterBank'> has no rule defined and nodefault rule exists for this module type. Please, set a ruleexplicitly for this module and assure that it is appropriatefor this type of layer.
+\end{minted}
+\caption{Missing rule error for layer \texttt{torchlibrosa.stft.LogmelFilterBank} of \emph{CNN14} model.}
+\label{fig:LrpMissingLayer}
+\end{figure}
+
+\subsection{Scope of testing}
+
+The scope of testing includes unit tests of the given framework's components and integration tests.
+The test setup for framework's tests is the same as for the development setup and is described
+in Sec. \ref{ch4:DevelopmentSetup}.
+
+The library provides a script \emph{pylibxai\_test.sh} as shown in Appendix. \ref{appendix:TestingListing} that
+executes both pytest's unit tests and also a functional tests
+that utilizes the framework's explanation runner script \textbf{pylibxai\_explain.py} to
+test functionally the entire process. The script may be launched from the command-line:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{text}
+$ ./pylibxai_test.sh
+\end{minted}
+
+The shortened testing results are visible in Fig. \ref{fig:TestingScriptOutput}.
+The script output displays launched tests where all 73 unit tests along with functional
+tests performing explanation passed correctly.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\scriptsize, breaklines, xleftmargin=12pt, linenos, mathescape]{text}
+$ ./pylibxai_test.sh
+======================================================================== test session starts =========================================================================
+platform win32 -- Python 3.9.20, pytest-8.4.1, pluggy-1.6.0
+rootdir: C:\Users\mfalk\Desktop\pylibxai
+configfile: pyproject.toml
+plugins: anyio-3.7.1, typeguard-4.3.0
+collected 73 items
+
+pylibxai\pylibxai_context\test_pylibxai_context.py .................                                                                                            [ 23%]
+pylibxai\Interfaces\test_interfaces.py .................                                                                                                        [ 46%]
+pylibxai\Explainers\test_explainers.py ....................                                                                                                     [ 73%]
+pylibxai\Views\test_web_view.py ...................                                                                                                             [100%]
+
+========================================================================== warnings summary ==========================================================================
+..\..\anaconda3\envs\pylibxai_env2\lib\site-packages\tensorflow\python\framework\dtypes.py:205
+  tensorflow\python\framework\dtypes.py:205: DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)
+    np.bool8: (False, True),
+
+..\..\anaconda3\envs\pylibxai_env2\lib\site-packages\flatbuffers\compat.py:19
+  flatbuffers\compat.py:19: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
+    import imp
+
+..\..\anaconda3\envs\pylibxai_env2\lib\site-packages\tensorboard\compat\
+tensorflow_stub\dtypes.py:326
+  tensorboard\compat\tensorflow_stub\dtypes.py:326: DeprecationWarning: `np.bool8`
+  is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)
+    np.bool8: (False, True),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=================================================================== 73 passed, 3 warnings in 7.91s ===================================================================
+[TEST1] CNN14, LIME, Integrated Gradients, Sandman 5s
+[TEST2] HarmonicCNN, LIME, Integrated Gradients, Sandman 5s
+[TEST3] GtzanCNN, Integrated Gradients, LRP
+\end{minted}
+\caption{The output of the testing script \emph{pylibxai\_test.sh} showing all tests passing.}
+\label{fig:TestingScriptOutput}
+\end{figure}
+
+\subsection{Framework's unit tests}
+
+The unit tests were implemented using \emph{pytest} tool and
+their include total of 73 tests. The implemented tests may be grouped by their
+testing component and summarized, including:
+
+\begin{itemize}
+    \item \textbf{Explainers tests} - The scope of unit testing of the explainer classes includes
+        tests for type checking, input parameter edge cases, and generated explanation results tests.
+        An exemplary test is shown in Fig. \ref{fig:ExplainerUnitTest} which tests whether
+        the \texttt{LimeExplainer} classes properly return an error when the adapter class passed as
+        input does not implement the expected \texttt{LimeAdapter}.
+    
+\begin{figure}[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+def test_lime_explainer_with_non_lime_adapter_raises_error(self):
+    """Test LimeExplainer rejects adapters that don't implement LimeAdapter"""
+    class NonLimeAdapter:
+        def some_method(self):
+            pass
+    context = Mock()
+    adapter = NonLimeAdapter()
+    with pytest.raises(TypeError) as excinfo:
+        LimeExplainer(adapter, context, ViewType.DEBUG)
+    
+    assert "LimeExplainer must be initialized with a model adapter that implements LimeAdapter interface" in str(excinfo.value)
+\end{minted}
+\caption{The unit test checks if the adapter class passed to the explainer class has the \texttt{LimeAdapter} interface.}
+\label{fig:ExplainerUnitTest}
+\end{figure}
+
+    \item \textbf{Models tests} - The testing of the integrated models is performed on the integration level with
+        functional tests that are part of the \emph{pylibxai\_test.sh} script, as shown in Appendix
+        \ref{appendix:TestingListing}. The exemplary test that invokes an explanation of the
+        \emph{GtzanCNN} model using Integrated gradients and LRP methods is shown in Fig.
+        \ref{fig:ModelIntegrationTest}.
+
+\begin{figure}[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+pylibxai_explain.py -w ./gtzancnn_expl/ -m GtzanCNN --explainer=integrated-gradients,lrp --target=jazz -i ./data/gtzan_jazz.wav
+\end{minted}
+\caption{The integration tests of the \emph{GtzanCNN} model using a jazz song from \emph{GTZAN} dataset.}
+\label{fig:ModelIntegrationTest}
+\end{figure}
+
+    \item \textbf{Interfaces tests} - The scope of unit testing of the interface classes includes tests for
+        proper interface implementation, partial implementation detection, multi-interface support, and inheritance
+        chain contract maintenance. The exemplary tests for interface classes that check if a partial implementation
+        of the \texttt{ModelLabelProvider} class raises an error are shown in Fig. \ref{fig:InterfaceUnitTest}.
+
+\begin{figure}[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+def test_model_label_provider_partial_implementation_raises_error(self):
+    """Test that ModelLabelProvider raises TypeError when only one abstract method is implemented"""
+    class PartialModelLabelProvider(ModelLabelProvider):
+        def get_label_mapping(self) -> Dict[int, str]:
+            return {0: "rock", 1: "pop", 2: "jazz"}
+        # Missing map_target_to_id
+    with pytest.raises(TypeError) as excinfo:
+        PartialModelLabelProvider()
+    
+    assert "abstract method" in str(excinfo.value).lower()
+    assert "map_target_to_id" in str(excinfo.value)
+\end{minted}
+\caption{The unit test that checks if partial implementation of the \texttt{ModelLabelProvider} interface raises an error.}
+\label{fig:InterfaceUnitTest}
+\end{figure}
+
+    \item \textbf{Context tests} - The scope of unit testing of the interface classes includes tests for directory
+        management and creation, plot generation, attribution data JSON serialization, and audio file operations.
+        The exemplary tests for interface classes that test JSON serialization of explanation’s attribution are
+        shown in Fig. \ref{fig:ContextUnitTest}.
+
+\begin{figure}[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+def test_write_attribution_creates_json(self, context, temp_dir):
+    """Test attribution JSON creation"""
+    test_data = np.array([0.1, 0.2, 0.3, 0.4])
+    suffix = "test_attribution.json"
+    context.write_attribution(test_data, suffix)
+    file_path = os.path.join(temp_dir, suffix)
+    assert os.path.exists(file_path)
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    
+    assert "attributions" in data
+    assert data["attributions"] == [0.1, 0.2, 0.3, 0.4]
+\end{minted}
+\caption{}
+\label{fig:ContextUnitTest}
+\end{figure}
+
+    \item \textbf{Views tests} - The scope of unit testing of the interface classes includes tests for server
+        startup and process management, error handling for subprocess failures, and resource cleanup and shutdown
+        procedures. The exemplary test for interface classes that test frontend server initialization
+        is shown in Fig. \ref{fig:ViewUnitTest}.
+
+\begin{figure}[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{py}
+@patch('pylibxai.Views.web_view.subprocess.Popen')
+@patch('pylibxai.Views.web_view.run_file_server')
+@patch('pylibxai.Views.web_view.os.environ')
+def test_start_success(self, mock_environ, mock_run_file_server, mock_popen, web_view):
+    """Test successful start of WebView."""
+    # ...
+    mock_env = {'EXISTING_VAR': 'value'}
+    mock_environ.copy.return_value = mock_env
+    web_view.start()
+    
+    mock_run_file_server.assert_called_once_with("/test/workdir", 8000)
+    assert web_view.server == mock_server
+    assert mock_env['VITE_PYLIBXAI_STATIC_PORT'] == '8000'
+    mock_popen.assert_called_once_with(
+        ['npm', 'run', 'dev'],
+        cwd=web_view.vite_dir, env=mock_env,
+        stdout=sys.stdout, stderr=sys.stderr, shell=True
+    )
+    
+    assert web_view.vite_process == mock_process
+\end{minted}
+\caption{}
+\label{fig:ViewUnitTest}
+\end{figure}
+\end{itemize}
 
 % #############################################
 %
@@ -1653,7 +1947,17 @@ if "shap" in expls:
 %
 % #############################################
 \clearpage % Rozdziały zaczynamy od nowej strony.
-\section{Summary} \label{ch:summary}
+\section{Conclusions} \label{ch:summary}
+
+Solving this issue is a intresting/promising idea for a future work.
+
+Wnioski:
+- W przypadku niektórych metod wymagających obliczeń per warstwę modelu jak LRP,
+  wymagane jest zadefiniowanie handlera per-klasę co powoduje, że modele audio
+  nie działają. Fakt ten uniemożliwił w bibliotece zaimplementowanie wsparcia
+  LRP dla HCNN oraz CNN14, które to posiadają własne warstwy
+
+biblioteka captum
 
 %---------------
 % Bibliografia
@@ -1669,9 +1973,7 @@ if "shap" in expls:
 % Makro \acronym dodaje skrót/symbol do listy,
 % zapewniając podstawowe formatowanie.
 \acronymlist
-\acronym{EiTI}{Wydział Elektroniki i Technik Informacyjnych}
-\acronym{PW}{Politechnika Warszawska}
-\acronym{WEIRD}{ang. \emph{Western, Educated, Industrialized, Rich and Democratic}}
+\acronym{XAI}{Explainable artificial intelligence}
 \acronym{SOTA}{State-of-art Music Models}
 \acronym{LRP}{Layerwise propagation}
 \acronym{JSON}{JavaScript Object Notation}
@@ -1710,7 +2012,7 @@ import os
 
 from pylibxai.model_adapters import HarmonicCNN, Cnn14Adapter, GtzanCNNAdapter
 from pylibxai.pylibxai_context import PylibxaiContext
-from pylibxai.Explainers import LimeExplainer, ShapExplainer, LRPExplainer
+from pylibxai.Explainers import LimeExplainer, IGradientsExplainer, LRPExplainer
 from pylibxai.Interfaces import ViewType, ModelLabelProvider
 from utils import get_install_path
 
@@ -1725,7 +2027,7 @@ def main():
     parser.add_argument('-u', '--visualize', action='store_true',
                         help="Enable visualization of audio in browser-based UI.")
     parser.add_argument('-e', '--explainer', type=str, required=True,
-                        help="Name of the explainer to use [lime, shap, lrp].")
+                        help="Name of the explainer to use [lime, integrated-gradients, lrp].")
     parser.add_argument('-t', '--target', type=str, required=True,
                         help="Name or index of the label to explain.\
                               Mapping is done automatically based on the model if the model provides it.") 
@@ -1741,8 +2043,8 @@ def main():
     assert device in ['cpu', 'cuda'], "Device must be either 'cpu' or 'cuda'."
     
     expls = args.explainer.split(",")
-    assert all(ex in ["lime", "shap", "lrp"] for ex in expls), \
-        "Invalid explainer specified. Available options: [lime, shap, lrp]."
+    assert all(ex in ["lime", "integrated-gradients", "lrp"] for ex in expls), \
+        "Invalid explainer specified. Available options: [lime, integrated-gradients, lrp]."
 
     context = PylibxaiContext(args.workdir)
 
@@ -1783,12 +2085,13 @@ def main():
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
         explainer = LRPExplainer(adapter, context, device, view_type=view)
-    if "shap" in expls:
+        explainer.explain(audio, target=target)
+    if "integrated-gradients" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE
         expl_count -= 1
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
-        explainer = ShapExplainer(adapter, context, device, view_type=view)
+        explainer = IGradientsExplainer(adapter, context, device, view_type=view)
         explainer.explain(audio, target=target)
 
 if __name__ == '__main__':
@@ -1797,20 +2100,37 @@ if __name__ == '__main__':
 
 % Załącznik 2
 \clearpage
-\appendix{Nazwa załącznika 2}
-\lipsum[1-2]
-\begin{table}[!h] \centering
-    \caption{Tabela w załączniku.}
-    \begin{tabular} {| c | c | r |} \hline
-        Kolumna 1       & Kolumna 2 & Liczba \\ \hline\hline
-        cell1           & cell2     & 60     \\ \hline
-        \multicolumn{2}{|r|}{Suma:} & 123,45 \\ \hline
-    \end{tabular}
-\end{table}
-\lipsum[3-4]
+\appendix{The testing script \emph{pylibxai\_test.sh}} \label{appendix:TestingListing}
 
-% Używając powyższych spisów jako szablonu,
-% możesz dodać również swój własny wykaz,
-% np. spis algorytmów.
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{bash}
+#!/usr/bin/env bash
+
+GREEN="\033[32m"
+CLR="\033[0m"
+
+# Run unit tests for pylibxai
+python -m pytest -v pylibxai/pylibxai_context/test_pylibxai_context.py \
+                    pylibxai/Interfaces/test_interfaces.py \
+                    pylibxai/Explainers/test_explainers.py \
+                    pylibxai/Views/test_web_view.py
+
+
+echo -e "${GREEN}[TEST1]${CLR} CNN14, LIME, Integrated Gradients, Sandman 5s"
+mkdir -p ./cnn14_expl/ &&
+python ./pylibxai/pylibxai_explain.py -w ./cnn14_expl/ -m CNN14 --explainer=lime,integrated-gradients --target=0 -i ./data/sandman_5s.wav &&
+rm -rf ./cnn14_expl/
+
+echo -e "${GREEN}[TEST2]${CLR} HarmonicCNN, LIME, Integrated Gradients, Sandman 5s"
+mkdir -p ./harmoniccnn_expl/ &&
+python ./pylibxai/pylibxai_explain.py -w ./harmoniccnn_expl/ -m HCNN --explainer=lime,integrated-gradients --target=0 \
+                           -i ./data/sandman_5s.wav &&
+rm -rf ./harmoniccnn_expl/
+
+echo -e "${GREEN}[TEST3]${CLR} GtzanCNN, Integrated Gradients, LRP"
+mkdir -p ./gtzancnn_expl/ &&
+python ./pylibxai/pylibxai_explain.py -w ./gtzancnn_expl/ -m GtzanCNN --explainer=integrated-gradients,lrp --target=jazz \
+                           -i ./data/gtzan_jazz.wav &&
+rm -rf ./gtzancnn_expl/
+\end{minted}
 
 \end{document} % Dobranoc.

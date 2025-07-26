@@ -3,7 +3,7 @@ from torch.autograd import Variable
 from .panns_inference import Cnn14, labels
 import numpy as np
 
-from pylibxai.Interfaces import LimeAdapter, IGradientsAdapter, ModelLabelProvider
+from pylibxai.Interfaces import LimeAdapter, IGradientsAdapter, ModelLabelProvider, LrpAdapter
 from utils import get_install_path
 
 def move_data_to_device(x, device):
@@ -16,7 +16,7 @@ def move_data_to_device(x, device):
 
     return x.to(device)
 
-class Cnn14Adapter(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
+class Cnn14Adapter(LimeAdapter, IGradientsAdapter, ModelLabelProvider, LrpAdapter):
     def __init__(self, device='cuda'):
         """Audio tagging inference wrapper.
         """
@@ -103,6 +103,34 @@ class Cnn14Adapter(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
             return output_dict['clipwise_output']
 
         return predict_fn
+
+    def get_lrp_predict_fn(self):
+        class GtzanNNWrapper(torch.nn.Module):
+            def __init__(self, predictor, device):
+                super(GtzanNNWrapper, self).__init__()
+                self.predictor = predictor
+                self.device = device
+
+            def forward(self, x):
+                # Make sure input requires gradients for LRP
+                if not x.requires_grad:
+                    x = x.detach().clone().requires_grad_(True)
+                    
+                # Move to device while preserving gradient information
+                x = move_data_to_device(x, self.device)
+            
+                # Ensure it requires gradients after moving to device
+                if not x.requires_grad:
+                    x.requires_grad_(True)
+
+                self.model.eval()  # Keep model in eval mode
+                output_dict = self.model(x, None)
+            
+                # Return the output without detaching to preserve gradient information
+                print(f'output_dict keys: {output_dict.keys()}')
+                return output_dict['clipwise_output']
+
+        return GtzanNNWrapper(self.model, self.device)
 
     def get_lime_predict_fn(self, input_length=None):
         length = 5 * 16000 if not input_length else input_length

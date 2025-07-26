@@ -12,6 +12,7 @@ class LRPExplainer:
     def __init__(self, model_adapter, context, device, view_type=None, port=9000):
         if not issubclass(type(model_adapter), LrpAdapter):
             raise TypeError("LRPExplainer must be initialized with a model adapter that implements LRPAdapter interface.")
+        self.model_adapter = model_adapter
         predict_fn = model_adapter.get_lrp_predict_fn()
         self.explainer = LRP(predict_fn)
         self.device = device

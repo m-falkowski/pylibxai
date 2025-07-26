@@ -82,6 +82,7 @@ def main():
         audio, _ = torchaudio.load(args.input, normalize=True)
         audio = audio.to(device)
         explainer = LRPExplainer(adapter, context, device, view_type=view, port=port)
+        explainer.explain(audio, target=target)
     if "integrated-gradients" in expls:
         view = view_type if expl_count == 1 else ViewType.NONE
         expl_count -= 1

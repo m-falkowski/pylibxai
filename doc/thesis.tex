@@ -83,7 +83,7 @@
 % Title in Polish for English theses
 % Use it only in English theses
 \poltitle{
-    Machine learning framework for explainable artificial intelligence models
+    Framework uczenia maszynowego dla modeli audio wyjaśnialnej sztucznej inteligencji
 }
 \author{Maciej Falkowski, BSc}
 \album{329117}
@@ -97,40 +97,39 @@
 %-------------------------------------
 \cleardoublepage % Zaczynamy od nieparzystej strony
 \abstract
-The aim of this thesis is to present a system that aims to simplify the analysis of explainable artificial
-intelligence (XAI) techniques in audio machine learning models.
 
-The proposed Audio XAI Framework is a framework that integrates selected XAI techniques such as
-audioLIME, Integrated gradients, and Layer-wise Relevance Propagation (LRP). The framework aims
-to provide a unified and extensible infrastructure for creating, managing, and visualizing model explanations.
+The aim of this thesis is to design a tool that enables the execution, visualization, and comparison of
+Explainable Artificial Intelligence (XAI) methods for audio machine learning models. As part of this
+the thesis describes the design of an audio XAI framework, which allows its user to integrate their models
+with the framework's API in the form of a library, which then performs explanations on the model and visualizes
+them in a web interface designed for the thesis. The thesis describes the developed framework architecture
+based on the Model-View-Presenter (MVP) pattern, which aims to ensure the solution's modularity, enabling
+integration of new user models and alternative views to the default one. The project integrates selected
+XAI methods, including Local Interpretable Model agnostic Explanations (LIME), Integrated gradients,
+and Layer-wise Relevance Propagation (LRP).
 
-The framework offers an application programming interface
-in a form of a Python library and supporting tools that will allow its user
-to integrate their model into the system and launch different XAI techniques on their model.
-It is structured using the Model-View-Controller (MVC) design pattern, ensuring modularity,
-scalability, and separation of concerns. The Model layer encapsulates operations and the machine learning
-models.
-
-The View layer defines an intuitive user interface tailored to data scientists and machine learning engineers, enabling interactive exploration of explanation outputs; and the Controller layer manages communication between the model and interface components.
-
-% Ważne by napisać czym praca nie jesy
-The aim of the thesis is not to perform any research about integrated machine learning models and explanation
-techniques. The thesis does not evaluate any of their metrics such as performance or accuracy, nor it compares them one to another.
-
-A key contribution of this work is the formalization of design principles and integration strategies that support multimodal explanations, including both visual and auditory outputs, with a focus on interpretability and usability.
-
-The framework includes visualization modules for displaying saliency maps, relevance heatmaps, and feature contribution plots, dynamically generated based on user queries and model outputs. In addition, user roles and interaction paradigms are defined to accommodate different levels of expertise, ensuring accessibility for both novice and expert users. The evaluation of the system demonstrates its effectiveness in improving interpretability and user understanding of complex model behaviors.
-
-This work lays the groundwork for future research and development in human-centric AI systems, offering a flexible foundation for building transparent and trustworthy machine learning applications.
-\keywords XXX, XXX, XXX
+\keywords Explainable artificial intelligence, Framework, Interpretability, Explainability, Model-View-Presenter, Integrated gradients, Layer-wise Relevance Propagation
 
 %----------------------------------------
 % Streszczenie po angielsku dla \langpol
 % Polish abstract if \langeng is set
 %----------------------------------------
 \clearpage
-\secondabstract \kant[1-3]
-\secondkeywords XXX, XXX, XXX
+\secondabstract
+
+Celem pracy magisterskiej jest zaprojektowanie narzędzia umożliwiającego wykonanie,
+wizualizację oraz zestawienie metod Wyjaśnialnej sztucznej inteligencji (XAI) dla modeli uczenia maszynowego audio.
+W ramach tego praca opisuje projekt frameworka wyjaśnień XAI modeli audio (audio XAI framework),
+który umożliwia użytkownikowi integrację jego modeli z API frameworka w postaci biblioteki,
+która następnie wykonuje wyjaśnienia na modelu, a następnie wizualizuje je w interfejsie
+webowym, który został zaprojektowany na potrzeby pracy. Praca opisuje opracowaną architekturę frameworku
+opartą o wzorzec Model-View-Presenter (MVP), której celem jest zapewnienie modularności rozwiązania, umożliwiającej
+integrację nowych modeli użytkownika oraz alternatywnych widoków względem domyślnego.
+Projekt integruje wyselekcjonowane metody XAI wliczające w nie Local Interpretable Model-agnostic Explanations (LIME),
+Integrated gradients oraz Layer-wise Relevance Propagation (LRP).
+
+
+\secondkeywords Explainable artificial intelligence, Framework, Interpretability, Explainability, Model-View-Presenter, Integrated gradients, Layer-wise Relevance Propagation
 
 \pagestyle{plain}
 
@@ -154,7 +153,54 @@ This work lays the groundwork for future research and development in human-centr
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{Introduction} \label{ch:introduction}
 
-Introduction TODO
+Artificial Intelligence (AI) continues to grow rapidly, containing a broad range of applications,
+including audio processing. The increasing complexity of AI systems brings the challenge of understanding
+and interpreting their decision-making processes. Many state-of-the-art models, such as deep
+neural networks (DNNs) especially Convolutional neural networks \cite{Lecun1998},
+frequently used for audio analysis, operate as so-called \emph{black boxes}. While these models deliver high accuracy,
+their inner workings often remain opaque to human observers, limiting trust, interpretability,
+and the ability to validate results.
+
+In this situation, Explainable Artificial Intelligence (XAI) has emerged as a promising and quickly expanding area
+of research \cite{Arrieta2019-yr}.
+XAI aims to make the decision-making process of complex AI systems more transparent to allow developers
+and researchers to better understand why a model produces a given output. There are many different explanation
+techniques, each operating on distinct principles and offering a unique standpoint
+on a model's decision-making process \cite{Abhishek2022-iu}.
+As a result, it is often necessary to apply multiple explanation methods to the same input and then compare
+and contrast their results. For audio models, it is additionally valuable to visualize supplementary audio elements,
+such as audio playback or spectrogram representations, to provide richer context for analysis. This necessity,
+however, leads to repetitive and time-consuming workflows for the user, which must be repeated for each
+explanation method used. Developing a tool that allows the user to execute multiple explanations on their
+model and then visualize these results in an integrated manner would greatly reduce the amount of
+manual work required.
+
+The thesis aims to design a tool that enables the execution, visualization, and comparison of XAI methods for
+audio machine learning models. As part of this goal, the thesis describes the design of an audio-focused XAI
+framework as the proposed solution to the identified problem.
+
+The framework provides an Application Programming Interface (API) in the form of a Python library
+and supporting tools to allows its users to integrate their own models into the system and run various XAI techniques.
+The framework's architecture is based on the Model-View-Presenter (MVP) pattern to provide modularity and ensure
+integration of additional models and alternative presentation form to the web interface. The framework
+integrates selected XAI methods, including Local Interpretable Model-agnostic Explanations (LIME), Integrated
+Gradients, and Layer-wise Relevance Propagation (LRP). The visualization layer is implemented as a web interface
+based on the JavaScript React library, which enables presentation of results from multiple explanation methods
+alongside audio playback and spectrogram visualization. The scope of the thesis is not to perform any research about
+integrated machine learning models and explanation techniques. The thesis does not evaluate any of their metrics such
+as performance or accuracy, nor it compares them one to another.
+
+The content of the thesis has been split into individual chapters. Chapter \ref{ch2:probAnalysis} discusses
+the fundamentals of Explainable artificial intelligence, provides the analysis for the selected methodology for
+the project which is a framework architecture, and discusses the selection of XAI methods and models integrated
+into the project. Chapter \ref{ch:reqrTools} describes the functional and non-functional requirements for each
+component of the framework as well as software requirements required for the implementation of the project of
+the thesis. Chapter \ref{ch:externalSpec} provides software requirements and the user manual of the project
+together with an overview of the user interface. Chapter \ref{ch:implementation} describes the internal components of
+the project, describing in detail the implementation of each step of interpretation. Chapter \ref{ch:verification}
+describes the testing and validation procedure of the project. Chapter \ref{ch:summary} provides a summary
+of the results obtained through project development, draws conclusions about them, and outlines ideas for
+a future research about similar topics.
 
 % #############################################
 %
@@ -162,65 +208,338 @@ Introduction TODO
 %
 % #############################################
 \clearpage % Rozdziały zaczynamy od nowej strony.
-\section{Problem analysis} \label{ch1:probAnalysis}
+\section{Problem analysis} \label{ch2:probAnalysis}
 
 This chapter provides an overview of terminology and methods used in the thesis,
-which describes essentials of machine learning explanations, description of explanation methods
-used in the thesis which are LIME, LRP, Integrated Gradients, and software engineering principles
+which describes essentials of Explainable Artificial Intelligence, description of XAI methods
+used in the thesis, and software engineering principles
 used for designing an Audio XAI framework.
 
-\subsection{Black box interpretation of ML predictors} % Why explanation framework for audio - the problem
-\subsubsection{Why explanation framework for audio - the problem}
+\subsection{Black-box and white-box AI systems}
 
-\subsection{Definition of user}
-\subsection{Program architecture selection} % overview of framework, monolithic UI etc.}
+The AI (Artificial Intelligence) systems may be classified as \emph{black-box} or \emph{white-box} models
+based on their interpretability characteristic \cite{Castelvecchi2016}. This classification is performed based on the
+transparency characteristic of the neural network, which is defined as a level of understanding of an internal behavior
+and decision-making process by a human observer \cite{Arrieta2019-yr}.
 
-\subsection{Similar solutions}
+White-box models have high-level transparency, and a human may understand their internal workings.
+The examples of such models include decision trees or linear
+regression models. In contrast, black-box models lack transparency, and their internals are opaque. The examples
+of black-box models are Convolutional Neural Networks (CNNs) or Deep Neural Networks in general. One of the methods
+to introspect the internals of black-box models is post-hoc explanation methods (\ref{ch2:Xai}) that allow
+introspection after the model processing, as shown in Fig. \ref{fig:BlackBoxModel}.
 
-To the best of our knowledge this is 
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering`
+    \includegraphics[width=14cm]{Black-box-post-hoc.png}
+    \caption{The diagram depicts a black-box model with post-hoc explanation techniques applied to its output.}
+    \label{fig:BlackBoxModel}
+\end{figure}
 
-\subsection{Explainable artificial intelligence} % Definition of ML explanation
-\subsubsection{Locality-awareness}
-\subsubsection{Model-agnostic}
+\subsection{Explainable artificial intelligence} \label{ch2:Xai}
 
-\subsection{Audio processing}
-\subsubsection{Waveform representation}
-\subsubsection{Mel-spectrogram}
+Explainable Artificial Intelligence (XAI) is a collection of machine learning
+techniques that focuses on making the decision-making process
+of AI (Artificial Intelligence) systems understandable to humans \cite{Arrieta2019-yr}.
+XAI seeks to provide \emph{explainability} of a model, which is a characteristic
+that describes any action or procedure that provides \emph{interpretability} of its
+internal decision-making process. The other XAI characteristic is \emph{interpretability} of the model, which is
+the ability of the model to provide a result understandable by a human. 
 
-\subsection{Model explanation} % Definition, Locality-awareness, model-agnostic
+The main goals of Explainable artificial intelligence are to increase transparency, understandability,
+and trustworthiness of AI systems for humans. The other advantages of XAI are for developers of AI systems
+to assist them with debugging and improving their systems.
 
-\subsection{Attribution method} \label{ch2:AttributionMethod}
-
-Attribution method is:
-
-\subsection{Attribution intensity} \label{ch2:AttrIntensity}
-
-% #############################################
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=\linewidth]{XAI-Taxonomy.png}
+    \caption{The taxonomy of the Explainable Artificial Intelligence \cite{Patricio2022}.}
+    \label{fig:XaiTaxonomy}
+\end{figure}
+ 
+The wide number of XAI techniques may be characterized into multiple categories forming
+a XAI taxonomy (Fig. \ref{fig:XaiTaxonomy}), including:
+\begin{itemize} [itemsep=1\baselineskip]
+    \item \textbf{Model-Specific vs. Model-Agnostic} - The model-agnostic methods can be applied to
+        any model without taking into account its internal structure. On the other hand, model-specific
+        techniques are tailored towards a particular type of model, for example, Convolutional Neural Networks,
+    \item \textbf{Locality of Explanation} - Local interpretability aims at explaining a single prediction
+        or instance to help understand why the model made a given decision. An example may be a LIME technique,
+        which may show which audio feature or part influenced a given prediction. In contrast, global
+        interpretability aims to explain the whole behavior of the model across the entire dataset,
+    \item \textbf{Model opaqueness} - This criterion characterizes XAI techniques based on the transparency
+        of models, which are black-box and white-box (section). White-box models are intrinsic, which means that
+        they are naturally explainable, while black-box models have a complex internal structure, which means
+        that only post-hoc methods can be used, i.e., those that explain the behavior of the model
+        without explaining its internal implementation.
+    \item \textbf{Modality} - It classifies the techniques based on the type or form of output
+        in which the explanation is presented to the user. The exemplary types of modality
+        are textual or visual.
+\end{itemize}
 
 \subsection{Selection of explanation methods for framework}
-\subsubsection{Criteria - interpretability, attribution, model-agnostic, simplicity}
-\subsubsection{Local Interpretable Model Explanation} \label{ch2:audioLIME} % AudioLIME
-\subsubsection{Integrated gradients} \label{ch2:IgradMethod}
-\subsubsection{Layer-wise Relevance Propagation} \label{ch2:LrpMethod}
 
-LRP (Layer-wise Relevance Propagation) \cite{Binder2016-oa} is a ...
+The thesis focuses on post-hoc explanation methods and provides a set of XAI methods integrated
+into the framework. The essential criteria for selecting these explanation methods were the
+interpretability of the produced explanation, simplicity of the user interface of a given XAI
+technique, whether it depends on a background data sample, and whether the method is model-specific
+or agnostic. The following XAI methods were considered as methods integrated into the framework:
+\begin{itemize}
+    \item \textbf{Local Interpretable Model Explanation (LIME)} - The LIME is an XAI technique that
+        provides local, model-agnostic explanations. The LIME implementation used for the project
+        is \emph{audioLIME}, which utilizes a source separation technique to provide \emph{listenable}
+        explanations that are interpretable for the user (Sec. \ref{ch2:LimeMethod}),
+    \item \textbf{Integrated Gradients} - Integrated Gradients is an attribution-based XAI technique
+        that fulfills axiomatic requirements of sensitivity and implementation invariance, making it
+        very reliable \cite{Sundararajan2017-zy} (Sec. \ref{ch2:IgradMethod}),
+    \item \textbf{Layer-wise Relevance Propagation (LRP)} - The LRP is a gradient-based technique that
+        with a similar interface to the integrated gradients which is an attribution map
+        (Sec. \ref{ch2:LrpMethod}),
+    \item \textbf{SHapley Additive exPlanations (SHAP)} - The SHAP explanation method \cite{NIPS2017_8a20a862}
+        was considered for the framework. It was rejected as it requires a background set of data
+        samples, making it data-dependent \cite{Spinner2019-jg}, which complicates the
+        implementation of that method for the project.
+\end{itemize}
 
-\subsection{Selection of model for integration} \label{ch2:ModelSelection}
-\subsubsection{Criteria - practicality}
-\subsubsection{HarmonicCNN}
-HarmonicCNN - a model from a repository \textit{State-of-the-art Music Tagging Models} \cite{Won2020-ej}.
-\subsubsection{CNN14}
-\subsubsection{Handmade Gtzan / GtzanCNN}
+The XAI techniques that were selected for the method integrated into the framework
+are LIME, Integrated Gradients, and Layer-wise relevance propagation.
 
-% #############################################
+\subsection{Local Interpretable Model Explanation} \label{ch2:LimeMethod} % AudioLIME
 
-\subsection{Dependency inversion principle} \label{ch2:DependencyInversion}
+The Local Interpretable Model Explanation (LIME) is an Explainable AI technique that
+makes a post-hoc prediction of a given model locally and model-agnostic,
+by fitting a small model around the prediction \cite{Ribeiro2016-cw}.
+The method perturbs interpretable components
+by creating a surrogate model $g \in G$ that finds the interpretable features
+around the input value to determine which interpretable features impact the model's
+decision.
 
-\subsection{Software framework} % Definition, Modularity, Dependency inversion/injection
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=12cm]{LIME-Diagram.png}
+    \caption{The diagram depicts the process of the LIME explanation \cite{Knab2025-pz}.}
+    \label{fig:LimeSteps}
+\end{figure}
+
+For the whole LIME procedure (Fig. \ref{fig:LimeSteps}), the first step is generating samples
+where LIME creates a set of perturbed samples to locally approximate a
+given explained model $f$ for a given input $x \in X$.
+LIME defines a set of interpretable inputs $x'$, which are perturbed samples of the input
+and represented as a set of binary vectors $z$, and the mapping $x =h_x(x')$, which converts
+the vectors back to the original input space. Different mapping $h_x$ are used depending
+on the type of the input space, like input or text data.
+The LIME explanation is calculated by minimizing a loss function $\mathcal{L}(f,g,\pi_x)$:
+\begin{equation}
+\xi(x) = \arg\min_{\substack{g \in G}} \mathcal{L}(f, g, \pi_{x}) + \Omega(g).
+\end{equation}
+
+where $\pi_x$ is defined as a proximity measure between a given input $x$ and a given
+binary vector $z$. The $\Omega$ is a complexity measure.
+
+\subsection{audioLIME} \label{ch2:audioLIME}
+AudioLIME is an XAI technique based on the LIME framework that extends its definition to audio data.
+The method applies source separation to the input audio waveform, which separates sound sources such
+as voice or musical instruments from the original audio input \cite{Haunschmid2020-dd}.
+The audioLIME method closely follows a pipeline of the LIME method but applies source
+separation to the input, as shown in Fig. \ref{fig:audioLIME-Diagram}.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=13cm]{audioLIME-Diagram.png}
+    \caption{The diagram shows the pipeline of the audioLIME method.}
+    \label{fig:audioLIME-Diagram}
+\end{figure}
+
+For a given input, the method defines a set of interpretable features - audio segments in this scenario - and
+generates a set of binary vectors by performing perturbation. The surrogate model then trains on these
+samples originating from the decomposed input, split into multiple audio sources by segmentation,
+and then perturbed.
+
+The method generates listenable explanations that
+provide interpretability to the user. Figure \ref{fig:audio-lime-wyjaśnienie} shows an example of
+audioLIME’s explanation, where the result contains an audio segment with the highest contribution
+to the model’s prediction.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=13cm]{audio-lime-wyjaśnienie.png}
+    \caption{The image shows the result of audioLIME's explanation.}
+    \label{fig:audio-lime-wyjaśnienie}
+\end{figure}
+
+\subsection{Integrated gradients} \label{ch2:IgradMethod}
+
+Integrated gradients (IG) is an attribution-based XAI technique that provides an explanation
+of the explained model by accumulating gradients from the baseline input $x'$ to the input $x$
+along a path integral of the gradients between those two inputs \cite{Sundararajan2017-zy}.
+The definition is specified for a given input model $F : R^n \rightarrow [0,1]$,
+the input $x \in R^n$, and the baseline input $x' \in R^n$.
+
+The integrated gradients in the $i^{th}$ dimension is defined for
+a gradient $\frac{\partial F\left(x\right)}{\partial x_i}$ as:
+\[
+\text{IG}_i(x) = (x_i - x'_i) \times \int_{\alpha=0}^{1} \frac{\partial F\left(x' + \alpha(x - x')\right)}{\partial x_i} \, d\alpha.
+\]
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=13cm]{Attribution-map.jpg}
+    \caption{The image the attribution map of Integrated Gradient's explanation.}
+    \label{fig:IgAttributionMap}
+\end{figure}
+
+The output of the LRP method is an attribution map as shown in Fig. \ref{fig:IgAttributionMap}.
+
+\subsection{Layer-wise Relevance Propagation} \label{ch2:LrpMethod}
+Layer-wise Relevance Propagation (LRP) is a gradient-based XAI method that
+explains a given classifier’s decision using decomposition and relies on a backward propagation
+mechanism that is applied to all the model’s layers in the sequence \cite{Binder2016-oa}.
+
+A given prediction $f(x)$ is redistributed backwards using a given
+redistribution rule until a given relevance score $R_i$, like an image fragment or pixel,
+is calculated and assigned, ensuring that \emph{relevance conservation} is preserved such that:
+\[
+\sum_{i} R_{i} = \ldots = \sum_{j} R_{j} = \sum_{k} R_{k} = \ldots = f(\mathbf{x}) \tag{1}
+\]
+
+Relevance conservation states that the total value of relevance is preserved
+at every step, such as every layer of the neural network, of the redistribution process.
+The relevance score $R_i$ of each input variable informs how strongly this variable contributed
+to the prediction. 
+
+The redistribution process from layer  $l + 1$ to layer $l$ can be
+defined for feed-forward neural networks as follows:
+\[
+R_j = \sum_k \frac{x_j w_{jk}}{\sum_{j} x_{j} w_{jk} + \varepsilon} R_k.
+\]
+for the relevance score $R_k$ at a layer $l + 1$, the weight connection $w_{jk}$ between
+neuron $j$ and neuron $k$, and $x_j$ neuron activations at a layer $l$.
+
+Different LRP redistribution rules, such as \( \varepsilon \)-rule or \( \gamma \)-rule,
+are defined for a given layer type.
+The output of the LRP method is an attribution map, similar to Integrated gradients,
+as shown in Fig. \ref{fig:IgAttributionMap}.
+
+\subsection{Sound waveform representation}
+The sound wave may be represented using a \emph{waveform}, which is a graphical
+representation of a function of a sound in the time domain as depicted in
+Fig. \ref{fig:waveform-sampling} \cite{Anand2024}.
+The digital representation of a sound wave is performed by sampling the analog waveform,
+usually at a regular period every $T$ seconds, which is a \textbf{sampling interval}. The measure that provides
+a value of average samples per second is the \textbf{sample rate} $f$, which is calculated as $f = \frac{1}{T}$.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=12cm]{waveform-sampling.png}
+    \caption{The process of sampling a sine audio waveform with constant interval.
+        Sampled points are represented using red dots.}
+    \label{fig:waveform-sampling}
+\end{figure}
+
+The sound may be represented in a graphical form in a time-frequency domain using a \emph{spectrogram}.
+The spectrogram is a spectrum of frequencies of a sound at a given time point in the time domain,
+where the color at a given point is the amplitude of a given wave \cite{Zhang2019AudioRU}.
+This representation of audio is important in Machine Learning as it allows us to represent audio as image
+data and use different types of neural networks, such as Convolutional neural networks. Sound may be 
+represented in the \textbf{Mel scale}, which is a non-linear, perceptual scale to better reflect the subjective
+reception of a sound level to a human rather than a standard sound scale presented in Hertz \cite{Volkmann2005}.
+The \textbf{mel-spectrogram} is a spectrogram whose frequency scale was transformed into the mel scale.
+An example of a mel-spectrogram is shown in Fig. \ref{fig:SpectrogramImage}.
+The mel-spectrogram is frequently used in the domain of machine learning as its format in the form
+of an image accurately approximates how humans perceive sound \cite{Zhang2019AudioRU}.
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=12cm]{spectrogram.png}
+    \caption{The picture shows an exemplary spectrogram.}
+    \label{fig:SpectrogramImage}
+\end{figure}
+
+\subsection{Selection of ML model for integration} \label{ch2:ModelSelection}
+
+The audio XAI framework contains several machine learning models that were prematurely integrated
+into the framework as part of the thesis. The selection of these models focused on
+selecting state-of-the-art audio classifier models.
+
+The models integrated into the framework as a part of the project include:
+\begin{itemize}
+    \item \textbf{HarmonicCNN} -  The HarmonicCNN model from the repository
+        \textit{State-of-the-art Music Tagging Models},
+        which is a collection of audio-tagging models \cite{Won2020-ej}. The model is a
+        novel approach to audio classification by using harmonic filters \cite{MinzWon2020},
+    \item \textbf{CNN14} - The state-of-the-art music-tagging CNN model from the \emph{Paans} collection
+        of models trained on the \emph{AudioSet} dataset \cite{AudioSet2017} that outperformed previous
+        state-of-the-art Google’s models in mean average precision (mAP) \cite{Kong2019-wu},  
+    \item \textbf{GtzanCNN} - The GtzanCNN is a handmade CNN model for the thesis based on the GTZAN dataset
+        \cite{Sturm2013-ma}. It was specifically designed to take a spectrogram directly as an input,
+        in contrast to the other models, such as CNN14 and HarmonicCNN, which convert a waveform to
+        the spectrogram in one of their layers. As later shown (Sec. \ref{ch6:ExplanationSupport}), this
+        allowed the model to run the LRP method as all its layers were supported by the LRP implementation
+        of the \emph{captum} library.
+\end{itemize}
+
+\subsection{Dependency Inversion Principle} \label{ch2:DependencyInversion}
+
+Dependency Inversion Principle (DIP) is a software engineering method stemming from
+the SOLID principle that provides a methodology for decoupling software modules.
+The DIP principle states in its definition \cite{martin2003agile}:
+
+\begin{definition}
+High-level modules should not depend on low-level modules. Both should depend on abstractions.
+Abstractions should not depend on details. Details should depend on abstractions.
+\end{definition}
+
+The example of the Dependency Principle Inversion is depicted in Fig. \ref{fig:DepInversionPrinciple}.
+The first high-level class \texttt{Controller} directly uses a given machine learning model by
+creating its instance directly by calling \mintinline{py}{MLModel()} in its constructor.
+This creates a dependency of a high-level class on the implementation of the low-level one.
+The second class \texttt{ControllerDecoupled} has an intermediate interface \texttt{PredictorInterface},
+which abstracts away the details of the low-level \texttt{MLModel} class and provides a clear interface for other
+low-level classes and the high-level class. This approach opens a high-level class for extension - any other
+class implementing the interface can be passed to the interface. The principle allows to make
+systems more maintainable, modular, and testable.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class Controller:
+    def __init__(self):
+        self.model = MLModel()  # tightly coupled
+
+class ControllerDecoupled:
+    def __init__(self, predictor: PredictorInterface):
+        self.model = predictor  # decoupled via abstraction
+\end{minted}
+\caption{The example of the DIP principle implemented in the Python programming language.}
+\label{fig:DepInversionPrinciple}
+\end{figure}
+
+\subsection{Software framework} \label{ch2:SoftwareFramework}
+
+A software framework is a software component that provides a generic, structured functionality
+for creating applications. It provides predefined components, tools, and API (Application Programming Interface)
+so that users may focus on implementing their programs \cite{buschmann1996pattern}.
+It differs from a \emph{library} by applying an Inversion of Control so that, rather than
+providing a certain functionality for a user to call, it provides a certain rigid program
+structure, calling the user’s provided code at some points.
+
+The software framework has key characteristics:
+\begin{itemize}
+    \item \textbf{Inversion of Control} - A key characteristic where a framework establishes a predefined
+        software structure and invokes user-provided components at specific points. This inversion of
+        control distinguishes a framework from a library. This principle allows modularity,
+        separation of concerns, and reduces boilerplate code,
+    \item \textbf{Default structure} - A framework typically has a consistent architecture, and its
+        core code is generally fixed. It may be structured using a specific design pattern like
+        Model-View-Controller to ensure modularity of the implementation. The framework may improve
+        the organization of a code by providing a predefined structure,
+    \item \textbf{Extensibility} - Allows for extension and customization of framework behavior.
+        It may be offered through different solutions such as plugin systems, hooks, or abstract
+        classes that developers can implement.
+\end{itemize}
 
 \subsection{Model-View-Presenter} \label{ch2:ModelViewController}
 
-MVP (Model-View-Presenter) \cite{Potel2011} is an architectural design pattern that is a variation
+Model-View-Presenter (MVP) \cite{Potel2011} is an architectural design pattern that is a variation
 of the MVC (Model-View-Controller) that aims to provide a separation of concerns between
 data processing (business logic) and user interface.
 
@@ -259,11 +578,69 @@ distinguish its MVP implementation from a typical one as view does not communica
 with a presenter class.
 
 \subsection{Audio XAI Framework architecture} \label{ch2:ArchitectureOverview}
-%\subsubsection{Framework components - API/Application programming interface(library),
- %UI, terminal command}
-%\subsection{Visualizing ML Explanation framework overview}
 
-% Image (MVP architecture)
+The proposed architecture for the topic of the thesis that allows generating explanations for ML models,
+along with visualizing them, is the \emph{framework} architecture (\ref{ch2:SoftwareFramework}).
+This decision originates from the observation that a wide range of machine learning models are
+defined using various libraries and user APIs. To make a project usable, there must be a minimal
+amount of code created to adapt a given external model for use in the project.
+Consequently, the intended user of such a tool is a ML model designer or user, including programmers,
+data scientists, etc.
+
+The other application architecture that was considered was a monolithic user
+application. This design was rejected in contrast to the framework as the project
+requires a minimal influence of the user to adapt their models,
+meaning that some form of inversion of control (Sec. \ref{ch2:SoftwareFramework}) is required, which
+naturally suggests the framework architecture.
+The framework architecture is shown in Fig.\ref{fig:FrameworkArch}.
+
+Furthermore, the framework is based on the MVP pattern (Sec. \ref{ch2:ModelViewController})
+to provide a modular and extensible implementation. This allows a framework to be extended
+with a new ML model, XAI technique, or presentation layer with no or minimal interaction
+with the rest of the implementation.
+
+\begin{figure}%[h!] % TODO: h! musi być wyłączone
+    \centering`
+    \includegraphics[width=12cm]{Framework-arch.png}
+    \caption{The Audio XAI framework architecture.}
+    \label{fig:FrameworkArch}
+\end{figure}
+
+The framework is separated logically into the following parts, including:
+\begin{description}
+    \item[Library] Provides an Application programming interface for the user
+        of the library that allows creation of an adapter for a user's model,
+        setup of a given explanation method, its configuration
+        including a selection of a given presentation layer, and utilities for processing and audio,
+    \item[Web interface] It is a presentation layer of the framework that allows visualization
+        of the results of XAI techniques, the audio data including its playback and spectrogram
+        visualization,
+    \item[Runner script] The runner script is an utility script provided by the framework
+        to help the user to launch explanation's on libraries supported models (\ref{ch2:ModelSelection})
+        in a typical usage scenario where the input audio is read and preprocessed for
+        a given model and then the explanation is launched.
+\end{description}
+
+\subsection{Similar solutions}
+
+The audio XAI framework designed and developed as part of the thesis is a unique attempt
+to provide an explanation framework that is tailored specifically towards the domain of
+audio machine learning. The framework is distinct from other XAI frameworks by providing
+direct support for audio features.
+
+To the best of our knowledge, two similar XAI frameworks focused on a similar topic as the thesis,
+but as later explained, they do not provide direct support for audio, making them distinct from
+the thesis project:
+\begin{itemize}
+    \item \textbf{explAIner} - The explAIner \cite{Spinner2019-jg} is a visual analytics framework
+        for interactive interaction with Explainable AI. It focuses on the whole XAI domain, providing
+        support for a wide spectrum of XAI techniques supporting different data types, including text and
+        image data. Though it is a very mature tool, it lacks a direct visual support for audio data,
+        which distinguishes it from a project for a thesis,
+    \item \textbf{XAI - An eXplainability toolbox for machine learning} - It is a toolbox \cite{SomeXaiFramework}
+        that provides collection of tools for working with Explainable AI. As with the previous example,
+        it is distinct in that it lacks the visual support for audio data.
+\end{itemize}
 
 % #############################################
 %
@@ -512,11 +889,55 @@ A declarative JavaScript library that has revolutionized user interface developm
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{External specification} \label{ch:externalSpec}
 
-\subsection{Development Setup} \label{ch4:DevelopmentSetup}
-\subsection{Installation process overview}
-\subsubsection{Installation steps}
+The following chapter provides the external interface of the audio XAI framework implemented as
+part of the thesis. It discusses the project's software requirements, installation procedure,
+user interface, and framework usage.
 
-\subsection{Command-line tool for simple explanations} \label{ch4:CmdTool}
+\subsection{Software requirements} \label{ch4:DevelopmentSetup}
+
+The audio XAI framework is implemented mainly in the Python programming language and
+requires a set of tools from Python's ecosystem for correct setup.
+The project's software prerequisites are:
+
+\begin{itemize}
+    \item \textbf{Python} - version 3.9.20
+    \item \textbf{Conda} - version 24.11.0
+    \item \textbf{curl} - version 8.11.0
+    \item \textbf{GNU bash} -  version 5.2.37
+\end{itemize}
+
+\subsection{Installation procedure}
+
+The framework provides an installation script \texttt{setup.sh} % TODO (Appendix. 3)
+in project's root directory that performs full installation of all
+software dependencies. To install the project the users must:
+
+\begin{itemize}
+    \item Clone the git repository of the audio XAI framework:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+git clone https://github.com/m-falkowski/pylibxai
+\end{minted}
+    \item Enter the cloned directory:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+cd pylibxai/
+\end{minted}
+    \item Initialize dependent repositories stored as git's submodules in the repository:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+git submodule update --init --recursive
+\end{minted}
+    \item Launch the install script that is present in the root directory:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+chmod +x setup.sh && ./setup.sh
+\end{minted}
+    \item The \texttt{setup.sh} script provides a \emph{conda} environment with all installed dependencies and activates it. The environment can be activated after the installation manually at any given point:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+conda activate pylibxai_context
+\end{minted}
+\end{itemize}
+
+\subsection{Command-line interface} \label{ch4:CmdTool}
+
+The library provides a 
 
 \subsection{Web interface for explanation}
 \subsubsection{Initializing web interface}
@@ -937,9 +1358,9 @@ Explanation methods are implemented as separate classes including \texttt{LimeEx
 
 \subsubsection{Integrated gradients and LRP explainers}
 
-The explainer implementation for integrated gradients and LRP are equal as
-they both use implementation from the Captum library which
-exposes method's results through attribution method \ref{ch2:AttributionMethod}.
+The explainer implementation for integrated gradients and LRP are both attribution-based methods
+%as they both use implementation from the Captum library which
+where they both return the attribution map as a result of their explanation as discussed in Sec. \ref{ch2:IgradMethod}.
 
 Both implementation define the ...
 
@@ -1490,7 +1911,8 @@ function Igradients() {
 
 %\subsubsection{Visualization of attribution intensity}
 
-The frontend must also provide a visualization of attribution intensity (Sec. \ref{ch2:AttrIntensity}) over time.
+The frontend must also provide a visualization of intensity of the attribution map
+(Sec. \ref{ch2:IgradMethod}) over time.
 This functionality is implemented using ChartJS library \cite{ChartJsDoc}.
 The attribution intensity is a summation of all waveform frequencies over a time so it may
 be displayed using a simple linear plot that the ChartJS library provides.
@@ -1682,7 +2104,7 @@ particularly the support of the chosen ML models and the explanation methods.
 The project unit tests have been implemented using \emph{pytest} \cite{PytestDoc}, a testing framework for Python.
 
 %\subsection{Case study: integrating Simple GTZAN model into framework} TODO: Robić???
-\subsection{Explanation support for models}
+\subsection{Explanation support for models} \label{ch6:ExplanationSupport}
 
 The thesis aimed to provide suitable explanation methods and integrated models to give a base functionality
 to work with the framework. The implemented explanation methods by the framework were implemented for
@@ -1975,10 +2397,11 @@ biblioteka captum
 \acronymlist
 \acronym{XAI}{Explainable artificial intelligence}
 \acronym{SOTA}{State-of-art Music Models}
-\acronym{LRP}{Layerwise propagation}
+\acronym{LRP}{Layer-wise relevance propagation}
 \acronym{JSON}{JavaScript Object Notation}
 \acronym{CORS}{Cross-origin resource sharing}
 \acronym{HTTP}{Hypertext Transfer Protocol}
+\acronym{API}{Application Programming Interface}
 \vspace{0.8cm}
 
 %--------------------------------------

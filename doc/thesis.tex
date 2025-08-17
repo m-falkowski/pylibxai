@@ -530,7 +530,7 @@ The software framework has key characteristics:
         separation of concerns, and reduces boilerplate code,
     \item \textbf{Default structure} - A framework typically has a consistent architecture, and its
         core code is generally fixed. It may be structured using a specific design pattern like
-        Model-View-Controller to ensure modularity of the implementation. The framework may improve
+        Model-View-Presenter to ensure modularity of the implementation. The framework may improve
         the organization of a code by providing a predefined structure,
     \item \textbf{Extensibility} - Allows for extension and customization of framework behavior.
         It may be offered through different solutions such as plugin systems, hooks, or abstract
@@ -712,7 +712,7 @@ the thesis project:
 
         The library API must provide explanation methods selected for the thesis, such as LIME, Integrated gradients, and LRP.
     These methods should be implemented as classes, and they also serve as controllers within
-    the Model-View-Controller pattern and coordinate between model adapters, explanation algorithms, and view components. They encapsulate the complete explanation workflow from input processing to result visualization.
+    the Model-View-Presenter pattern and coordinate between model adapters, explanation algorithms, and view components. They encapsulate the complete explanation workflow from input processing to result visualization.
 
     \item \textbf{Support for web interface view}
 
@@ -828,7 +828,7 @@ the thesis project:
          The project thesis aims to provide a general and extensible audio explanation framework. The system must be 
     designed with a modular structure, where key components such as explanation methods, model adapters, and view
     renderers are implemented as independent modules. For that, the system must adhere 
-    to the pattern principles of Model-View-Controller architecture as discussed
+    to the pattern principles of Model-View-Presenter architecture as discussed
     in Sec. \ref{ch2:ModelViewController}. This modularity allows for the seamless integration of new 
     functionalities, such as adding additional explanation algorithms or
     supporting new audio models, without requiring  modifications to the core of the system.
@@ -850,7 +850,7 @@ the thesis project:
 
 \end{description}
 
-\subsection{Tools specification} \label{ch:ch3LabelSpec}
+\subsection{Tools specification} \label{ch:ToolsSpecification}
 \begin{description}
 \item \textbf{PyTorch}
 
@@ -935,17 +935,195 @@ conda activate pylibxai_context
 \end{minted}
 \end{itemize}
 
+\subsection{Framework application programming interface}
+
+The most fundamental way of using the framework is through its API interface.
+The framework provides its API interface as a Python library that may be used
+by the user. The exemplary usage of the API interface is shown in Fig. \ref{fig:ApiUsage},
+where the user imports in Python's interactive mode a set of classes of the framework to create a
+context class, instantiate an HarmonicCNN model adapter and create a \texttt{LimeExplainer} class
+used to launch the LIME method.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{text}
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from pylibxai.model_adapters import HarmonicCNN
+>>> from pylibxai.pylibxai_context import PylibxaiContext
+>>> from pylibxai.Interfaces import ViewType
+>>> from pylibxai.Explainers import LimeExplainer
+>>> ctx = PylibxaiContext("/root/")
+>>> ctx
+<pylibxai.pylibxai_context.pylibxai_context.PylibxaiContext object at 0x00000140174F6A90>
+>>> adapter = HarmonicCNN(device="cpu")
+>>> explainer = LimeExplainer(adapter, ctx, view_type=ViewType.WEBVIEW)
+>>> explainer
+<pylibxai.Explainers.lime_explainer.LimeExplainer object at 0x00000140351E7FD0>
+>>>
+\end{minted}
+\caption{The help message output of the command-line explanation runner.}
+\label{fig:ApiUsage}
+\end{figure}
+
 \subsection{Command-line interface} \label{ch4:CmdTool}
 
-The library provides a 
+The library provides a script, \texttt{pylibxai\_explain.py} (Sec. \ref{ch5:ExplanationRunner})
+that allows executing the user’s input audio on models and XAI methods
+already implemented in the framework. The interface of the script is shown
+in its help message, which is visible in Fig. \ref{fig:CmdlineParameters}.
+This command-line script contains the following options:
+\begin{itemize}
+    \item \textbf{-u, --visualize} - The boolean flag that enables visualization in the web interface.
+        If not specified, the terminal-based debug view will be used,
+    \item \textbf{-e EXPLAINER, --explainer EXPLAINER} - The parameter is used to specify
+        the XAI method to be used,
+    \item \textbf{-t TARGET, --target TARGET} - Name or index of the expected class that will be returned
+        by the prediction,
+    \item \textbf{-i INPUT, --input INPUT} - The parameter is used for providing a path to the input file.
+    \item \textbf{-w WORKDIR, --workdir WORKDIR} - The parameter is used for providing a path to the input file,
+    \item \textbf{-p PORT, --port PORT} - Specifies the port number of the web interface if it is enabled.
+        It must be used along with \texttt{--visualize} parameter,
+    \item \textbf{-d DEVICE, --device DEVICE} - The device type on which the explanation will be launched.
+        It is either \emph{cpu} or \emph{cuda}.
+\end{itemize}
 
-\subsection{Web interface for explanation}
-\subsubsection{Initializing web interface}
-\subsubsection{Displaying LIME results}
-\subsubsection{Displaying LRP results}
-\subsubsection{Displaying Integrated gradients results}
-\subsubsection{Displaying software warning} \label{ch4:NotificationPanel}
-\subsubsection{Version information}
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{text}
+$ pylibxai_explain.py -h
+usage: pylibxai_explain.py [-h] -m MODEL [-u] -e EXPLAINER -t TARGET -i INPUT -w WORKDIR [-p PORT] [-d DEVICE]
+
+Process a model name and input path.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m MODEL, --model MODEL
+                        Name of the model to use [{sota_music, paans, gtzan},]...
+  -u, --visualize       Enable visualization of audio in browser-based UI.
+  -e EXPLAINER, --explainer EXPLAINER
+                        Name of the explainer to use [lime, integrated-gradients, lrp].
+  -t TARGET, --target TARGET
+                        Name or index of the label to explain. Mapping is done automatically based on the model if the model provides it.
+  -i INPUT, --input INPUT
+                        Path to the input file or directory.
+  -w WORKDIR, --workdir WORKDIR
+                        Path to the workdir directory.
+  -p PORT, --port PORT  Port to use for the web server.
+  -d DEVICE, --device DEVICE
+                        Device to use for computation [cpu, cuda]. Default is 'cuda' if available, otherwise 'cpu'.
+\end{minted}
+\caption{The output of the help message of the command-line explanation runner.}
+\label{fig:CmdlineParameters}
+\end{figure}
+
+The exemplary usage of the explanation runner helper script is shown in Fig. \ref{fig:ExemplaryCmdline}.
+
+\begin{figure}%[h]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+pylibxai_explain.py -w ./shap_expl/ -m gtzan --explainer=integrated-gradients,lrp -i datasets/GTZAN/Data/genres_original/jazz/jazz.00050.wav
+\end{minted}
+\caption{The exemplary invocation of explanation runner that runs Integrated Gradients and LRP XAI methods on GtzanCNN model.}
+\label{fig:ExemplaryCmdline}
+\end{figure}
+
+\subsection{Web interface} \label{ch4:NotificationPanel}
+
+The main presentation layer of the Audio XAI framework is provided in the form of a web user interface.
+The web interface provides the following components to the user:
+\begin{itemize}
+    \item \textbf{The main page with XAI method's results} - The main page contains the results of a given XAI
+        method. In case of the LIME method, there is the original audio playback provided as the result,
+        followed by the playback of the explanation as shown in Fig. \ref{fig:LimeView}.
+        Both are provided as a listenable result. In the case of the Integrated gradients method and LRP
+        both methods contain the same version of the result page, as these two methods return an
+        attribution map of a given input audio, as shown in Fig. \ref{fig:WholeInterface},
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{lime-view.png}
+    \caption{The picture shows the whole web interface with a main page that contains the LIME results.}
+    \label{fig:LimeView}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{whole_interface.png}
+    \caption{The picture shows the whole web interface with a main page that contains the LRP results.}
+    \label{fig:WholeInterface}
+\end{figure}    
+
+    \item \textbf{Sidebar} - The sidebar allows switching between different subpages,
+        defined as visible in Fig. \ref{fig:Sidebar},
+
+\begin{figure}[h!] % TODO: h! musi być wyłączone
+    \centering
+    \includegraphics[width=8cm]{sidebar.png}
+    \caption{The picture depicts the sidebar component of the web page.}
+    \label{fig:Sidebar}
+\end{figure}
+    
+    \item \textbf{Attribution map} - The attribution map is the XAI result of the attribution-based methods,
+        Integrated Gradients, and LRP. For a given input, the given image of the attribution is visualized
+        in the results page using \emph{Chart.js}, as shown for the spectrogram model
+        in Fig. \ref{fig:SpectrogramAttribution}.
+        This section also contains the original raw input without the attribution applied,
+        as shown in Fig. \ref{fig:SpectrogramRaw}, and a button to toggle between these 
+        two representations.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=12cm]{spectrogram-attribution.png}
+    \caption{The picture shows the attribution map overlayed on the given input.}
+    \label{fig:SpectrogramAttribution}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=12cm]{spectrogram-raw.png}
+    \caption{The picture shows the raw input without attribution overlayed.}
+    \label{fig:SpectrogramRaw}
+\end{figure}
+
+    \item \textbf{Attribution intensity plot} - The attribution intensity plot visualizes the
+        attribution over time, summing the attribution provided at a given point
+        in time, as shown in Fig. \ref{fig:AttributionPlot}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=12cm]{attribution_map_frontend.png}
+    \caption{The picture shows the plot of attribution intensity over time.}
+    \label{fig:AttributionPlot}
+\end{figure}
+
+    \item \textbf{Version information panel} - The version information panel displays information about
+        software versioning, as shown in Fig. \ref{fig:VersionPanel}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=8cm]{version-information.png}
+    \caption{The image shows the version information panel of the web page.}
+    \label{fig:VersionPanel}
+\end{figure}
+
+    \item \textbf{Notification panel} - The notification panel contains any notifications about errors o
+        warnings that might have happened during the execution of the web page,
+        as shown in Fig. \ref{fig:NotificationPanel}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=8cm]{notification-panel.png}
+    \caption{The image shows the notification information panel of the web page.}
+    \label{fig:NotificationPanel}
+\end{figure}
+
+    \item \textbf{Model information page} - The model information page contains supplementary information
+        about a user's model, as shown in Fig. \ref{fig:ModelInformation}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=12cm]{model-information.png}
+    \caption{The image shows the model information page.}
+    \label{fig:ModelInformation}
+\end{figure}
+
+\end{itemize}
 
 % #############################################
 %
@@ -955,7 +1133,8 @@ The library provides a
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{Framework implementation} \label{ch:implementation}
 
-    The following chapter contains an overview of the architecture and implementation details of the explanation framework. It briefly discusses each of the system's components by providing
+    The following chapter contains an overview of the architecture and implementation details of
+    the explanation framework. It briefly discusses each of the system's components by providing
     a walk-through of each step of the framework's explanation pipeline.
 
 \subsection{Software architecture overview}
@@ -1006,7 +1185,7 @@ The library provides a
 	\item \textbf{pylibxai-ui/} - Frontend React application providing web-based user interface for visualization,
 \end{itemize}
 
-\subsection{Model-View-Controller implementation overview}
+\subsection{Model-View-Presenter implementation overview}
 
 \begin{figure}%[h!] % TODO: h! musi być wyłączone
     \centering
@@ -1015,10 +1194,16 @@ The library provides a
     \label{fig:ClassDiagram}
 \end{figure}
 
-    The thesis utilizes Model-View-Controller (MVC) architectural pattern (Sec. \ref{ch2:ModelViewController}) to obtain extendable architecture that satisfies one of core requirements of the thesis that is modularity as discussed in Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extendable with a new explanation types, machine learning models, and views separating these three from each other so that the developer might work on one of these exclusively.
+    The thesis utilizes Model-View-Presenter (MVP) architectural pattern
+    (Sec. \ref{ch2:ModelViewController}) to obtain extendable architecture that satisfies
+    one of core requirements of the thesis that is modularity as discussed in
+    Sec. \ref{ch:NonFuncRequirements}. This allows a framework to be easily extendable with 
+    new explanation types, machine learning models, and views separating these three from
+    each other so that the developer might work on one of these exclusively.
 
-    The Model-View-Controller is implemented using
-    the following classes visible in the class diagram \ref{fig:ClassDiagram}. The implementation and details of these classes are discussed later in the chapter:
+    The Model-View-Presenter is implemented using
+    the following classes visible in the class diagram \ref{fig:ClassDiagram}.
+    The implementation and details of these classes are discussed later in the chapter:
     \begin{description}
         \item[Model] The function of the model in the framework is realized using adapter classes for user
         models, such as \texttt{HarmonicCNN} or \texttt{Cnn14} (Sec. \ref{ch2:ModelSelection}). These classes
@@ -1183,7 +1368,7 @@ adapters should be implemented (Sec. \ref{ch5:AdapterInterfaces}). These user-su
 model definition and wrap around logic responsible for model inference to allow
 them to be used within the framework.
 
-Adapters of users’ ML models serve as model classes in a Model-View-Controller,
+Adapters of users’ ML models serve as model classes in a Model-View-Presenter,
 where they are responsible for data processing. They are used by controller classes,
 which are explainer classes in the case of the framework that pass the user’s input to them.
 This way, the data manipulation is separated from the rest of the framework,
@@ -1316,7 +1501,7 @@ to fulfill the implementation of framework’s \texttt{LimeExplainer} which is b
 implementation mthat operates on numpy’s array types. The function then must
 take a numpy \texttt{np.ndarray} as an input and also return it.
 
-\begin{figure}%[h]
+\begin{figure}[h!]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
     # ...
@@ -1328,7 +1513,7 @@ def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
             audio[i] = torch.Tensor(x_array[i]).unsqueeze(0)
         audio = audio.cuda()
         audio = Variable(audio)
-        output_dict = self.model(audio) # inference here (input is passed into model)
+        output_dict = self.model(audio)
         output_tensor = output_dict.detach().cpu().numpy()
         return np.array(output_tensor)
 
@@ -1343,28 +1528,33 @@ def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
 
 \subsection{Explainer classes}
 
-The explainer classes are the core component of the framework that is responsible
-for the launching of the explanation methods on the user input and the
-selected model. Their primary purpose is to manage perform explanation
-on the user's model and manipulation of the resulting data based on the users decision.
-They offload from the user a need to visualize 
+The explainer classes are the core component of the framework that is responsible for launching
+the explanation methods on the user input and the selected model. Their primary purpose is to manage
+the explanation performed on the user's model and manipulate the resulting data based on the user's decision.
+They offload from the user the need to handle data between a model and an explanation, they postprocess
+explanation results to prepare them for visualization, and lastly,
+they launch the selected presentation layer, initializing it with explanation results.  
 
-These classes serve a purpose of controllers as part of the Model-View-Controller
-pattern though this name is not taken directly in their classes names.
-As controllers they manage the model and view classes and they
+These classes serve a purpose as presenter as part of the Model-View-Presenter pattern,
+though this name is not taken directly in their class names. As presenters,
+they manage the model and view classes directly, steering the flow of data between them.
 
-Explanation methods are implemented as separate classes including \texttt{LimeExplainer},
+Explanation methods are implemented as separate classes, including \texttt{LimeExplainer},
 \texttt{IGradientsExplainer}, and \texttt{LrpAdapter}.
 
 \subsubsection{Integrated gradients and LRP explainers}
 
-The explainer implementation for integrated gradients and LRP are both attribution-based methods
-%as they both use implementation from the Captum library which
-where they both return the attribution map as a result of their explanation as discussed in Sec. \ref{ch2:IgradMethod}.
+The explainer implementations for the Integrated gradients and the LRP are identical.
+This is due to both of them being attribution-based methods (Sec. \ref{ch2:IgradMethod}),
+which results in their implementation in \emph{Captum} library to have the same interface.
+As a result, the Integrated gradient's explainer implementation will be explained,
+and the LRP is defined similarly.
 
-Both implementation define the ...
+Both implementations' constructors initialize the classes with a user-provided model adapter,
+context class, and a type of view. The instance of a view class is created and managed internally,
+as shown in Fig. \ref{fig:IGradientsExplainer}.
 
-\begin{figure}%[h]
+\begin{figure}[h!]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 class IGradientsExplainer:
     def __init__(self, model_adapter, context, device, view_type=None, port=9000):
@@ -1383,11 +1573,41 @@ class IGradientsExplainer:
         else:
             raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
 \end{minted}
-\caption{Class definition of \texttt{IGradientsExplainer}.}
+\caption{The constructor definition of the \texttt{IGradientsExplainer} class.}
 \label{fig:IGradientsExplainer}
 \end{figure}
 
-\begin{figure}%[h]
+The \mintinline{py}{explain()} method is the top-level function used to launch the explanation process.
+It receives input audio and the input target as parameters and launches a set of operations,
+which include generating a spectrogram of the audio input and producing an attribution map
+as shown in Fig. \ref{fig:IgradMainExplainFunc}.
+It also launches the specified view class using \mintinline{py}{self.view.start()},
+which was chosen by the user during initialization.
+
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class IGradientsExplainer:
+    def explain(self, audio, target):
+        # ...
+        fig, _ = self.explain_instance_visualize(audio, target=target, type="original_image")
+        self.context.write_plt_image(fig, os.path.join("igrad", "igrad_spectogram.png"))
+        # ...
+        attribution = self.get_smoothed_attribution()
+        self.context.write_attribution(attribution, os.path.join("igrad", "igrad_attributions.json"))
+       
+        if self.view_type == ViewType.WEBVIEW:
+            self.view.start()
+        # ...
+\end{minted}
+\caption{The top-level explain function of the \texttt{IGradientsExplainer} class.}
+\label{fig:IgradMainExplainFunc}
+\end{figure}
+
+The internal \mintinline{py}{explain_instance()} method executes the user’s provided input and passes
+it to the explainer, which performs the explanation as shown in Fig. \ref{fig:ExplainInstance}
+The value returned from it is the attribution generated by the explanation.
+
+\begin{figure}[h!]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 class IGradientsExplainer:
     def explain_instance(self, audio, target, background=None):
@@ -1395,11 +1615,18 @@ class IGradientsExplainer:
         attributions, delta = self.explainer.attribute(audio, target=target, return_convergence_delta=True)
         return attributions, delta
 \end{minted}
-\caption{Class definition of \texttt{IGradientsExplainer}.}
-\label{fig:explain_instance}
+\caption{The implementation of \texttt{explain\_instance} method of the \texttt{IGradientsExplainer} class.}
+\label{fig:ExplainInstance}
 \end{figure}
 
-\begin{figure}%[h]
+The method \mintinline{py}{explain_instance_visualize()} is similar to the \emph{explain\_instance}, 
+but as a result, it generates an image of the attribution that is overlayed on the
+input as shown in Fig. \ref{fig:ExplainInstanceVisualize}.
+The image is generated using \emph{Matplotlib} (Sec. \ref{ch:ToolsSpecification}) library.
+To prevent the interactive window of the generated image, a call to the function \mintinline{py}{plt.ioff()}
+disables the interactive mode of Matplotlib.
+
+\begin{figure}[h!]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 class IGradientsExplainer:
     def explain_instance_visualize(self, audio, target, type=None, background=None, attr_sign='positive'):
@@ -1415,11 +1642,16 @@ class IGradientsExplainer:
                                         show_colorbar=True,
                                         outlier_perc=50)
 \end{minted}
-\caption{Class definition of \texttt{IGradientsExplainer}.}
-\label{fig:explain_instance_visualize}
+\caption{The implementation of \texttt{explain\_instance\_visualize} method of the \texttt{IGradientsExplainer} class.}
+\label{fig:ExplainInstanceVisualize}
 \end{figure}
 
-\begin{figure}%[h]
+The method \mintinline{py}{get_smoothed_attribution()} of the explainer is the helper
+function that performs a moving average over the generated attribution, which calculates
+the average of a given group of elements. In the case of the implementation,
+it is \mintinline{py}{window_size=15}, using a sliding window, as shown in Fig. \ref{fig:get_smoothed_attribution}.
+
+\begin{figure}[h!]
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
 class IGradientsExplainer:
     def get_smoothed_attribution(self):
@@ -1432,17 +1664,129 @@ class IGradientsExplainer:
         smoothed_attribution = moving_average(summed_attribution)
         return smoothed_attribution
 \end{minted}
-\caption{Class definition of \texttt{IGradientsExplainer}.}
+\caption{The \texttt{get\_smoothed\_attribution} method of the \texttt{IGradientsExplainer} class.}
 \label{fig:get_smoothed_attribution}
 \end{figure}
 
 \subsubsection{LIME explainer}
 
-% ...
+The LIME method implementation is different from the previously described Integrated gradients and
+LIME methods. It is based on the \emph{audioLIME} method (Sec. \ref{ch2:audioLIME}) and generates
+an explanation in the form of a listenable audio fragment with the most relevant part of the audio.
+
+The initialization of the class is similar to the previous explainer classes, where the explainer
+class is initialized with a user-provided model adapter, context class, and a type of view,
+as shown in Fig. \ref{fig:LimeMethodInit}.
+
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class LimeExplainer:
+    def __init__(self, adapter, context, view_type, port=9000):
+        # ...
+        self.adapter = adapter
+        self.context = context
+        self.view_type = view_type
+        if view_type == ViewType.WEBVIEW:
+            self.view = WebView(context, port=port)
+        elif view_type == ViewType.DEBUG:
+            self.view = DebugView(context)
+        elif view_type == ViewType.NONE:
+            self.view = None
+        else:
+            raise ValueError(f"Invalid view type: {view_type}. Must be one of WEBVIEW, DEBUG, or NONE.")
+\end{minted}
+\caption{The initialization process of the \texttt{LimeExplainer} class.}
+\label{fig:LimeMethodInit}
+\end{figure}
+
+The \texttt{LimeExplainer} contains only a top-level \mintinline{py}{explain()} method,
+which contains the whole implementation of the explainer in itself. The function starts with the
+creation of the \texttt{SpleeterFactorization} class, which performs factorization of the
+audio as explained in Sec. \ref{ch2:audioLIME}, and then creates an instance of the explanation
+object \texttt{LimeAudioExplainer} from the audioLIME’s implementation,
+as shown in Fig. \ref{fig:LimeExplainMethod}.
+ 
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class LimeExplainer:
+    def explain(self, audio, target=None): 
+        audio_loader = RawAudioLoader(audio)
+        spleeter_factorization = 
+            SpleeterFactorization(audio_loader,
+                n_temporal_segments=10,
+                composition_fn=None,
+                model_name='spleeter:5stems'
+            )
+        print('Creating explanation object')
+        explainer = lime_audio.LimeAudioExplainer(verbose=True, absolute_feature_sort=False)
+\end{minted}
+\caption{The top-level function \texttt{explain} of the \texttt{LimeExplainer} class.}
+\label{fig:LimeExplainMethod}
+\end{figure}
+
+The LIME explanation instance is created by extracting the user's adapter using
+the \mintinline{py}{adapter.get_lime_predict_fn()} adapter handler as shown in Fig. \ref{fig:LimeExplExecution}.
+
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class LimeExplainer:
+    def explain(self, audio, target=None):
+            # ...
+            explanation = 
+            explainer.explain_instance(factorization=spleeter_factorization,
+                predict_fn=self.adapter.get_lime_predict_fn(),
+                top_labels=1,
+                num_samples=16384,
+                batch_size=16
+            )
+            # ...
+\end{minted}
+\caption{The audioLIME explanation instance defined in \texttt{explain()} method of the \texttt{LimeExplainer} class.}
+\label{fig:LimeExplExecution}
+\end{figure}
+
+The LIME explanation is performed on the selected number of listenable components of
+the \mintinline{py}{adapter.get_lime_predict_fn()} adapter handler, as shown in Fig. \ref{fig:LimeGetSortedComps}.
+
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class LimeExplainer:
+    def explain(self, audio, target=None):
+        # ...
+        label = list(explanation.local_exp.keys())[0]
+        top_components, component_indices =
+            explanation.get_sorted_components(label,
+                positive_components=True,
+                negative_components=False,
+                num_components=3,
+                return_indeces=True)
+        # ...
+\end{minted}
+\caption{The audioLIME explanation execution in the \texttt{LimeExplainer} class.}
+\label{fig:LimeGetSortedComps}
+\end{figure}
+
+After the LIME explanation result is generated, the explainer class saves the results
+into a given context and launches the given view class, as shown in Fig. \ref{fig:LimeSaveResults}.
+
+\begin{figure}[h!]
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+class LimeExplainer:
+    def explain(self, audio, target=None):
+        # ...
+        self.context.write_audio(audio, os.path.join("lime", "original.wav"))
+        self.context.write_audio(sum(top_components), os.path.join("lime", f"lime_explanation.wav"), 16000, 'PCM_24')
+
+        if self.view_type == ViewType.WEBVIEW:
+            self.view.start()
+\end{minted}
+\caption{The end section of the \texttt{explain} function of the \texttt{LimeExplainer}, which saves the results to a given context class and lanuches a given view class.}
+\label{fig:LimeSaveResults}
+\end{figure}
 
 \subsection{Context class definition}
 
-The \texttt{PylibxaiContext} class ma`nages the data and encapsulates the data saving process.
+The \texttt{PylibxaiContext} class manages the data and encapsulates the data saving process.
 It is an important bridge between model and view classes, formalizing how explanation results
 are saved and accessed through a framework.
 The class also implements the requirement \textit{Context Management}
@@ -1494,7 +1838,7 @@ The \texttt{PylibxaiContext} class contains the following fields, as shown in it
 
 \begin{itemize}
     \item \mintinline{py}{self.workdir} - the field holds a path to the working directory in which explanation results will be saved,
-    \item \mintinline{py}{write_plt_image(self, fig, suffix)} - it handles saving the results of Matplotlib's (Sec. \ref{ch:ch3LabelSpec}) generated image,
+    \item \mintinline{py}{write_plt_image(self, fig, suffix)} - it handles saving the results of Matplotlib's (Sec. \ref{ch:ToolsSpecification}) generated image,
     \item \mintinline{py}{write_attribution(self, smoothed_attribution, suffix)} - it handles saving explanation's attribution,
     \item \mintinline{py}{write_label_mapping(self, labels, suffix)} - it handles saving the mapping of labels into their indexes,
     \item \mintinline{py}{write_audio(self, audio, suffix, *args, **kwargs)} - it handles saving of an audio file,
@@ -1503,7 +1847,7 @@ The \texttt{PylibxaiContext} class contains the following fields, as shown in it
 \subsection{View classes}
 
 The purpose of view classes is to present explanation results to the user in a readable form
-according to Model-View-Controller pattern. The framework is implemented with modularity as a goal
+according to Model-View-Presenter pattern. The framework is implemented with modularity as a goal
 and allows multiple views defined implementing \texttt{ViewInterface} interface.
 The framework is implemented with modularity as a goal and allows multiple views
 defined by implementing \texttt{ViewInterface} interface that defines how explanation
@@ -1741,7 +2085,7 @@ element is encapsulated as a reusable React component
 %\subsubsection{Frontend layout organization}
 
 The main objective of web page design is to offer a separate display of each explanation method to not
-confusing the results with each other, as discussed in Sec. \ref{ch:ch3LabelSpec}.
+confusing the results with each other, as discussed in Sec. \ref{ch:ToolsSpecification}.
 The Web page’s layout is organized to emphasize the separation of different explanation methods to allow
 a user to quickly switch between them. For that, the web page organizes different data displayed in
 separate sections and provides a sidebar to switch between them.
@@ -2022,7 +2366,7 @@ pushNotification({ type: 'error', message: `Integrated Gradients: Failed to load
 \end{minted}
 
 \clearpage % TODO: usuń
-\subsection{Explanation runner command-line script}
+\subsection{Explanation runner command-line script} \label{ch5:ExplanationRunner}
 
 The framework provides a command-line tool script as a helper tool for quick execution
 of explanation methods on the user’s input using models integrated into the library
@@ -2103,7 +2447,6 @@ implemented as part of the thesis. It also summarizes the results obtained durin
 particularly the support of the chosen ML models and the explanation methods.
 The project unit tests have been implemented using \emph{pytest} \cite{PytestDoc}, a testing framework for Python.
 
-%\subsection{Case study: integrating Simple GTZAN model into framework} TODO: Robić???
 \subsection{Explanation support for models} \label{ch6:ExplanationSupport}
 
 The thesis aimed to provide suitable explanation methods and integrated models to give a base functionality
@@ -2371,15 +2714,53 @@ def test_start_success(self, mock_environ, mock_run_file_server, mock_popen, web
 \clearpage % Rozdziały zaczynamy od nowej strony.
 \section{Conclusions} \label{ch:summary}
 
-Solving this issue is a intresting/promising idea for a future work.
+The goal of this thesis was to develop a software solution enabling XAI explanations on audio model
+and visualization of explanation data and audio for analysis and comparison. 
+As part of this, the thesis proposes and describes the design of an XAI audio framework that offers its 
+user an API interface for performing explanations and a presentation layer, within which a web interface
+has been developed to visualize various explanation results such as audio playback, attribution, and the like.
+Additionally, the framework is based on the Model-View-Presenter pattern to ensure
+the modularity and maintainability of the solution.
 
-Wnioski:
-- W przypadku niektórych metod wymagających obliczeń per warstwę modelu jak LRP,
-  wymagane jest zadefiniowanie handlera per-klasę co powoduje, że modele audio
-  nie działają. Fakt ten uniemożliwił w bibliotece zaimplementowanie wsparcia
-  LRP dla HCNN oraz CNN14, które to posiadają własne warstwy
+A dedicated tool for visualizing audio explanations allows for quick comparison of multiple explanation methods.
+The framework design relieves the user of a significant portion of the work by managing the explanation and
+visualization process. The user's role in this process is to define an adapter for their machine learning model
+and then “inject” or otherwise pass it for use in the framework classes according to the dependency inversion
+pattern.
 
-biblioteka captum
+The Model-View-Presenter (MVP) architectural pattern used allowed for easy extension of the project with new
+models and forms of presentation of results. Adding a new alternative view instead of a web page only requires
+defining the appropriate classes and passing them to the controller. This does not require any modification of
+explanation classes or adapters from models, as these classes are independent of the view according to the MVP
+pattern.
+
+The interactive interface significantly supports the analysis capabilities, and the visual form of presentation
+makes it easier for the user to interpret the results and compare methods. Automatic visualization of audio waves
+with the ability to listen to them, visualization of spectrograms, and analysis of the attribution of individual
+methods, along with their comparison, saves the user time by automatically offering an interface that contains a
+ready-made set of explanations for their model.
+
+The full scope of the thesis, which includes the development of a framework and a web view,
+as well as the addition of selected XAI methods and audio models, has been completed.
+However, it was not possible to implement full support for all methods for each model, 
+as described in Sec. \ref{ch6:ExplanationSupport}.
+The problems encountered during the writing of the thesis prevented the
+addition of support for the LRP method for HCNN and CNN14 models, as it requires the definition
+of calculations per model layer, and the layers responsible for conversion to spectrogram are
+not supported in the Captum library. In addition, support for the LIME method was implemented for
+the GtzanCNN model, but was not tested due to limitations of the environment in which the work was developed.
+
+Future work on the topic of audio Explainable AI frameworks may include:
+\begin{itemize}
+    \item Interactive and editable mode - the ability to dynamically select audio fragments for 
+          analysis or testing,
+    \item Support for new types of machine learning models such as Large Language Models,
+    \item Support for new explanation methods - integrating techniques such as Grad-CAM, SHAP,
+        or similar XAI methods.
+\end{itemize}
+
+The XAI audio framework project demonstrates the application of classic software engineering rules
+in the field of explainable artificial intelligence.
 
 %---------------
 % Bibliografia

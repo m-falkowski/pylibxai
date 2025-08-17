@@ -82,7 +82,7 @@ function Lime() {
 
     const loadAudio = async () => {
       try {
-        await wavesurfer.current.load(`${staticBaseUrl}/lime/explanation.wav`)
+        await wavesurfer.current.load(`${staticBaseUrl}/lime/lime_explanation.wav`)
       } catch (error) {
         console.error('Failed to load audio:', error)
       }

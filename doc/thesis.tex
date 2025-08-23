@@ -30,6 +30,8 @@
 \usepackage{pifont}   % for ding symbols
 \usepackage{svg}
 
+%\usepackage[breaklinks]{hyperref}
+
 \newcommand{\cmark}{\ding{51}} % checkmark
 \newcommand{\xmark}{\ding{55}} % cross
 
@@ -51,6 +53,9 @@
 }
 \surroundwithmdframed[style=verbatimframe]{verbatim}
 
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+
 %-------------------------------------------------------------
 % Wybór wydziału:
 %  \facultyeiti: Wydział Elektroniki i Technik Informacyjnych
@@ -70,15 +75,15 @@
 % Strona tytułowa
 %------------------
 \instytut{Control and Computation Engineering}
-\kierunek{computer science}
+\kierunek{Computer Science}
 \specjalnosc{Internet Management Support Systems}
 \title{
-    Machine learning framework for explainable artificial intelligence models
+    Machine learning framework for explainable artificial intelligence audio models
 }
 % Title in English for English theses
 % In English theses, you may remove this command
 \engtitle{
-    Machine learning framework for explainable artificial intelligence models
+    Machine learning framework for explainable artificial intelligence audio models
 }
 % Title in Polish for English theses
 % Use it only in English theses
@@ -99,7 +104,7 @@
 \abstract
 
 The aim of this thesis is to design a tool that enables the execution, visualization, and comparison of
-Explainable Artificial Intelligence (XAI) methods for audio machine learning models. As part of this
+Explainable Artificial Intelligence (XAI) methods for audio machine learning models. As part of this,
 the thesis describes the design of an audio XAI framework, which allows its user to integrate their models
 with the framework's API in the form of a library, which then performs explanations on the model and visualizes
 them in a web interface designed for the thesis. The thesis describes the developed framework architecture
@@ -125,11 +130,11 @@ która następnie wykonuje wyjaśnienia na modelu, a następnie wizualizuje je w
 webowym, który został zaprojektowany na potrzeby pracy. Praca opisuje opracowaną architekturę frameworku
 opartą o wzorzec Model-View-Presenter (MVP), której celem jest zapewnienie modularności rozwiązania, umożliwiającej
 integrację nowych modeli użytkownika oraz alternatywnych widoków względem domyślnego.
-Projekt integruje wyselekcjonowane metody XAI wliczające w nie Local Interpretable Model-agnostic Explanations (LIME),
+Projekt integruje wyselekcjonowane metody XAI wliczając w nie Local Interpretable Model-agnostic Explanations (LIME),
 Integrated gradients oraz Layer-wise Relevance Propagation (LRP).
 
 
-\secondkeywords Explainable artificial intelligence, Framework, Interpretability, Explainability, Model-View-Presenter, Integrated gradients, Layer-wise Relevance Propagation
+\secondkeywords Wyjaśnialna sztuczna inteligencja, Framework, Interpretowalność, Wyjaśnialność, Model-View-Presenter, Integrated gradients, Layer-wise Relevance Propagation
 
 \pagestyle{plain}
 
@@ -186,7 +191,10 @@ integration of additional models and alternative presentation form to the web in
 integrates selected XAI methods, including Local Interpretable Model-agnostic Explanations (LIME), Integrated
 Gradients, and Layer-wise Relevance Propagation (LRP). The visualization layer is implemented as a web interface
 based on the JavaScript React library, which enables presentation of results from multiple explanation methods
-alongside audio playback and spectrogram visualization. The scope of the thesis is not to perform any research about
+alongside audio playback and spectrogram visualization. The implementation of the developed audio XAI framework is
+available on GitHub under the link \href{https://github.com/m-falkowski/pylibxai}{https://github.com/m-falkowski/pylibxai}.
+
+The scope of the thesis is not to perform any research about
 integrated machine learning models and explanation techniques. The thesis does not evaluate any of their metrics such
 as performance or accuracy, nor it compares them one to another.
 
@@ -653,13 +661,13 @@ the thesis project:
         This chapter defines and formalizes requirements that the project must actualize
     to meet the objective of the thesis, including software and behavioral requirements.
     The chapter starts with a definition of functional and non-functional requirements,
-    followed by an overview of software requirements and tools used in the thesis.
+    followed by an overview of software requirements and tools used in the project of the thesis.
 
 \subsection{Functional requirements}
 
-    The functional requirements seek to define how a framework should behave to its user.
-    For clarity the requirements are divided based on the software component of the framework which
-    in framework's case are library, user web interface, and terminal helper tool.
+    The functional requirements seek to define how a framework should behave for its user.
+    For clarity, the requirements are divided based on the software component of the framework,
+    which in the framework’s case are the library, user web interface, and terminal helper tool.
 
 % Wymagania interfejsu, backend serwera, UI
 \subsubsection{Library application programming interface requirements}
@@ -667,10 +675,10 @@ the thesis project:
 
     \item \textbf{Provide user model injection}
 
-        The library API must enable users to create adapters for their classes allowing them to inject operations on
-    their data into the framework. Users may implement custom model adapters by extending the provided base
-    classes. This enables integration of various audio model architectures with the explanation
-    framework.
+        The library API must enable users to create adapters for their classes, allowing them to
+    inject operations on their data into the framework. Users may implement custom model adapters
+    by extending the provided base classes. This enables integration of various audio model
+    architectures with the explanation framework.
 
     \item \textbf{Provide explanation interface for model adapters}
 
@@ -680,19 +688,19 @@ the thesis project:
 
     \item \textbf{Explanation method Selection}
 
-        The library API must offer users the ability to choose which explanation methods are displayed in the view.
-    Users can select from available explainers including LIME, Integrated gradients, and LRP through library API or through
-    command-line arguments in case when using a helper tool. This allows users to focus on specific explanation
-    approaches relevant to their use case.
+        The library API must offer users the ability to choose which explanation methods are displayed
+    in the view. Users can select from available explainers, including LIME, Integrated gradients,
+    and LRP, through the library API or through command-line arguments when using a helper tool.
+    This allows users to focus on specific explanation approaches relevant to their use case.
 
     \item \textbf{Support necessary audio format}
 
         The library API must support user audio input provided in \texttt{.wav} and \texttt{.mp4} formats.
-    Audio should be automatically converted to appropriate tensor formats for model processing.
+    Audio should be automatically converted to appropriate formats for model processing.
 
     \item \textbf{Provide interface for view classes}
 
-        The library API must offer a base interface for implementing views which will fulfill
+        The library API must offer a base interface for implementing views that will fulfill
     the requirement of modularity and allow a system to support multiple view types.
 
     \item \textbf{Context Management}
@@ -704,20 +712,23 @@ the thesis project:
     \item \textbf{Interface for prediction class information}
 
         The library should offer an interface enabling users to inject prediction class information.
-    This information is essential for proper explanation interpretation and visualization.
+    This information is essential for proper explanation, interpretation, and visualization.
     The system should support label retrieval dynamically depending on whether the user provided
     support for their user-defined model adapters.
 
     \item \textbf{Support for selected explanation methods}
 
-        The library API must provide explanation methods selected for the thesis, such as LIME, Integrated gradients, and LRP.
-    These methods should be implemented as classes, and they also serve as controllers within
-    the Model-View-Presenter pattern and coordinate between model adapters, explanation algorithms, and view components. They encapsulate the complete explanation workflow from input processing to result visualization.
+        The library API must provide explanation methods selected for the thesis, such as LIME,
+    Integrated Gradients, and LRP. These methods should be implemented as classes, and they also
+    serve as controllers within the Model-View-Presenter pattern and coordinate between model
+    adapters, explanation algorithms, and view components. They encapsulate the complete
+    explanation workflow from input processing to result visualization.
 
     \item \textbf{Support for web interface view}
 
-        The library API must define web server view classes that manage file serving and web-based user interface.
-    Web server components handle HTTP requests and serve explanation results through a user interface.
+        The library API must define web server view classes that manage file serving and a web-based user
+    interface. Web server components handle HTTP requests and serve explanation results through
+    a user interface.
 
     \item \textbf{Ensure persistent result storage}
 
@@ -730,25 +741,26 @@ the thesis project:
 
 \subsubsection{User web interface requirements}
     \begin{enumerate}[itemsep=1\baselineskip]
-    %\vspace{\baselineskip}
     \item \textbf{Separate tab for each explanation result}
 
-            The user interface must aggregate the results of each explanation method in separate tabs to organize
-        outcomes and enable switching between them. Each explanation method, which is LIME, Integrated gradients, or LRP,
-        should get its dedicated tab. This should allow users to easily navigate different explanation approaches
-        to compare results. The sidebar should provide a structured view of all generated explanations in a single
-        interface and allow you to switch between them.
+        The user interface must aggregate the results of each explanation method in separate tabs to
+    organize outcomes and enable switching between them. Each explanation method, which is LIME,
+    Integrated gradients, or LRP, should get its dedicated tab. This should allow users to easily
+    navigate different explanation approaches to compare results. The sidebar should provide a
+    structured view of all generated explanations in a single interface and allow you to
+    switch between them.
 
     \item \textbf{Display original audio playback}
 
-        The user interface must display the original audio track that serves as input for explanations across all
-    explanation methods. The interface must enable audio playback functionality, including play/pause controls and
-    waveform visualization. Users can listen to the original audio while examining explanation results for better
-    context understanding. The waveform display provides a visual representation of the audio signal structure.
+        The user interface must display the original audio track that serves as input for explanations
+    across all explanation methods. The interface must enable audio playback functionality,
+    including play/pause controls and waveform visualization. Users can listen to the original
+    audio while examining explanation results for better context understanding. The waveform display
+    provides a visual representation of the audio signal structure.
 
     \item \textbf{Visualize LIME explanation result}
 
-        The user interface must display LIME explanation result as playable audio.
+        The user interface must display the LIME explanation result as playable audio.
     Users should be able to listen to specific audio segments that contributed most significantly
     to the model's prediction. This enables an intuitive understanding of which temporal parts of
     the audio influenced the model's decision. The width of the explained audio visualization
@@ -770,47 +782,50 @@ the thesis project:
 
     \item \textbf{Visualize attribution intensity}
 
-        The user interface must show plot of attribution intensity of user's input audio
-    for both Integrated gradients and LIME explanations. The attribution scores given to various audio input segments are displayed in these plots. This enables users to determine which audio signal regions had the biggest impact on the model's prediction.
+        The user interface must show a plot of attribution intensity of the user's input audio for both
+    Integrated gradients and LIME explanations. The attribution scores given to various audio
+    input segments are displayed in these plots. This enables users to determine which audio
+    signal regions had the biggest impact on the model's prediction.
 
     \item \textbf{Display of user's input overlayed with attribution}
 
-        The user interface must display attribution overlaid on user's input for both Integrated gradients and LIME explanations.
-    Attribution values are visualized as color heatmaps on the user's spectrogram which enables a user to
-    understand which frequency components at a given time interval influenced the model's decision.
-    This method works very well when the input provided to the model is a spectrogram.
+        The user interface must display attribution overlaid on the user's input for both Integrated
+    gradients and LIME explanations. Attribution values are visualized as color heatmaps on the user's
+    spectrogram, which enables a user to understand which frequency components at a given time interval
+    influenced the model's decision. This method works very well when the input provided to the
+    model is a spectrogram.
 
     \item \textbf{Display prediction classes of user's model}
 
-        The user interface must display optional model label descriptions when provided by the user's model adapter.
-    The interpretability of explanation visualizations is improved by label information.
+        The user interface must display optional model label descriptions when provided by
+    the user's model adapter. The interpretability of explanation visualizations is
+    improved by label information.
 
     \end{enumerate}
 
 \subsubsection{Terminal application requirements}
-    Framework must provide a terminal-application tool for launching supported models on framework's explanation method with input provided by the user. The tool then will implement a typical usage scenario:
-    \begin{enumerate}
-        \item User input is converted from a waveform input into model's type which is either tensor of input samples or spectrogram type.
-        \item The tool defines a necessary model adapter,
-    \end{enumerate}
+    The XAI framework must provide a terminal application tool for launching supported models on
+    the framework's explanation method, with input provided by the user. The tool will then
+    implement a typical usage scenario:
 
     \begin{enumerate}[itemsep=1\baselineskip]
 
-    \item \textbf{Provide selection of one or more explanation method}
+    \item \textbf{Provide a selection of one or more explanation methods}
 
-        The application must enable users to select one or more explanation methods offered by the framework which are LIME, Integrated gradients, or LRP.
+        The application must enable users to select one or more explanation methods offered by
+    the framework, which are LIME, Integrated gradients, or LRP.
 
-    \item \textbf{Provide selection of audio model}
+    \item \textbf{Provide a selection of audio model}
 
-            The application must enable users to select from models implemented within the framework that they
-        intend to use. 
+        The application must enable users to select from models implemented within the framework that they
+    intend to use. 
 
-    \item \textbf{Provide selection of visualization method}
+    \item \textbf{Provide a selection of visualization methods}
 
         The application must enable users to select the visualization method implemented in the framework.
     Users can choose between web-based visualization and disabled visualization.
 
-    \item \textbf{Provide selection of working directory}
+    \item \textbf{Provide a selection of working directory}
 
     The application must enable users to select a folder as the working directory or create a default when not provided by the user.
 
@@ -820,65 +835,111 @@ the thesis project:
 
     The implementation of an audio XAI framework must meet several criteria
     to ensure proper behavior for the user and quality criteria.
-    The most important criteria are modularity, usability, and persistency.
+    The most important criteria are modularity, usability, and persistence.
 
 \begin{description}
     \item \textbf{Modularity}
 
-         The project thesis aims to provide a general and extensible audio explanation framework. The system must be 
-    designed with a modular structure, where key components such as explanation methods, model adapters, and view
-    renderers are implemented as independent modules. For that, the system must adhere 
-    to the pattern principles of Model-View-Presenter architecture as discussed
-    in Sec. \ref{ch2:ModelViewController}. This modularity allows for the seamless integration of new 
-    functionalities, such as adding additional explanation algorithms or
-    supporting new audio models, without requiring  modifications to the core of the system.
+         The project thesis aims to provide a general and extensible audio explanation framework.
+    The system must be  designed with a modular structure, where key components such as explanation methods,
+    model adapters, and view renderers are implemented as independent modules. For that, the system must 
+    adhere to the pattern principles of Model-View-Presenter architecture as discussed in Sec.
+    \ref{ch2:ModelViewController}. This modularity allows for the seamless integration of new 
+    functionalities, such as adding additional explanation algorithms or supporting new audio models,
+    without requiring  modifications to the core of the system.
 
     \item \textbf{Reliability}
 
-        The system must behave stably and predictably during normal operation. During regular operation, the system has to
-    display stable and predictable behavior. The user interface, audio processing pipelines, and explanation methods must
-    all gracefully handle runtime errors and invalid inputs. Errors must be properly logged, and informative feedback must
-    be sent to the user without crashing. To avoid data loss, intermediate and final outputs need to be saved consistently.
+        The system must behave stably and predictably during normal operation. During regular operation,
+    the system has to display stable and predictable behavior. The user interface, audio processing pipelines,
+    and explanation methods must all gracefully handle runtime errors and invalid inputs. Errors must be
+    properly logged, and informative feedback must be sent to the user without crashing.
+    To avoid data loss, intermediate and final outputs need to be saved consistently.
 
     \item \textbf{Usability}
 
-        The framework library and web user interface must follow intuitive design principles, including consistent
-    navigation, clear labeling, and visual clarity of explanation results. The use of separate tabs for different 
-    explanation methods ensures that users can focus on one explanation at a time while easily switching between views. 
-    Notifications and status indicators must be visible and should inform a user about the behavior of the interface. In 
-    addition, the command-line application helper tool must be a fast way of testing the library implementation and environment setup.
+        The framework library and web user interface must follow intuitive design principles,
+    including consistent navigation, clear labeling, and visual clarity of explanation results.
+    The use of separate tabs for different explanation methods ensures that users can focus on one
+    explanation at a time while easily switching between views. Notifications and status indicators
+    must be visible and should inform a user about the behavior of the interface. In addition,
+    the command-line application helper tool must be a fast way of testing the library
+    implementation and environment setup.
 
 \end{description}
 
 \subsection{Tools specification} \label{ch:ToolsSpecification}
+
+The developed Audio XAI Framework requires a set of tools and libraries,
+which were used for its building and development.
+
 \begin{description}
-\item \textbf{PyTorch}
+\item \textbf{PyTorch \cite{PyTorchDoc}}
 
-A comprehensive open-source machine learning framework that provides exceptional flexibility for building and training neural networks with dynamic computational graphs. PyTorch offers seamless GPU acceleration capabilities enabling efficient training of complex deep learning models on large datasets. The framework provides extensive libraries of pre-built components and optimizers that accelerate development while maintaining a pythonic interface. PyTorch has become the preferred framework for research due to its intuitive debugging experience and strong community support.
+PyTorch is a tensor library that is used for designing deep learning solutions.
+The library is used as a foundation of the framework for constructing ML models trained on the GPU.
+It is also used by most dependencies, especially integrated models (Sec. \ref{ch2:ModelSelection}).
 
-\item \textbf{librosa}
+\item \textbf{NumPy \cite{NumpyDoc}}
 
-A specialized Python library for music and audio signal processing that provides comprehensive tools for analyzing sound data through various time-frequency transforms. Librosa offers advanced capabilities for rhythm analysis, beat detection, and feature extraction of key acoustic characteristics commonly used in machine learning pipelines. The library integrates smoothly with numerical computing libraries while supporting various audio formats with built-in resampling capabilities. Librosa emphasizes reproducible research with transparent implementations of audio algorithms complemented by excellent documentation.
+NumPy is a Python library for numerical computing. It efficiently implements multidimensional arrays
+and mathematical operations. In the thesis, it is used to handle numerical data, matrix operations,
+and preprocessing steps for audio and model inputs.
 
-\item \textbf{torchaudio}
+\item \textbf{Librosa \cite{LibrosaDoc}}
 
-A domain-specific library built on PyTorch that provides GPU-accelerated tools for audio processing tasks in deep learning applications. TorchAudio offers seamless integration with PyTorch's autograd system, enabling gradient-based training with audio feature extractors as differentiable components. The library includes specialized audio augmentation techniques and pre-trained models for common audio tasks with a consistent tensor-based API. TorchAudio ensures compatibility with PyTorch's ecosystem and is actively maintained with regular updates incorporating state-of-the-art techniques.
+Librosa is a Python library for music and audio processing and analysis. It is used in the
+thesis for reading user's input audio, conversions into spectrogram and similar.
 
-\item \textbf{pytest}
+\item \textbf{torchaudio \cite{TorchAudioDoc}}
 
-A sophisticated testing framework for Python that emphasizes simplicity with a minimalist syntax for writing tests and a powerful fixture system for managing dependencies. Pytest's parameterization features enable running tests with multiple inputs while providing detailed assertion introspection to quickly identify issues. The framework's plugin architecture has fostered a rich ecosystem of extensions for specialized testing needs including coverage analysis. Pytest supports both unit and functional testing with automatic test discovery and comprehensive reporting features.
+TorchAudio is a Python library for music and audio processing and analysis.
+Similarly to Librosa, it is used in the thesis for reading user's input audio, conversion
+into spectrogram and similar.
 
-\item \textbf{matplotlib}
+\item \textbf{Pytest \cite{PytestDoc}}
 
-A comprehensive data visualization library for Python that has become the standard for creating publication-quality figures and interactive visualizations. Matplotlib offers exceptional flexibility through its object-oriented API, allowing precise control over every aspect of plots for creating complex custom visualizations. The library supports an extensive range of plot types from basic line graphs to specialized visualizations suitable for diverse data representation needs. Matplotlib integrates seamlessly with NumPy and pandas while providing robust support for mathematical expressions through LaTeX rendering.
+Pytest is a Python testing framework. It is used in the thesis for unit testing.
 
-\item \textbf{captum}
+\item \textbf{Matplotlib \cite{MatplotlibDoc}}
 
-An interpretability library built specifically for PyTorch that implements state-of-the-art algorithms for explaining decisions made by deep learning models. Captum provides unified implementations of gradient-based attribution methods that reveal feature importance across various model architectures at multiple granularities. The library implements advanced visualization techniques for different data modalities, rendering attributions as heatmaps for images and waveforms for audio. Captum's attribution methods support batch processing and GPU acceleration with a consistent API that works across different model architectures.
+Matplotlib is a Python library for data visualization. In the thesis,
+it is used for plotting spectrograms, training curves, and other graphs
+that illustrate experimental results.
 
-\item \textbf{React}
+\item \textbf{Captum \cite{CaptumDoc}}
 
-A declarative JavaScript library that has revolutionized user interface development through its component-based architecture and efficient virtual DOM rendering system. React promotes unidirectional data flow that makes application state changes predictable while its JSX syntax combines JavaScript with HTML-like templates for creating reusable components. The library's robust ecosystem includes state management solutions, routing libraries, and testing frameworks that address common development challenges. React's composition-focused design encourages creation of small, focused components that can be combined to build complex interfaces while promoting code reuse.
+Captum is a model interpretability library for PyTorch. It provides methods such as saliency maps
+and attribution scores. In the thesis, it is used to analyze and explain neural network 
+predictions on audio data.
+
+\item \textbf{React \cite{ReactDOC}}
+
+React is a JavaScript library used for developing component-based interfaces.
+In the thesis, it is used to implement the frontend of the application, providing
+interactive views and controls for audio and model outputs.
+
+\item \textbf{Vite \cite{ViteDOC}}
+
+Vite is a modern frontend build tool and development server. In the thesis, it 
+is used for bundling the React application and enabling fast development with hot-reload support.
+
+\item \textbf{Bootstrap \cite{BootstrapDOC}}
+
+Bootstrap is a CSS framework providing pre-styled components and layout utilities.
+In the thesis, it is used to simplify styling and ensure a responsive frontend design.
+
+\item \textbf{Wavesurfer \cite{WavesurferDOC}}
+
+Wavesurfer is a JavaScript library for audio visualization and interaction.
+In the thesis, it is used to render waveform displays, allow audio playback,
+and enable user interactions with audio segments.
+
+\item \textbf{ChartJs \cite{ChartJsDoc}}
+
+ChartJs is a JavaScript charting library for visualizing data with charts and plots.
+In the thesis, it is used in the frontend to present experiment results and performance metrics.
+
 \end{description}
 
 % #############################################
@@ -908,9 +969,10 @@ The project's software prerequisites are:
 
 \subsection{Installation procedure}
 
-The framework provides an installation script \texttt{setup.sh} % TODO (Appendix. 3)
-in project's root directory that performs full installation of all
-software dependencies. To install the project the users must:
+The framework provides an installation script \texttt{setup.sh} in the project’s root directory that performs
+a complete installation of all software dependencies,
+listed in Appendix \ref{appendix:InstallationScriptListing}.
+To install the project the users must:
 
 \begin{itemize}
     \item Clone the git repository of the audio XAI framework:
@@ -925,13 +987,14 @@ cd pylibxai/
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
 git submodule update --init --recursive
 \end{minted}
+    \item Create a \emph{conda} environment where all dependencies will be installed and activate it.
+    The environment can be activated after the installation manually at any given:
+\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
+conda create -y --name pylibxai_env -c conda-forge python=3.9.20 && conda activate pylibxai_env
+\end{minted}
     \item Launch the install script that is present in the root directory:
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
-chmod +x setup.sh && ./setup.sh
-\end{minted}
-    \item The \texttt{setup.sh} script provides a \emph{conda} environment with all installed dependencies and activates it. The environment can be activated after the installation manually at any given point:
-\begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, mathescape]{text}
-conda activate pylibxai_context
+chmod +x setup.sh && sudo ./setup.sh
 \end{minted}
 \end{itemize}
 
@@ -960,7 +1023,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 <pylibxai.Explainers.lime_explainer.LimeExplainer object at 0x00000140351E7FD0>
 >>>
 \end{minted}
-\caption{The help message output of the command-line explanation runner.}
+\caption{The exemplary usage of the framework API interface in Python's interactive mode.}
 \label{fig:ApiUsage}
 \end{figure}
 
@@ -1135,7 +1198,8 @@ The web interface provides the following components to the user:
 
     The following chapter contains an overview of the architecture and implementation details of
     the explanation framework. It briefly discusses each of the system's components by providing
-    a walk-through of each step of the framework's explanation pipeline.
+    a walk-through of each step of the framework's explanation pipeline. The implementation assigns
+    a name \emph{Pylibxai} that refers to the implementation of the audio XAI framework which is the goal of the thesis.
 
 \subsection{Software architecture overview}
 
@@ -1153,8 +1217,8 @@ The web interface provides the following components to the user:
     composed of two parts which the first is a backend server that serves the explanation results to the frontend part
     through the HTTP protocol. The frontend part then requests the required data from the backend server and visualizes
     it in the form of a browser page. The communication process between user application and framework is shown in
-    \ref{fig:CommunicationArchitecture}.
-
+    Fig. \ref{fig:CommunicationArchitecture}.
+ 
     \item \textbf{Command-line explanation runner} - It is a toolchain's helper script and serves the purpose of quickly 
     launching a typical usage type of the library, which is loading an input audio file and then launching a chosen set 
     of explanations on the chosen library's provided model.
@@ -1189,7 +1253,7 @@ The web interface provides the following components to the user:
 
 \begin{figure}%[h!] % TODO: h! musi być wyłączone
     \centering
-    \includegraphics[width=15cm]{class_diagram.png}
+    \includegraphics[width=15cm]{ClassDiagram.png}
     \caption{Library class diagram.}
     \label{fig:ClassDiagram}
 \end{figure}
@@ -1267,8 +1331,8 @@ class LimeAdapter(ABC):
     This interface requires from user defining a single method \mintinline{py}{get_igrad_predict_fn(self)}
     that must return an \mintinline{py}{np.array}.
 
-    Additionally, Integrated gradients interface requires defining a \mintinline{py}{igrad_prepare_inference_input}
-    method that serves a purpose of additionally preprocessing data for a given model as shown in
+    Additionally, the \mintinline{py}{igrad_prepare_inference_input()} method is defined by the Integrated gradients explainer,
+    which serves the purpose of additionally preprocessing data for a given model, as shown in
     \ref{fig:IGradientsAdapter}. This is required as interface for explainers accept user's waveform input but they
     do expect an input which is the same as model's input which may be either waveform or a spectrogram which
     requires additional conversion.
@@ -1445,8 +1509,8 @@ class HarmonicCNN(LimeAdapter, IGradientsAdapter, ModelLabelProvider):
 \end{figure}
 
 The adapter defines a method \mintinline{py}{get_igrad_predict_fn()} that implements
-the \texttt{IGradientsAdapter} interface as shown in Fig. \ref{fig:HarmonicIgradOverload}.
-This method must return a function with a type \mintinline{py}{Callable[[torch.Tensor], torch.Tensor]}, % TODO: overflow hbox
+Integrated gradient's interface as shown in Fig. \ref{fig:HarmonicIgradOverload}.
+This method must return a function with a type \mintinline{py}{Callable[[torch.Tensor], torch.Tensor]},
 that takes Pytorch \mintinline{py}{torch.Tensor} both as an argument and return type.
 The callback then defines an inner function \mintinline{py}{predict_fn(x)} that contains
 the standard inference code of HarmonicCNN, and then it returns that function.
@@ -1468,10 +1532,10 @@ def get_igrad_predict_fn(self) -> Callable[[torch.Tensor], torch.Tensor]:
 
 To implement \texttt{LrpAdapter} the adapter provides a definition for LRP
 callback as shown in Fig. \ref{fig:HarmonicLrpOverload}. This method must return
-a function object that returns a Python's \mintinline{py}{torch.nn.Module} meaning
-that a user must create a wrapper class around it's model's implementation.
+a function object that must contain the instance of Python's \mintinline{py}{torch.nn.Module} that
+a user must create a wrapper class around its model’s implementation.
 The function defines a \mintinline{py}{HarmonicCNNWrapper} that inherits from 
-\mintinline{py}{torch.nn.Module} class and provides a required
+a Python's type \mintinline{py}{torch.nn.Module} and provides a required
 \mintinline{py}{forward()} method where a HarmonicCNN inference is placed.
 
 \begin{figure}%[h]
@@ -1522,9 +1586,6 @@ def get_lime_predict_fn(self) -> Callable[[np.ndarray], np.ndarray]:
 \caption{Support of LIME method in adapter \texttt{HarmonicCNN}.}
 \label{fig:HarmonicLLIMEOverload}
 \end{figure}
-
-%\subsubsection{CNN14 adapter} TODO: potrzebne?
-%\subsubsection{GtzanCNN adapter} TODO: potrzebne?
 
 \subsection{Explainer classes}
 
@@ -2371,7 +2432,7 @@ pushNotification({ type: 'error', message: `Integrated Gradients: Failed to load
 The framework provides a command-line tool script as a helper tool for quick execution
 of explanation methods on the user’s input using models integrated into the library
 (Sec. \ref{ch5:ModelAdapters}). The full script implementation
-is shown in Appendix. \ref{appendix:ScriptListing}.
+is shown in Appendix \ref{appendix:ScriptListing}.
 
 For this, the script sets up terminal options as described in Sec. \ref{ch4:CmdTool}, with a use of Python's \texttt{argparse.ArgumentParser} class:
 \begin{minted}[numbersep=12pt, fontsize=\footnotesize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
@@ -2529,7 +2590,7 @@ The scope of testing includes unit tests of the given framework's components and
 The test setup for framework's tests is the same as for the development setup and is described
 in Sec. \ref{ch4:DevelopmentSetup}.
 
-The library provides a script \emph{pylibxai\_test.sh} as shown in Appendix. \ref{appendix:TestingListing} that
+The library provides a script \emph{pylibxai\_test.sh} as shown in Appendix \ref{appendix:TestingListing} that
 executes both pytest's unit tests and also a functional tests
 that utilizes the framework's explanation runner script \textbf{pylibxai\_explain.py} to
 test functionally the entire process. The script may be launched from the command-line:
@@ -2720,7 +2781,8 @@ As part of this, the thesis proposes and describes the design of an XAI audio fr
 user an API interface for performing explanations and a presentation layer, within which a web interface
 has been developed to visualize various explanation results such as audio playback, attribution, and the like.
 Additionally, the framework is based on the Model-View-Presenter pattern to ensure
-the modularity and maintainability of the solution.
+the modularity and maintainability of the solution. The implementation of the developed audio XAI framework is
+available on GitHub under the link \href{https://github.com/m-falkowski/pylibxai}{https://github.com/m-falkowski/pylibxai}.
 
 A dedicated tool for visualizing audio explanations allows for quick comparison of multiple explanation methods.
 The framework design relieves the user of a significant portion of the work by managing the explanation and
@@ -2760,7 +2822,7 @@ Future work on the topic of audio Explainable AI frameworks may include:
 \end{itemize}
 
 The XAI audio framework project demonstrates the application of classic software engineering rules
-in the field of explainable artificial intelligence.
+in the field of Explainable Artificial Intelligence.
 
 %---------------
 % Bibliografia
@@ -2779,10 +2841,15 @@ in the field of explainable artificial intelligence.
 \acronym{XAI}{Explainable artificial intelligence}
 \acronym{SOTA}{State-of-art Music Models}
 \acronym{LRP}{Layer-wise relevance propagation}
+\acronym{MVP}{Model-View-Presenter}
+\acronym{AI}{Artificial Intelligence}
+\acronym{ML}{Machine Learning}
 \acronym{JSON}{JavaScript Object Notation}
 \acronym{CORS}{Cross-origin resource sharing}
 \acronym{HTTP}{Hypertext Transfer Protocol}
 \acronym{API}{Application Programming Interface}
+\acronym{GPU}{Graphics processing unit}
+\acronym{HCNN}{HarmonicCNN}
 \vspace{0.8cm}
 
 %--------------------------------------
@@ -2805,6 +2872,95 @@ in the field of explainable artificial intelligence.
 \captionsetup[table]{list=no}
 
 % Załącznik 1
+\clearpage
+\appendix{The installation script \emph{setup.sh}} \label{appendix:InstallationScriptListing}
+\begin{minted}[numbersep=12pt, fontsize=\scriptsize, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+#!/bin/env bash
+
+# Download AudioSet class labels indices
+# wget http://storage.googleapis.com/us_audioset/youtube_corpus/v1/csv/class_labels_indices.csv -O class_labels_indices.csv
+
+if ! command -v conda &> /dev/null
+then
+    echo "conda could not be found"
+    exit
+fi
+
+if ! command -v git &> /dev/null
+then
+    echo "git could not be found"
+    exit
+fi
+
+if ! command -v curl &> /dev/null
+then
+    echo "curl could not be found"
+    exit
+fi
+
+function install_regressors() {
+    git clone -n https://github.com/nsh87/regressors.git
+    cd regressors || exit
+    git checkout HEAD -- :^".editorconfig*.py"
+    git commit -m 'Remove editorconfig files'
+    curl -L -o regressors_commit.patch https://github.com/nsh87/regressors/commit/717c8e7009247cfa74af09a5d5bfc592752c04ae.patch
+    git am regressors_commit.patch
+    python setup.py install
+    cd .. || exit
+    rm -rf regressors
+}
+
+function install_audiolime() {
+    git clone https://github.com/CPJKU/audioLIME.git
+    cd audioLIME || exit
+    python setup.py install
+    cd .. || exit
+    rm -rf audioLIME
+}
+
+function install_captum() {
+    git clone https://github.com/pytorch/captum.git
+    cd captum || exit
+    python setup.py install
+    cd .. || exit
+    rm -rf captum
+}
+
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+install_regressors
+install_audiolime
+install_captum
+
+pip install spleeter
+\end{minted}
+\begin{minted}[numbersep=12pt, fontsize=\scriptsize, firstnumber=59, breaklines, xleftmargin=12pt, linenos, mathescape]{py}
+pip install tqdm
+pip install matplotlib
+pip install 'scipy>=0.9'
+pip install librosa
+pip install pandas seaborn 'statsmodels>=0.6.1'
+pip install soundfile
+pip install fire
+pip install tensorboard
+pip install torchlibrosa
+
+pip install pytest
+conda install -y -c conda-forge tk
+
+# install pylibxai
+pip install -e .
+
+conda install -y -c conda-forge nodejs
+
+cd pylibxai/pylibxai-ui
+npm install
+cd ../../
+
+sudo cp pylibxai/pylibxai_explain.py /usr/local/bin/
+\end{minted}
+
+% Załącznik 2
 \clearpage
 
 \appendix{Listing of the script \texttt{pylibxai\_explain.py}} \label{appendix:ScriptListing}
@@ -2902,7 +3058,7 @@ if __name__ == '__main__':
     main()
 \end{minted}
 
-% Załącznik 2
+% Załącznik 3
 \clearpage
 \appendix{The testing script \emph{pylibxai\_test.sh}} \label{appendix:TestingListing}
 
